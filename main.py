@@ -8,16 +8,12 @@ import ChannelFilteringClient
 import MessageBroker
 from displays import *
 from handlers import *
-import os
 from config import AppConfig
 
 
 def main():
     config = AppConfig(SafeConfigParser())
-    config.read([
-        'defaults.cfg',
-        os.path.expanduser('~') + '/.pi-dashboard.cfg'
-    ])
+    config.read(['defaults.cfg', sys.argv[1]])
 
     logger = logging.getLogger('raspberry_pi_dashboard')
     logger.setLevel(logging.DEBUG)

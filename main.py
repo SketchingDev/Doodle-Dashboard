@@ -28,7 +28,7 @@ def main():
         config.get_dashboard_channel_name()
     )
 
-    broker = MessageBroker.MessageBroker(Display())
+    broker = MessageBroker.MessageBroker(PapirusDisplay())
     broker.set_handlers([TextTagHandler()])
 
     if not dashboard_client.connect():

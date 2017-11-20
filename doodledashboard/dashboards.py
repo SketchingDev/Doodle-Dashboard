@@ -1,6 +1,8 @@
+from slackclient import SlackClient
+
+from doodledashboard.lucas.repositories import SlackRepository
 from lucas.handlers.weather.weather import WeatherHandler
 from lucas.dashboard import Dashboard
-from lucas.factories import ClientFactory
 from lucas.handlers.steps.steps import StepsHandler
 
 
@@ -15,5 +17,8 @@ class StandardDashboard(Dashboard):
     def get_handlers(self):
         return [StepsHandler(self._shelve), WeatherHandler(self._shelve)]
 
-    def get_client(self, slack_config):
-        return ClientFactory().create(slack_config)
+    def get_repository(self, slack_config):
+        slack_client = SlackClient(slack_config.get_token())
+        channel = slack_config.get_channel_name()
+
+        return SlackRepository(slack_client, channel)

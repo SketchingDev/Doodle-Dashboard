@@ -1,15 +1,27 @@
 import sys
 
+import logging
 from dashboards import StandardDashboard
 from doodledashboard.lucas.displays.display import LoggingDisplay
 from lucas.client import SlackConfig
-from lucas.factories import DashboardLogger
 
 import shelve
 
+
+def register_logger(logger):
+    logger.setLevel(logging.DEBUG)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    logger.addHandler(ch)
+
+
 if __name__ == '__main__':
+
+    _logger = logging.getLogger('raspberry_pi_dashboard')
+    register_logger(_logger)
+
     _shelve = shelve.open('/tmp/shelve')
-    _logger = DashboardLogger().register()
     _slack_config = SlackConfig.create_from_file(sys.argv[1])
 
     _display = LoggingDisplay()

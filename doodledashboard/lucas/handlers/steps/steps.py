@@ -42,5 +42,5 @@ class StepsHandler(MessageHandler):
         if not messages:
             return default
         else:
-            text = messages[-1]['text']
+            text = messages[-1].get_text()
             return text.replace(self.get_tag(), '').strip()

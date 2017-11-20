@@ -19,7 +19,7 @@ class PapirusDisplay(Display):
         self._screenComposite.AddImg(image_path, x, y, size)
 
     def write_text(self, text, x, y, font_size=10, font_face=None):
-        self._screenComposite.AddText(text, x, y, font_size, fontPath=font_face)
+        self._screenComposite.AddText(str(text), x, y, font_size, fontPath=font_face)
 
     def flush(self):
         self._screenComposite.WriteAll()

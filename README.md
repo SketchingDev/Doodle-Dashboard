@@ -33,7 +33,8 @@ Channel=<NAME OF SLACK CHANNEL>
 
 5. Start the dashboard
 ```
-$ python ./doodledashboard/main.py <PATH TO CONFIG FROM STEP 4>
+$ export PYTHONPATH=`pwd`
+$ python doodledashboard/main.py <PATH TO CONFIG FROM STEP 4>
 ```
 
 

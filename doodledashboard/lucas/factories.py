@@ -2,7 +2,7 @@ import logging
 
 from slackclient import SlackClient
 
-from doodledashboard.lucas.client import ChannelFilteringClient
+from client import ChannelFilteringClient
 
 
 class DashboardLogger:

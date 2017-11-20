@@ -20,11 +20,13 @@ class StepsHandler(MessageHandler):
         return '#steps'
 
     def draw(self, display, messages):
-        steps = self._extract_latest_steps(messages, -1)
+        steps = self._extract_latest_steps(messages, '')
 
-        if steps is -1:
+        if steps is '':
             if self.shelve.has_key(StepsHandler._SAVED_VALUE_KEY):
                 steps = self.shelve[StepsHandler._SAVED_VALUE_KEY]
+            else:
+                steps = '0'
         else:
             self.shelve[StepsHandler._SAVED_VALUE_KEY] = steps
 

@@ -1,4 +1,4 @@
-from doodledashboard.lucas.handlers.quote.quote import QuoteHandler
+from lucas.handlers.weather.weather import WeatherHandler
 from lucas.dashboard import Dashboard
 from lucas.factories import ClientFactory
 from lucas.handlers.steps.steps import StepsHandler
@@ -10,10 +10,10 @@ class StandardDashboard(Dashboard):
         self._shelve = shelve
 
     def get_update_interval(self):
-        return 5
+        return 8
 
     def get_handlers(self):
-        return [QuoteHandler(self._shelve), StepsHandler(self._shelve)]
+        return [StepsHandler(self._shelve), WeatherHandler(self._shelve)]
 
     def get_client(self, slack_config):
         return ClientFactory().create(slack_config)

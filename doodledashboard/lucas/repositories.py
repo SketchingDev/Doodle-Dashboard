@@ -34,13 +34,13 @@ class SlackRepository(Repository):
         if not self._connected:
             self._connected = self._try_connect()
 
-        if not self._channel:
-            self._channel = self._try_find_channel(self._channel_name)
-
         if not self._test_connection():
             self._logger.info('Failed to connect to Slack, will try again next time around')
             self._connected = False
             return []
+
+        if not self._channel:
+            self._channel = self._try_find_channel(self._channel_name)
 
         events = self._client.rtm_read()
         events = SlackRepository._filter_events_by_channel(self._channel, events)
@@ -50,11 +50,16 @@ class SlackRepository(Repository):
         return [MessageModel(event['text']) for event in events]
 
     def _test_connection(self):
+        connected = False
         try:
-            self._client.api_call("api.test")
-            return True
+            response = self._client.api_call("api.test")
+            if response['ok']:
+                connected = True
+            else:
+                self._logger.info("Slack threw the error '%s'" % response['error'])
         except ConnectionError:
-            return False
+            connected = False
+        return connected
 
     def _try_connect(self):
         connected = self._client.rtm_connect(with_team_state=False)

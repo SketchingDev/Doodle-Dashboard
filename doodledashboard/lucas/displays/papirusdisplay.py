@@ -10,19 +10,20 @@ class PapirusDisplay(Display):
     def __init__(self):
         Display.__init__(self)
         self._screen = Papirus()
-        self._screenComposite = PapirusComposite(False)
+        self._screen_composite = PapirusComposite(False)
 
     def clear(self):
         self._screen.update()
 
     def draw_image(self, image_path, x, y, size):
-        self._screenComposite.AddImg(image_path, x, y, size)
+        self._screen_composite.AddImg(image_path, x, y, size)
 
     def write_text(self, text, x, y, font_size=10, font_face=None):
-        self._screenComposite.AddText(str(text), x, y, font_size, fontPath=font_face)
+        self._screen_composite.AddText(text, x, y, font_size, fontPath=font_face)
 
     def flush(self):
-        self._screenComposite.WriteAll()
+        self._screen_composite.WriteAll()
+        self._screen_composite = PapirusComposite(False)
 
     def get_size(self):
         return PapirusDisplay._SUPPORTED_SIZE

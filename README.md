@@ -21,7 +21,7 @@ $ git clone <PROJECT URL>
 3. Install project dependencies   
 ```
 $ cd doodle-dashboard
-$ pip install -r requirements.txt
+$ pip install -r doodledashboard/requirements.txt
 ``` 
 
 4. Create a configuration file

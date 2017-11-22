@@ -20,15 +20,16 @@ class StepsHandler(MessageHandler):
         return '#steps'
 
     def draw(self, display, messages):
-        steps = self._extract_latest_steps(messages, '')
+        steps = '0'
 
-        if steps is '':
+        if not messages:
             if self.shelve.has_key(StepsHandler._SAVED_VALUE_KEY):
                 steps = self.shelve[StepsHandler._SAVED_VALUE_KEY]
-            else:
-                steps = '0'
         else:
-            self.shelve[StepsHandler._SAVED_VALUE_KEY] = steps
+            new_steps = self.remove_tag(messages[-1])
+            if new_steps is not '':
+                steps = new_steps
+                self.shelve[StepsHandler._SAVED_VALUE_KEY] = steps
 
         display.draw_image(self._background_full_path, 0, 0, display.get_size())
         display.write_text("Steps so far", 70, 50, 40, self._font_full_path)
@@ -38,9 +39,4 @@ class StepsHandler(MessageHandler):
     def _get_current_directory(self):
         return os.path.dirname(os.path.realpath(__file__))
 
-    def _extract_latest_steps(self, messages, default):
-        if not messages:
-            return default
-        else:
-            text = messages[-1].get_text()
-            return text.replace(self.get_tag(), '').strip()
+

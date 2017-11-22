@@ -27,20 +27,18 @@ class WeatherHandler(MessageHandler):
         return '#weather'
 
     def draw(self, display, messages):
-        weather = self._extract_weather(messages, '')
+        weather = WeatherHandler._DEFAULT_KEY
 
-        if weather is '':
+        if not messages:
             if self.shelve.has_key(WeatherHandler._SAVED_VALUE_KEY):
                 weather = self.shelve[WeatherHandler._SAVED_VALUE_KEY]
-            else:
-                weather = WeatherHandler._DEFAULT_KEY
         else:
-            self.shelve[WeatherHandler._SAVED_VALUE_KEY] = weather
+            new_weather = self.remove_tag(messages[-1])
+            if self._image_paths.has_key(weather):
+                weather = new_weather
+                self.shelve[WeatherHandler._SAVED_VALUE_KEY] = weather
 
-        if self._image_paths.has_key(weather):
-            image_path = self._image_paths.get(weather)
-        else:
-            image_path = self._image_paths.get(WeatherHandler._DEFAULT_KEY)
+        image_path = self._image_paths.get(weather)
 
         display.draw_image(image_path, 0, 0, display.get_size())
         display.flush()
@@ -48,9 +46,4 @@ class WeatherHandler(MessageHandler):
     def _get_current_directory(self):
         return os.path.dirname(os.path.realpath(__file__))
 
-    def _extract_weather(self, messages, default):
-        if not messages:
-            return default
-        else:
-            text = messages[-1].get_text()
-            return text.replace(self.get_tag(), '').strip()
+

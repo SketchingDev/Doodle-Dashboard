@@ -8,3 +8,8 @@ class MessageHandler:
 
     def get_tag(self):
         raise NotImplementedError('Implement this method')
+
+    def remove_tag(self, message):
+        return message.get_text()\
+            .replace(self.get_tag(), '')\
+            .strip()

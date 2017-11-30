@@ -1,7 +1,7 @@
 from slackclient import SlackClient
 
+from doodledashboard.lucas.datasources.slack import SlackRepository
 from doodledashboard.lucas.handlers.bank.bank import BankHandler
-from doodledashboard.lucas.repositories import SlackRepository
 from lucas.handlers.weather.weather import WeatherHandler
 from lucas.dashboard import Dashboard
 from lucas.handlers.steps.steps import StepsHandler

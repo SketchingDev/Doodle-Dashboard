@@ -9,30 +9,41 @@ message they sent containing its balance, so using the automation app
 message, redirect it to a private Slack channel and have Doodle Dashboard extract the account balance and display it.
 
 
-## Getting started
+## Requirements
 
-1. Install [Python 2.7](https://www.python.org/downloads/) and [pip](https://pip.pypa.io/en/stable/installing/)
+ * [Python 2.7](https://www.python.org/downloads/)
+ * [pip](https://pip.pypa.io/en/stable/installing/)
 
-2. Clone Doodle Dashboard repository
+
+## Building the project
+
+1. Clone the repository
 ```
 $ git clone <PROJECT URL>
-```
-
-3. Install project dependencies   
-```
 $ cd doodle-dashboard
-$ pip install -r requirements.txt
-``` 
+```
 
-4. Create a configuration file
+2. Install project dependencies
+```
+$ make dev
+```
+or
+```
+$ pip install -r requirements.txt
+$ pip install -r requirements.testing.txt
+```
+
+3. Create a configuration file
 ```
 [Slack]
 Token=<SLACK API TOKEN>
 Channel=<NAME OF SLACK CHANNEL>
 ```
 
-5. Start the dashboard
+## Starting the dashboard
+
 ```
+$ cd doodle-dashboard
 $ export PYTHONPATH=`pwd`
 $ python doodledashboard/main.py <PATH TO CONFIG FROM STEP 4>
 ```

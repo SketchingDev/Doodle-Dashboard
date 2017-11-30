@@ -27,8 +27,7 @@ class LoggingDisplay(Display):
         self._logger = logging.getLogger('raspberry_pi_dashboard.LoggingDisplay')
 
     def clear(self):
-        pass
-        # self._logger.info("Clear display")
+        self._logger.info("Clear display")
 
     def write_text(self, text, x, y, font_size=10, font_face=None):
         self._logger.info("Write text: '%s'" % text)
@@ -37,9 +36,8 @@ class LoggingDisplay(Display):
         self._logger.info("Draw image: %s" % image_path)
 
     def flush(self):
-        pass
-        # self._logger.info("Flush called")
+        self._logger.info("Flush called")
 
     def get_size(self):
-        # self._logger.info("Display size requested")
+        self._logger.info("Display size requested")
         return (0, 0)

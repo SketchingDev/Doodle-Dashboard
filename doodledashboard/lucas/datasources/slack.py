@@ -10,7 +10,7 @@ class SlackRepository(Repository):
         Repository.__init__(self)
         self._client = client
         self._channel_name = channel_name
-        self._logger = logging.getLogger('raspberry_pi_dashboard.SlackRepository')
+        self._logger = logging.getLogger('doodle_dashboard.SlackRepository')
         self._connected = False
         self._connected_previously = False
 

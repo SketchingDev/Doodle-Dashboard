@@ -24,7 +24,7 @@ class Display:
 class LoggingDisplay(Display):
     def __init__(self):
         Display.__init__(self)
-        self._logger = logging.getLogger('raspberry_pi_dashboard.LoggingDisplay')
+        self._logger = logging.getLogger('doodle_dashboard.LoggingDisplay')
 
     def clear(self):
         self._logger.info("Clear display")

@@ -18,7 +18,7 @@ def register_logger(logger):
 
 if __name__ == '__main__':
 
-    _logger = logging.getLogger('raspberry_pi_dashboard')
+    _logger = logging.getLogger('doodle_dashboard')
     register_logger(_logger)
 
     _shelve = shelve.open('/tmp/shelve')

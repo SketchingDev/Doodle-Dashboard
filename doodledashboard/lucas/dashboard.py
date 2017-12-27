@@ -8,7 +8,7 @@ class Dashboard:
     def __init__(self, slack_config, display):
         self._slack_config = slack_config
         self._display = display
-        self._logger = logging.getLogger('raspberry_pi_dashboard.Dashboard')
+        self._logger = logging.getLogger('doodle_dashboard.Dashboard')
 
     def start(self):
         repository = self.get_repository(self._slack_config)

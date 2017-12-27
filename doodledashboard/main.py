@@ -3,7 +3,7 @@ import sys
 import logging
 from dashboards import StandardDashboard
 from doodledashboard.lucas.displays.display import LoggingDisplay
-from lucas.client import SlackConfig
+from lucas.config import SlackConfig
 
 import shelve
 

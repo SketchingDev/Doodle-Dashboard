@@ -1,4 +1,4 @@
-# Doodle Dashboard
+# Doodle Dashboard [![Build Status](https://travis-ci.org/SketchingDev/Doodle-Dashboard.svg?branch=master)](https://travis-ci.org/SketchingDev/Doodle-Dashboard)
 
 Doodle Dashboard is simple framework for creating a dashboard powered by [Slack](https://slack.com/).
 

@@ -10,5 +10,5 @@ env:
 dev: env
 	pip install -r requirements.testing.txt
 
-test: lint
+tests:
 	py.test

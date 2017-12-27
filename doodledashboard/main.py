@@ -1,7 +1,7 @@
 import sys
 
 import logging
-from dashboards import StandardDashboard
+from standarddashboard import StandardDashboard
 from doodledashboard.lucas.displays.display import LoggingDisplay
 from lucas.config import SlackConfig
 

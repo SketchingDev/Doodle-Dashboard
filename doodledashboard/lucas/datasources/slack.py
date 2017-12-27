@@ -1,6 +1,6 @@
 import logging
 
-from doodledashboard.lucas.datasources.repository import Repository
+from doodledashboard.lucas.datasources.repository import Repository, MessageModel
 
 
 class SlackRepository(Repository):

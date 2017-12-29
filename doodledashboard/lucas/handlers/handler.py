@@ -6,10 +6,5 @@ class MessageHandler:
     def draw(self, display, messages):
         raise NotImplementedError('Implement this method')
 
-    def get_tag(self):
+    def filter(self, messages):
         raise NotImplementedError('Implement this method')
-
-    def remove_tag(self, message):
-        return message.get_text()\
-            .replace(self.get_tag(), '')\
-            .strip()

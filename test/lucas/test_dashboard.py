@@ -22,6 +22,24 @@ class TestAbstractDashboard(unittest.TestCase):
             return self._repositories
 
     @mock.patch('itertools.cycle', side_effect=(lambda values: values))
+    def test_messages_from_repositories_are_passed_to_handlers_filter(self, itertools_cycle_function):
+        display = Mock()
+        handler_1 = Mock()
+
+        message_1 = Mock()
+        message_2 = Mock()
+        message_3 = Mock()
+
+        repository_1 = Mock()
+        repository_2 = Mock()
+        repository_1.get_latest_messages.return_value = [message_1, message_2]
+        repository_2.get_latest_messages.return_value = [message_3]
+
+        TestAbstractDashboard.TestDashboard(display, [handler_1], [repository_1, repository_2]).start()
+
+        handler_1.filter.assert_called_with([message_1, message_2, message_3])
+
+    @mock.patch('itertools.cycle', side_effect=(lambda values: values))
     def test_get_latest_messages_called_for_all_repositories_when_start_called(self, itertools_cycle_function):
         display = Mock()
         handlers = [Mock()]
@@ -38,32 +56,23 @@ class TestAbstractDashboard(unittest.TestCase):
     @mock.patch('itertools.cycle', side_effect=(lambda values: values))
     def test_messages_from_repositories_with_tags_passed_to_handlers(self, itertools_cycle_function):
         display = Mock()
+
+        message_1 = Mock()
+        message_2 = Mock()
+        message_3 = Mock()
+
         handlers = [Mock(), Mock()]
-        handlers[0].get_tag.return_value = '1'
-        handlers[1].get_tag.return_value = '2'
+        handlers[0].filter.return_value = [message_1]
+        handlers[1].filter.return_value = [message_2, message_3]
 
-        message_1 = TestAbstractDashboard.create_mock_message_with_text('1')
-        message_2 = TestAbstractDashboard.create_mock_message_with_text('2')
-        message_3 = TestAbstractDashboard.create_mock_message_with_text('2')
+        repository_1 = Mock()
+        repository_1.get_latest_messages.return_value = []
 
-        repositories = [Mock(), Mock()]
-        repositories[0].get_latest_messages.return_value = [message_1, message_2]
-        repositories[1].get_latest_messages.return_value = [message_3]
-
-        TestAbstractDashboard.TestDashboard(display, handlers, repositories).start()
+        TestAbstractDashboard.TestDashboard(display, handlers, [repository_1]).start()
 
         handlers[0].draw.assert_called_with(display, [message_1])
         handlers[1].draw.assert_called_with(display, [message_2, message_3])
 
-    @staticmethod
-    def create_mock_message_with_text(text):
-        message = Mock()
-        message.get_text.return_value = text
-        return message
-
-    # @staticmethod
-    # def return_argument(values):
-    #     return values
 
 if __name__ == '__main__':
     unittest.main()

@@ -22,8 +22,7 @@ class Dashboard:
             if is_at_beginning:
                 messages = self._collect_all_messages(repositories)
 
-            handler_messages = Dashboard._filter_messages_containing_text(messages, handler.get_tag())
-            handler.draw(self._display, handler_messages)
+            handler.draw(self._display, handler.filter(messages))
 
             time.sleep(update_interval)
 
@@ -42,7 +41,3 @@ class Dashboard:
 
     def get_repositories(self):
         raise NotImplementedError('Implement this method')
-
-    @staticmethod
-    def _filter_messages_containing_text(messages, text):
-        return [m for m in messages if text in m.get_text()]

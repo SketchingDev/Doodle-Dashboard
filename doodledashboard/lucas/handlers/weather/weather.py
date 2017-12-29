@@ -1,6 +1,7 @@
 import os
 from os import path
 
+from doodledashboard.lucas.handlers.filters import MessageContainsTextFilter
 from doodledashboard.lucas.handlers.handler import MessageHandler
 
 
@@ -16,6 +17,7 @@ class WeatherHandler(MessageHandler):
         MessageHandler.__init__(self, shelve)
 
         current_dir = self._get_current_directory()
+        self._message_filter = MessageContainsTextFilter('#weather')
         self._image_paths = {
             'sunny': path.join(current_dir, WeatherHandler._SUN_FILENAME),
             'cloudy': path.join(current_dir, WeatherHandler._CLOUD_FILENAME),
@@ -23,8 +25,8 @@ class WeatherHandler(MessageHandler):
             'stormy': path.join(current_dir, WeatherHandler._STORM_FILENAME)
         }
 
-    def get_tag(self):
-        return '#weather'
+    def filter(self, messages):
+        return self._message_filter.filter(messages)
 
     def draw(self, display, messages):
         weather = WeatherHandler._DEFAULT_KEY
@@ -33,7 +35,7 @@ class WeatherHandler(MessageHandler):
             if self.shelve.has_key(WeatherHandler._SAVED_VALUE_KEY):
                 weather = self.shelve[WeatherHandler._SAVED_VALUE_KEY]
         else:
-            new_weather = self.remove_tag(messages[-1])
+            new_weather = self._message_filter.remove_text(messages[-1])
             if self._image_paths.has_key(weather):
                 weather = new_weather
                 self.shelve[WeatherHandler._SAVED_VALUE_KEY] = weather

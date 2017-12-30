@@ -16,8 +16,7 @@ class WeatherHandler(MessageHandler):
     def __init__(self, shelve):
         MessageHandler.__init__(self, shelve)
 
-        current_dir = self._get_current_directory()
-        self._message_filter = MessageContainsTextFilter('#weather')
+        current_dir = WeatherHandler._get_current_directory()
         self._image_paths = {
             'sunny': path.join(current_dir, WeatherHandler._SUN_FILENAME),
             'cloudy': path.join(current_dir, WeatherHandler._CLOUD_FILENAME),
@@ -25,27 +24,33 @@ class WeatherHandler(MessageHandler):
             'stormy': path.join(current_dir, WeatherHandler._STORM_FILENAME)
         }
 
-    def filter(self, messages):
-        return self._message_filter.filter(messages)
-
-    def draw(self, display, messages):
-        weather = WeatherHandler._DEFAULT_KEY
-
-        if not messages:
-            if self.shelve.has_key(WeatherHandler._SAVED_VALUE_KEY):
-                weather = self.shelve[WeatherHandler._SAVED_VALUE_KEY]
+        if self.shelve.has_key(WeatherHandler._SAVED_VALUE_KEY):
+            self._weather_key = self.shelve[WeatherHandler._SAVED_VALUE_KEY]
         else:
-            new_weather = self._message_filter.remove_text(messages[-1])
-            if self._image_paths.has_key(weather):
-                weather = new_weather
-                self.shelve[WeatherHandler._SAVED_VALUE_KEY] = weather
+            self._weather_key = WeatherHandler._DEFAULT_KEY
 
-        image_path = self._image_paths.get(weather)
+    def update(self, messages):
+        if messages:
+            message_body = WeatherHandler._get_latest(messages).get_text()
+
+            for term in self._image_paths:
+                if term in message_body:
+                    self._weather_key = term
+                    self.shelve[WeatherHandler._SAVED_VALUE_KEY] = term
+                    return
+
+    def draw(self, display):
+        image_path = self._image_paths.get(self._weather_key)
 
         display.draw_image(image_path, 0, 0, display.get_size())
         display.flush()
 
-    def _get_current_directory(self):
+    @staticmethod
+    def _get_latest(messages):
+        return messages[-1]
+
+    @staticmethod
+    def _get_current_directory():
         return os.path.dirname(os.path.realpath(__file__))
 
 

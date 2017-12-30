@@ -12,17 +12,23 @@ class Dashboard:
         repositories = self.get_repositories()
         self._logger.info('%s repositories loaded' % len(repositories))
 
-        handlers = self.get_handlers()
-        self._logger.info('%s handlers loaded' % len(handlers))
+        filtered_handlers = self.get_filtered_handlers()
+        self._logger.info('%s filtered handlers loaded' % len(filtered_handlers))
 
         messages = []
         update_interval = self.get_update_interval()
-        for handler in itertools.cycle(handlers):
-            is_at_beginning = handlers[0] is handler
-            if is_at_beginning:
+        for filtered_handler in itertools.cycle(filtered_handlers):
+
+            if filtered_handler is filtered_handlers[0]:  # Is at beginning
                 messages = self._collect_all_messages(repositories)
 
-            handler.draw(self._display, handler.filter(messages))
+            handler = filtered_handler['handler']
+            filter_chain = filtered_handler['filter_chain']
+
+            handlers_messages = filter_chain.filter(messages) if filter_chain else messages
+
+            handler.update(handlers_messages)
+            handler.draw(self._display)
 
             time.sleep(update_interval)
 
@@ -36,7 +42,7 @@ class Dashboard:
     def get_update_interval(self):
         raise NotImplementedError('Implement this method')
 
-    def get_handlers(self):
+    def get_filtered_handlers(self):
         raise NotImplementedError('Implement this method')
 
     def get_repositories(self):

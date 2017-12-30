@@ -1,9 +1,9 @@
 from slackclient import SlackClient
 
 from doodledashboard.lucas.datasources.slack import SlackRepository
-from lucas.handlers.weather.weather import WeatherHandler
+from doodledashboard.lucas.handlers.filters import MessageContainsTextFilter
 from lucas.dashboard import Dashboard
-from lucas.handlers.steps.steps import StepsHandler
+from lucas.handlers.weather.weather import WeatherHandler
 
 
 class StandardDashboard(Dashboard):
@@ -15,8 +15,8 @@ class StandardDashboard(Dashboard):
     def get_update_interval(self):
         return 8
 
-    def get_handlers(self):
-        return [StepsHandler(self._shelve), WeatherHandler(self._shelve)]
+    def get_filtered_handlers(self):
+        return [{'handler': WeatherHandler(self._shelve), 'filter_chain': MessageContainsTextFilter('#weather')}]
 
     def get_repositories(self):
         slack_client = SlackClient(self._slack_config.get_token())

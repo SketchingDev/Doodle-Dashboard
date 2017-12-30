@@ -3,8 +3,8 @@ class MessageHandler:
         self.shelve = shelve
         pass
 
-    def draw(self, display, messages):
+    def update(self, messages):
         raise NotImplementedError('Implement this method')
 
-    def filter(self, messages):
+    def draw(self, display):
         raise NotImplementedError('Implement this method')

@@ -27,6 +27,14 @@ class SlackRepository(Repository):
             self._channel = self._try_find_channel(self._channel_name)
 
         events = self._client.rtm_read()
+        self._logger.info('Events from Slack: %s' % events)
+
+        if len(events) is 1 and events[0]['type'] == 'hello':
+            self._logger.info('Slack connection confirmed with hello: %s' % events)
+            events = self._client.rtm_read()
+            self._logger.info('Events from Slack: %s' % events)
+
+
         events = SlackRepository._filter_events_by_channel(self._channel, events)
         events = SlackRepository._filter_events_by_type(events, 'message')
         events = SlackRepository._filter_events_with_text(events)

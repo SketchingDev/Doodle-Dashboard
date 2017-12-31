@@ -1,11 +1,10 @@
-import logging
-
-from requests.exceptions import ConnectionError
-
-
 class MessageModel:
-    def __init__(self, text):
+    def __init__(self, date, text):
+        self._date = date
         self._text = text
+
+    def get_date(self):
+        return self._date
 
     def get_text(self):
         return self._text

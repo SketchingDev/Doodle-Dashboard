@@ -1,5 +1,7 @@
 import logging
 
+from requests import ConnectionError
+
 from doodledashboard.lucas.datasources.repository import Repository, MessageModel
 
 
@@ -34,12 +36,12 @@ class SlackRepository(Repository):
             events = self._client.rtm_read()
             self._logger.info('Events from Slack: %s' % events)
 
-
         events = SlackRepository._filter_events_by_channel(self._channel, events)
         events = SlackRepository._filter_events_by_type(events, 'message')
         events = SlackRepository._filter_events_with_text(events)
 
-        return [MessageModel(event['text']) for event in events]
+        # TODO Convert timestamp to date/time
+        return [MessageModel(event['ts'], event['text']) for event in events]
 
     def _test_connection(self):
         connected = False

@@ -1,3 +1,6 @@
+import re
+
+
 class MessageFilter:
     def __init__(self):
         self._next_filter = None
@@ -31,21 +34,13 @@ class MessageContainsTextFilter(MessageFilter):
             .strip()
 
 
-# class MessageMatchesRegexFilter(MessageFilter):
-#     def __init__(self, regex):
-#         MessageFilter.__init__(self)
-#         self._regex = regex
-#
-#     def do_filter(self, messages):
-#         matched_messages = []
-#
-#         for m in messages:
-#             match = re.match(self._regex, m.get_text())
-#             if match:
-#                 matched_messages += m
-#
-#         return matched_messages
+class MessageMatchesRegexFilter(MessageFilter):
+    def __init__(self, regex):
+        MessageFilter.__init__(self)
+        self._pattern = re.compile(regex, re.IGNORECASE)
 
+    def do_filter(self, messages):
+        return [m for m in messages if self._pattern.match(m.get_text())]
 
 
 

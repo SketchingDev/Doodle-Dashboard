@@ -1,10 +1,6 @@
 class MessageModel:
-    def __init__(self, date, text):
-        self._date = date
+    def __init__(self, text):
         self._text = text
-
-    def get_date(self):
-        return self._date
 
     def get_text(self):
         return self._text

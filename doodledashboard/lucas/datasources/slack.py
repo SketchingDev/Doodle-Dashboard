@@ -40,8 +40,7 @@ class SlackRepository(Repository):
         events = SlackRepository._filter_events_by_type(events, 'message')
         events = SlackRepository._filter_events_with_text(events)
 
-        # TODO Convert timestamp to date/time
-        return [MessageModel(event['ts'], event['text']) for event in events]
+        return [MessageModel(event['text']) for event in events]
 
     def _test_connection(self):
         connected = False

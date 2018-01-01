@@ -16,6 +16,7 @@ class RssFeed(Repository):
     def _convert_to_message(feed_item):
         publish_date = parser.parse(feed_item['published'])
         title = feed_item['title']
+        link = feed_item['link']
         summary = feed_item['summary']
 
-        return MessageModel(publish_date, '%s \n %s' % (title, summary))
+        return MessageModel(publish_date, '%s \n %s \n %s' % (title, link, summary))

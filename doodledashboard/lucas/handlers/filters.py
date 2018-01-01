@@ -40,7 +40,7 @@ class MessageMatchesRegexFilter(MessageFilter):
         self._pattern = re.compile(regex, re.IGNORECASE)
 
     def do_filter(self, messages):
-        return [m for m in messages if self._pattern.match(m.get_text())]
+        return [m for m in messages if self._pattern.search(m.get_text())]
 
 
 

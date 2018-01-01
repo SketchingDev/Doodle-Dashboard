@@ -1,7 +1,6 @@
 import os
 from os import path
 
-from doodledashboard.lucas.handlers.filters import MessageContainsTextFilter
 from doodledashboard.lucas.handlers.handler import MessageHandler
 
 
@@ -18,10 +17,10 @@ class WeatherHandler(MessageHandler):
 
         current_dir = WeatherHandler._get_current_directory()
         self._image_paths = {
-            'sunny': path.join(current_dir, WeatherHandler._SUN_FILENAME),
-            'cloudy': path.join(current_dir, WeatherHandler._CLOUD_FILENAME),
-            'rainy': path.join(current_dir, WeatherHandler._RAIN_FILENAME),
-            'stormy': path.join(current_dir, WeatherHandler._STORM_FILENAME)
+            'sun': path.join(current_dir, WeatherHandler._SUN_FILENAME),
+            'cloud': path.join(current_dir, WeatherHandler._CLOUD_FILENAME),
+            'rain': path.join(current_dir, WeatherHandler._RAIN_FILENAME),
+            'storm': path.join(current_dir, WeatherHandler._STORM_FILENAME)
         }
 
         if self.shelve.has_key(WeatherHandler._SAVED_VALUE_KEY):
@@ -31,7 +30,9 @@ class WeatherHandler(MessageHandler):
 
     def update(self, messages):
         if messages:
-            message_body = WeatherHandler._get_latest(messages).get_text()
+            message_body = WeatherHandler._get_latest(messages)\
+                .get_text()\
+                .lower()
 
             for term in self._image_paths:
                 if term in message_body:

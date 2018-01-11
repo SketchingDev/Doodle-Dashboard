@@ -1,12 +1,31 @@
 # Doodle Dashboard [![Build Status](https://travis-ci.org/SketchingDev/Doodle-Dashboard.svg?branch=master)](https://travis-ci.org/SketchingDev/Doodle-Dashboard)
 
-Doodle Dashboard is simple framework for creating a dashboard powered by [Slack](https://slack.com/).
+Doodle Dashboard is a highly extensible dashboard designed to display data from multiple sources. It was designed
+with the Raspberry Pi in mind, though will work on any device that supports Python 2.7. 
 
-I originally created the dashboard to display my bank balance on my [Raspberry Pi](https://www.raspberrypi.org/). 
-Unfortunately the only way of knowing my balance without logging in to the bank's website was via a weekly SMS 
-message they sent containing its balance, so using the automation app 
-[Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm) I was able to detect the SMS 
-message, redirect it to a private Slack channel and have Doodle Dashboard extract the account balance and display it.
+
+## How it works
+
+![High level diagram of messages flowing through framework](docs/images/flow-diagram.png?raw=true)
+
+The dashboard works using the following elements:
+
+ * **Data Source** - The external sources of information you want to display on the dashboard
+ * **Filters** - Filters items from data sources based on customisable criteria
+ * **Handler** - Draws information from the filtered items to the display
+ * **Display** - The display attached to the device
+
+The workings of the dashboard can be summarised by looking at how to display the latest weather:
+
+1. Data Source - Configure the dashboard to poll the BBC's weather RSS feed
+2. Filtering - Keep items from previous step that contain the text 'weather' 
+3. Handler - Using items from previous step draw the relevant image to the dashboard based on the presence of the 
+keyword of 'rain', 'sun', 'cloud' or 'storm'
+
+
+## Configuration
+
+[TODO]
 
 
 ## Requirements
@@ -47,16 +66,3 @@ $ cd doodle-dashboard
 $ export PYTHONPATH=`pwd`
 $ python doodledashboard/main.py <PATH TO CONFIG FROM STEP 4>
 ```
-
-
-## Products that integrate with Slack
-
-### Websites
-
-* [Zapier](https://zapier.com/)
-* [IFTTT](https://ifttt.com/)
-* [Microsoft Flow](https://flow.microsoft.com/)
-
-### Apps
-
-* [Tasker](https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm)

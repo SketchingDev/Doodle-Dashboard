@@ -2,7 +2,7 @@ import logging
 
 from requests import ConnectionError
 
-from doodledashboard.lucas.datasources.repository import Repository, MessageModel
+from doodledashboard.datasources.repository import Repository, MessageModel
 
 
 class SlackRepository(Repository):

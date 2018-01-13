@@ -1,10 +1,10 @@
 from slackclient import SlackClient
 
-from doodledashboard.lucas.datasources.rss import RssFeed
-from doodledashboard.lucas.datasources.slack import SlackRepository
-from doodledashboard.lucas.handlers.filters import MessageMatchesRegexFilter
-from lucas.dashboard import Dashboard
-from lucas.handlers.weather.weather import WeatherHandler
+from doodledashboard.dashboard import Dashboard
+from doodledashboard.datasources.rss import RssFeed
+from doodledashboard.datasources.slack import SlackRepository
+from doodledashboard.handlers.filters import MessageMatchesRegexFilter
+from doodledashboard.handlers.weather.weather import WeatherHandler
 
 
 class StandardDashboard(Dashboard):
@@ -20,9 +20,10 @@ class StandardDashboard(Dashboard):
         return StandardDashboard._EIGHT_SECONDS
 
     def get_filtered_handlers(self):
-        return [{
-            'handler': WeatherHandler(self._shelve), 'filter_chain': MessageMatchesRegexFilter('weather')
-        }]
+        return [
+            {'filter_chain': MessageMatchesRegexFilter('weather'), 'handler': WeatherHandler(self._shelve)},
+
+        ]
 
     def get_repositories(self):
         return [

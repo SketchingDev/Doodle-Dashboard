@@ -2,7 +2,7 @@ import unittest
 
 from mock import Mock, mock
 
-from doodledashboard.lucas.dashboard import Dashboard
+from doodledashboard.dashboard import Dashboard
 
 
 class TestAbstractDashboard(unittest.TestCase):

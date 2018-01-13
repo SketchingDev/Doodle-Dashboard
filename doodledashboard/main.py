@@ -1,11 +1,10 @@
 import sys
-
 import logging
-from standarddashboard import StandardDashboard
-from doodledashboard.lucas.displays.display import LoggingDisplay
-from lucas.config import SlackConfig
-
 import shelve
+
+from doodledashboard.config import SlackConfig
+from doodledashboard.displays.display import LoggingDisplay
+from doodledashboard.standarddashboard import StandardDashboard
 
 
 def register_logger(logger):
@@ -16,8 +15,7 @@ def register_logger(logger):
     logger.addHandler(ch)
 
 
-if __name__ == '__main__':
-
+def start():
     _logger = logging.getLogger('doodle_dashboard')
     register_logger(_logger)
 
@@ -36,3 +34,7 @@ if __name__ == '__main__':
         _shelve.close()
         _logger.critical(err)
         sys.exit(1)
+
+
+if __name__ == '__main__':
+    start()

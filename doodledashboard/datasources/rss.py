@@ -1,6 +1,6 @@
 import feedparser
 
-from doodledashboard.lucas.datasources.repository import MessageModel, Repository
+from doodledashboard.datasources.repository import Repository, MessageModel
 
 
 class RssFeed(Repository):

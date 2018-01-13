@@ -1,16 +1,21 @@
 from papirus import Papirus, PapirusComposite
 
-from doodledashboard.lucas.displays.display import Display
+from doodledashboard.displays.display import Display
 
 
 class PapirusDisplay(Display):
 
-    _SUPPORTED_SIZE = (264, 176)
+    A_1_44_INCH = (128, 90)
+    A_1_9_INCH = (144, 128)
+    A_2_0_INCH = (200, 96)
+    A_2_6_INCH = (232, 128)
+    A_2_7_INCH = (264, 176)
 
-    def __init__(self):
+    def __init__(self, size):
         Display.__init__(self)
         self._screen = Papirus()
         self._screen_composite = PapirusComposite(False)
+        self._screen_size = size
 
     def clear(self):
         self._screen.update()
@@ -26,7 +31,7 @@ class PapirusDisplay(Display):
         self._screen_composite = PapirusComposite(False)
 
     def get_size(self):
-        return PapirusDisplay._SUPPORTED_SIZE
+        return self._screen_size
 
 
 

@@ -1,6 +1,6 @@
 import unittest
 
-from doodledashboard.lucas.datasources.rss import RssFeed
+from doodledashboard.datasources.rss import RssFeed
 
 
 class TestRssFeedIT(unittest.TestCase):

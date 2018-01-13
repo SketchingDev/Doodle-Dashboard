@@ -1,7 +1,7 @@
 import os
 from os import path
 
-from doodledashboard.lucas.handlers.handler import MessageHandler
+from doodledashboard.handlers.handler import MessageHandler
 
 
 class WeatherHandler(MessageHandler):
@@ -53,5 +53,3 @@ class WeatherHandler(MessageHandler):
     @staticmethod
     def _get_current_directory():
         return os.path.dirname(os.path.realpath(__file__))
-
-

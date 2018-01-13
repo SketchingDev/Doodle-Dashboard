@@ -1,6 +1,5 @@
 import logging
 
-
 class Display:
     def __init__(self):
         pass
@@ -40,4 +39,4 @@ class LoggingDisplay(Display):
 
     def get_size(self):
         self._logger.info("Display size requested")
-        return (0, 0)
+        return 0, 0

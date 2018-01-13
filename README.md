@@ -34,7 +34,7 @@ keyword of 'rain', 'sun', 'cloud' or 'storm'
  * [pip](https://pip.pypa.io/en/stable/installing/)
 
 
-## Building the project
+## Development
 
 1. Clone the repository
 ```
@@ -59,6 +59,12 @@ Token=<SLACK API TOKEN>
 Channel=<NAME OF SLACK CHANNEL>
 ```
 
+### ImportError: No module named
+
+If you keep getting the ImportError when building the project check that you
+haven't already installed the application via PIP, otherwise you might be pulling
+in the doodle dashboard classes from your local pip packages.
+
 ## Starting the dashboard
 
 ```
@@ -66,3 +72,5 @@ $ cd doodle-dashboard
 $ export PYTHONPATH=`pwd`
 $ python doodledashboard/main.py <PATH TO CONFIG FROM STEP 4>
 ```
+
+

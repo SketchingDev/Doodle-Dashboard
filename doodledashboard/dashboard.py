@@ -4,46 +4,60 @@ import time
 
 
 class Dashboard:
-    def __init__(self, display):
+    _FIVE_SECONDS = 5
+
+    def __init__(self, display, data_sources, notifications):
         self._display = display
         self._logger = logging.getLogger('doodle_dashboard.Dashboard')
+        self._data_sources = data_sources
+        self._notifications = notifications
+        self._update_interval = Dashboard._FIVE_SECONDS
+
+    def set_update_interval(self, interval):
+        self._update_interval = interval
 
     def start(self):
-        repositories = self.get_repositories()
-        self._logger.info('%s repositories loaded' % len(repositories))
-
-        filtered_handlers = self.get_filtered_handlers()
-        self._logger.info('%s filtered handlers loaded' % len(filtered_handlers))
+        self._logger.info('%s repositories loaded' % len(self._data_sources))
+        self._logger.info('%s notifications loaded' % len(self._notifications))
 
         messages = []
-        update_interval = self.get_update_interval()
-        for filtered_handler in itertools.cycle(filtered_handlers):
+        for notification in itertools.cycle(self._notifications):
 
-            if filtered_handler is filtered_handlers[0]:  # Is at beginning
-                messages = self._collect_all_messages(repositories)
+            if self._is_at_beginning(notification):
+                messages = self._collect_all_messages(self._data_sources)
+                self._logger.info('%s messages collected' % len(messages))
 
-            handler = filtered_handler['handler']
-            filter_chain = filtered_handler['filter_chain']
+            notification.handle_messages(self._display, messages)
+            time.sleep(self._update_interval)
 
-            handlers_messages = filter_chain.filter(messages) if filter_chain else messages
+    def _is_at_beginning(self, notification):
+        return notification is self._notifications[0]
 
-            handler.update(handlers_messages)
-            handler.draw(self._display)
-
-            time.sleep(update_interval)
-
-    def _collect_all_messages(self, repositories):
+    @staticmethod
+    def _collect_all_messages(repositories):
         messages = []
         for repository in repositories:
             messages += repository.get_latest_messages()
 
         return messages
 
-    def get_update_interval(self):
-        raise NotImplementedError('Implement this method')
 
-    def get_filtered_handlers(self):
-        raise NotImplementedError('Implement this method')
+class Notification:
+    def __init__(self, handler):
+        self._handler = handler
+        self._filter_chain = None
 
-    def get_repositories(self):
-        raise NotImplementedError('Implement this method')
+    def set_filter_chain(self, filter_chain):
+        self._filter_chain = filter_chain
+
+    def handle_messages(self, display, messages):
+        filtered_messages = self._filter_messages(messages)
+
+        self._handler.update(filtered_messages)
+        self._handler.draw(display)
+
+    def _filter_messages(self, messages):
+        if self._filter_chain:
+            return self._filter_chain.filter(messages)
+        else:
+            return messages

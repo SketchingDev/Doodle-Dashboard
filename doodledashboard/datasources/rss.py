@@ -1,6 +1,7 @@
 import feedparser
 
-from doodledashboard.datasources.repository import Repository, MessageModel
+from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.datasources.repository import Repository, MessageModel, RepositoryConfigCreator
 
 
 class RssFeed(Repository):
@@ -19,3 +20,17 @@ class RssFeed(Repository):
         summary = feed_item['summary']
 
         return MessageModel('%s \n %s \n %s' % (title, link, summary))
+
+
+class RssRepositoryConfigCreator(RepositoryConfigCreator):
+    def __init__(self):
+        RepositoryConfigCreator.__init__(self)
+
+    def creates_for_id(self, filter_id):
+        return filter_id == 'rss'
+
+    def create_item(self, config_section):
+        if 'url' not in config_section:
+            raise MissingRequiredOptionException('Expected \'url\' option to exist')
+
+        return RssFeed(config_section['url'])

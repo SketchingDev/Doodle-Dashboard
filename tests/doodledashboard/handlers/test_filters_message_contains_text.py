@@ -2,7 +2,8 @@ import unittest
 
 from mock import Mock
 
-from doodledashboard.handlers.filters import MessageContainsTextFilter
+from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.filters import MessageContainsTextFilter, MessageContainsTextFilterCreator
 
 
 class TestMessageContainsTextFilter(unittest.TestCase):
@@ -38,6 +39,28 @@ class TestMessageContainsTextFilter(unittest.TestCase):
         message = Mock()
         message.get_text.return_value = text
         return message
+
+
+class TestMessageContainsTextFilterCreator(unittest.TestCase):
+
+    def test_creates_for_correct_id(self):
+        self.assertTrue(MessageContainsTextFilterCreator().creates_for_id('message-contains-text'))
+
+    def test_exception_thrown_for_missing_text_option(self):
+        creator = MessageContainsTextFilterCreator()
+
+        with self.assertRaises(MissingRequiredOptionException):
+            creator.create({'type': 'message-contains-text'})
+
+    def test_text_options_passed_to_filter(self):
+        creator = MessageContainsTextFilterCreator()
+
+        text_filter = creator.create({
+            'type': 'message-contains-text',
+            'text': 'testing'
+        })
+
+        self.assertEqual(text_filter.get_text(), 'testing')
 
 
 if __name__ == '__main__':

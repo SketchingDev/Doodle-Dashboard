@@ -2,7 +2,10 @@ import logging
 
 from requests import ConnectionError
 
-from doodledashboard.datasources.repository import Repository, MessageModel
+from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.datasources.repository import Repository, MessageModel, RepositoryConfigCreator
+
+from slackclient import SlackClient
 
 
 class SlackRepository(Repository):
@@ -96,3 +99,22 @@ class SlackRepository(Repository):
     @staticmethod
     def _filter_events_by_channel(channel, events):
         return [e for e in events if 'channel' in e and e['channel'] == channel['id']]
+
+
+class SlackRepositoryConfigCreator(RepositoryConfigCreator):
+    def __init__(self):
+        RepositoryConfigCreator.__init__(self)
+
+    def creates_for_id(self, filter_id):
+        return filter_id == 'slack'
+
+    def create_item(self, config_section):
+        if 'token' not in config_section:
+            raise MissingRequiredOptionException('Expected \'token\' option to exist')
+
+        if 'channel' not in config_section:
+            raise MissingRequiredOptionException('Expected \'channel\' option to exist')
+
+        slack_client = SlackClient(config_section['token'])
+        channel = config_section['channel']
+        return SlackRepository(slack_client, channel)

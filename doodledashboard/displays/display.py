@@ -1,5 +1,8 @@
 import logging
 
+from doodledashboard.config import Creator
+
+
 class Display:
     def __init__(self):
         pass
@@ -40,3 +43,28 @@ class LoggingDisplay(Display):
     def get_size(self):
         self._logger.info("Display size requested")
         return 0, 0
+
+
+class DisplayConfigCreator(Creator):
+    def __init__(self):
+        Creator.__init__(self)
+
+    def creates_for_id(self, filter_id):
+        raise NotImplementedError('Implement this method')
+
+    def can_create(self, config_section):
+        return 'display' in config_section and self.creates_for_id(config_section['display'])
+
+    def create_item(self, config_section):
+        raise NotImplementedError('Implement this method')
+
+
+class LoggingDisplayConfigCreator(DisplayConfigCreator):
+    def __init__(self):
+        DisplayConfigCreator.__init__(self)
+
+    def creates_for_id(self, display_id):
+        return display_id == 'logging'
+
+    def create_item(self, config_section):
+        return LoggingDisplay()

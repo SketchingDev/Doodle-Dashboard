@@ -2,7 +2,7 @@ import unittest
 
 from mock import Mock
 
-from doodledashboard.handlers.filters import MessageMatchesRegexFilter
+from doodledashboard.filters import MessageMatchesRegexFilter
 
 
 class TestMessageContainsTextFilter(unittest.TestCase):

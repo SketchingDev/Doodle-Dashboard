@@ -17,13 +17,11 @@ class Dashboard:
         self._update_interval = interval
 
     def start(self):
-        self._logger.info('%s repositories loaded' % len(self._data_sources))
-        self._logger.info('%s notifications loaded' % len(self._notifications))
-
         messages = []
         for notification in itertools.cycle(self._notifications):
 
             if self._is_at_beginning(notification):
+                self._logger.info('At beginning of notification cycle, will poll data sources')
                 messages = self._collect_all_messages(self._data_sources)
                 self._logger.info('%s messages collected' % len(messages))
 
@@ -61,3 +59,10 @@ class Notification:
             return self._filter_chain.filter(messages)
         else:
             return messages
+
+    # TODO Only used for testing. Find better way of testing method
+    def get_filter_chain(self):
+        return self._filter_chain
+
+    def __str__(self):
+        return "Displays messages using: %s" % str(self._handler)

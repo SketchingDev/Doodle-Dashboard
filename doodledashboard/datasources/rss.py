@@ -9,9 +9,15 @@ class RssFeed(Repository):
         Repository.__init__(self)
         self._feed_url = url
 
+    def get_url(self):
+        return self._feed_url
+
     def get_latest_messages(self):
         feed = feedparser.parse(self._feed_url)
         return [self._convert_to_message(item) for item in feed['entries']]
+
+    def __str__(self):
+        return "RSS feed for %s" % self._feed_url
 
     @staticmethod
     def _convert_to_message(feed_item):
@@ -22,7 +28,7 @@ class RssFeed(Repository):
         return MessageModel('%s \n %s \n %s' % (title, link, summary))
 
 
-class RssRepositoryConfigCreator(RepositoryConfigCreator):
+class RssFeedConfigCreator(RepositoryConfigCreator):
     def __init__(self):
         RepositoryConfigCreator.__init__(self)
 

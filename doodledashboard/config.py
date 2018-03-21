@@ -35,6 +35,20 @@ class RootCreator(Creator):
         pass
 
 
+class FilterConfigCreator(Creator):
+    def __init__(self):
+        Creator.__init__(self)
+
+    def creates_for_id(self, filter_id):
+        raise NotImplementedError('Implement this method')
+
+    def can_create(self, config_section):
+        return 'type' in config_section and self.creates_for_id(config_section['type'])
+
+    def create_item(self, config_section):
+        raise NotImplementedError('Implement this method')
+
+
 class MissingRequiredOptionException(Exception):
     def __init__(self, value):
         self.value = value
@@ -74,13 +88,13 @@ class DashboardConfig:
     def get_display(self):
         display = self._display_creator.create(self._config)
         if not display:
-           raise MissingConfigurationValueException('Missing display option. Where am I supposed to display stuff?!')
+            raise MissingConfigurationValueException('Missing display option')
 
         return display
 
     def get_data_sources(self):
         data_source_elements = []
-        #DataSourceConfigSection
+        # DataSourceConfigSection
         if 'data-sources' in self._config:
             data_source_elements = self._config['data-sources']
 
@@ -89,33 +103,42 @@ class DashboardConfig:
     def get_notifications(self):
         notifications = []
 
-        #NotificationsConfigSection
+        # NotificationsConfigSection
         if 'notifications' in self._config:
             for notification_element in self._config['notifications']:
 
                 handler = self._handler_creator.create(notification_element)
                 if handler:
                     notification = Notification(handler)
-                    notification.set_filter_chain(self._extract_from_filter_chain(notification_element))
+
+                    filter_chain = self._extract_from_filter_chain(notification_element)
+                    if filter_chain:
+                        notification.set_filter_chain(filter_chain)
 
                     notifications.append(notification)
 
         return notifications
 
     def _extract_from_filter_chain(self, notification_element):
-        filters = []
+        # TODO: Fix issue with circular dependency that I get when this import is moved to the top
+        # https://stackoverflow.com/questions/9252543/importerror-cannot-import-name-x
+        from doodledashboard.filters import MessageFilter
 
-        #FiterChainConfigSection
+        root_filter = MessageFilter()
+
+        if not self._filter_creator:
+            return root_filter
+
+        # FilterChainConfigSection
         if 'filter-chain' in notification_element:
             filter_chain_elements = notification_element['filter-chain']
 
             for filter_element in filter_chain_elements:
-                filter = self._filter_creator.create(filter_element)
-                if filter:
-                    filters.append(filter)
+                new_filter = self._filter_creator.create(filter_element)
+                if new_filter:
+                    root_filter.add(new_filter)
 
-        return filters
-
+        return root_filter
 
     @staticmethod
     def _create_items(creator_chain, config_elements):

@@ -1,6 +1,6 @@
 from papirus import Papirus, PapirusComposite
 
-from doodledashboard.displays.display import Display
+from doodledashboard.displays.display import Display, DisplayConfigCreator
 
 
 class PapirusDisplay(Display):
@@ -33,5 +33,26 @@ class PapirusDisplay(Display):
     def get_size(self):
         return self._screen_size
 
+    def __str__(self):
+        return "Papirus display %s" % self._screen_size
 
 
+class PapirusDisplayConfigCreator(DisplayConfigCreator):
+
+    _DISPLAYS = {
+        'papirus-1x44inch': PapirusDisplay.A_1_44_INCH,
+        'papirus-1x9inch': PapirusDisplay.A_1_9_INCH,
+        'papirus-2x0inch': PapirusDisplay.A_2_0_INCH,
+        'papirus-2x6inch': PapirusDisplay.A_2_6_INCH,
+        'papirus-2x7inch': PapirusDisplay.A_2_7_INCH
+    }
+
+    def __init__(self):
+        DisplayConfigCreator.__init__(self)
+
+    def creates_for_id(self, display_id):
+        return display_id in PapirusDisplayConfigCreator._DISPLAYS.keys()
+
+    def create_item(self, config_section):
+        size = PapirusDisplayConfigCreator._DISPLAYS.get(config_section['display'])
+        return PapirusDisplay(size)

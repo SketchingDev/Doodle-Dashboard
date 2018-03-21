@@ -65,6 +65,10 @@ If you keep getting the ImportError when building the project check that you
 haven't already installed the application via PIP, otherwise you might be pulling
 in the doodle dashboard classes from your local pip packages.
 
+```
+sudo rm -rf /Library/Python/2.7/site-packages/doodledashboard/
+```
+
 ## Starting the dashboard
 
 ```
@@ -72,5 +76,3 @@ $ cd doodle-dashboard
 $ export PYTHONPATH=`pwd`
 $ python doodledashboard/main.py <PATH TO CONFIG FROM STEP 4>
 ```
-
-

@@ -1,6 +1,7 @@
 import re
 
-from doodledashboard.config import Creator, MissingRequiredOptionException
+from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.config import Creator
 
 
 class MessageFilter:
@@ -14,7 +15,7 @@ class MessageFilter:
             self._successor.add(successor)
 
     def do_filter(self, messages):
-        raise NotImplementedError('Implement this method')
+        return messages
 
     def filter(self, messages):
         filtered_messages = self.do_filter(messages)

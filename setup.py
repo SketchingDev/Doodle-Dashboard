@@ -1,13 +1,24 @@
 from setuptools import setup, find_packages
 
-# https://caremad.io/posts/2013/07/setup-vs-requirement/
 setup(
-    name='Doodle Dashboard',
-    version='0.1',
+    name='doodle-dashboard',
+    version='0.0.1',
     description='Extensible dashboard designed to display data from multiple sources.',
     url='https://github.com/SketchingDev/Doodle-Dashboard',
+    license = 'MIT',
     packages=find_packages(),
+    install_requires=[
+        'requests',
+        'slackclient',
+        'feedparser',
+        'pyyaml'
+    ],
     entry_points={
         'console_scripts': ['doodledashboard=doodledashboard.command_line:main'],
-    }
+    },
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Programming Language :: Python :: 2.7',
+    ],
+    python_requires='>=2.7'
 )

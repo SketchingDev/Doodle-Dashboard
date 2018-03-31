@@ -1,37 +1,33 @@
 # Doodle Dashboard [![Build Status](https://travis-ci.org/SketchingDev/Doodle-Dashboard.svg?branch=master)](https://travis-ci.org/SketchingDev/Doodle-Dashboard)
 
-Doodle Dashboard is a highly extensible dashboard designed to display data from multiple sources. It was designed
-with the Raspberry Pi in mind, though will work on any device that supports Python 2.7. 
-
-
-## How it works
+Doodle Dashboard is used to create fun little dashboards that display useful information from multiple sources, like
+Tweets from your favourite Twitterers, weather reports for your local area or breaking news.
 
 ![High level diagram of messages flowing through framework](docs/images/flow-diagram.png?raw=true)
 
-The dashboard works using the following elements:
-
- * **Data Source** - The external sources of information you want to display on the dashboard
- * **Filters** - Filters items from data sources based on customisable criteria
- * **Handler** - Draws information from the filtered items to the display
- * **Display** - The display attached to the device
-
-The workings of the dashboard can be summarised by looking at how to display the latest weather:
-
-1. Data Source - Configure the dashboard to poll the BBC's weather RSS feed
-2. Filtering - Keep items from previous step that contain the text 'weather' 
-3. Handler - Using items from previous step draw the relevant image to the dashboard based on the presence of the 
-keyword of 'rain', 'sun', 'cloud' or 'storm'
-
-
-## Configuration
-
-[TODO]
-
-
 ## Requirements
+  * [Python 2.7](https://www.python.org/downloads/)
+  * [pip](https://pip.pypa.io/en/stable/installing/)
 
- * [Python 2.7](https://www.python.org/downloads/)
- * [pip](https://pip.pypa.io/en/stable/installing/)
+## Getting started
+
+  1. Start by reading [how to create the configuration file]() for your dashboard
+  2. Install the requirements in the previous section
+  3. Install Doodle-Dashboard
+```
+$ pip install doodle-dashboard
+```
+  4. Start the dashboard
+```
+$ doodledashboard <ABSOLUTE PATH TO YAML CONFIGURATION>
+```
+
+### Supported sources
+  * [RSS](http://www.whatisrss.com/)
+  * [Slack](https://slack.com/)
+
+### Supported displays
+  * [Papirus](https://uk.pi-supply.com/products/papirus-epaper-eink-screen-hat-for-raspberry-pi)
 
 
 ## Development
@@ -52,11 +48,10 @@ $ pip install -r requirements.txt
 $ pip install -r requirements.testing.txt
 ```
 
-3. Create a configuration file
+3. Running locally
 ```
-[Slack]
-Token=<SLACK API TOKEN>
-Channel=<NAME OF SLACK CHANNEL>
+$ export PYTHONPATH=`pwd`
+$ python doodledashboard/main.py <ABSOLUTE PATH TO CONFIG FILE>
 ```
 
 ### ImportError: No module named
@@ -67,12 +62,4 @@ in the doodle dashboard classes from your local pip packages.
 
 ```
 sudo rm -rf /Library/Python/2.7/site-packages/doodledashboard/
-```
-
-## Starting the dashboard
-
-```
-$ cd doodle-dashboard
-$ export PYTHONPATH=`pwd`
-$ python doodledashboard/main.py <PATH TO CONFIG FROM STEP 4>
 ```

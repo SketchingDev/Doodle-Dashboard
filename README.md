@@ -17,7 +17,7 @@ Tweets from your favourite Twitterers, weather reports for your local area or br
 $ pip install doodle-dashboard
 ```
   2. [Create your dashboard's configuration](https://github.com/SketchingDev/Doodle-Dashboard/wiki/Create-a-dashboard)
-  3. Start the dashboard, passing it the dashboard's configuration created in step 1
+  3. Start the dashboard
 ```
 $ doodledashboard <ABSOLUTE PATH TO YAML CONFIGURATION>
 ```
@@ -33,7 +33,7 @@ $ cd doodle-dashboard
 ```
 $ make dev
 ```
-3. Running locally
+3. Run
 ```
 $ export PYTHONPATH=`pwd`
 $ python doodledashboard/main.py <ABSOLUTE PATH TO CONFIG FILE>

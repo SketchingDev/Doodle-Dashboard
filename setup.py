@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='doodle-dashboard',
-    version='0.0.1',
+    version='0.0.2',
     description='Extensible dashboard designed to display data from multiple sources.',
     url='https://github.com/SketchingDev/Doodle-Dashboard',
     license = 'MIT',
@@ -20,5 +20,5 @@ setup(
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 2.7',
     ],
-    python_requires='>=2.7'
+    python_requires='~=2.7'
 )

@@ -3,12 +3,12 @@ import logging
 from requests import ConnectionError
 
 from doodledashboard.config import MissingRequiredOptionException
-from doodledashboard.datasources.repository import Repository, MessageModel, RepositoryConfigCreator
+from doodledashboard.datafeeds.repository import Repository, MessageModel, RepositoryConfigCreator
 
 from slackclient import SlackClient
 
 
-class SlackRepository(Repository):
+class SlackFeed(Repository):
     _channel = None
 
     def __init__(self, client, channel_name):
@@ -39,9 +39,9 @@ class SlackRepository(Repository):
             events = self._client.rtm_read()
             self._logger.info('Events from Slack: %s' % events)
 
-        events = SlackRepository._filter_events_by_channel(self._channel, events)
-        events = SlackRepository._filter_events_by_type(events, 'message')
-        events = SlackRepository._filter_events_with_text(events)
+        events = SlackFeed._filter_events_by_channel(self._channel, events)
+        events = SlackFeed._filter_events_by_type(events, 'message')
+        events = SlackFeed._filter_events_with_text(events)
 
         return [MessageModel(event['text']) for event in events]
 
@@ -117,4 +117,4 @@ class SlackRepositoryConfigCreator(RepositoryConfigCreator):
 
         slack_client = SlackClient(config_section['token'])
         channel = config_section['channel']
-        return SlackRepository(slack_client, channel)
+        return SlackFeed(slack_client, channel)

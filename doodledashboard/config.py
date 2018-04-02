@@ -92,11 +92,11 @@ class DashboardConfig:
 
         return display
 
-    def get_data_sources(self):
+    def get_data_feeds(self):
         data_source_elements = []
         # DataSourceConfigSection
-        if 'data-sources' in self._config:
-            data_source_elements = self._config['data-sources']
+        if 'data-feeds' in self._config:
+            data_source_elements = self._config['data-feeds']
 
         return self._create_items(self._data_source_creator, data_source_elements)
 

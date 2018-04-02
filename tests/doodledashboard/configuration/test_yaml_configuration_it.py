@@ -3,8 +3,8 @@ import unittest
 import yaml
 
 from doodledashboard.config import DashboardConfig
-from doodledashboard.datasources.repository import MessageModel
-from doodledashboard.datasources.rss import RssFeedConfigCreator, RssFeed
+from doodledashboard.datafeeds.repository import MessageModel
+from doodledashboard.datafeeds.rss import RssFeedConfigCreator, RssFeed
 from doodledashboard.displays.loggingdisplay import LoggingDisplayConfigCreator, LoggingDisplay
 from doodledashboard.filters import MessageContainsTextFilterCreator, MessageMatchesRegexTextFilterCreator
 from doodledashboard.handlers.weather.weather import WeatherMessageHandlerConfigCreator
@@ -16,7 +16,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         interval: 20
         display: logging
         
-        data-sources:
+        data-feeds:
           - source: rss
             url: http://example-weather.com/feed.rss
         
@@ -54,7 +54,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         dashboard_config = DashboardConfig(config)
         dashboard_config.set_data_source_creators(RssFeedConfigCreator())
 
-        data_sources = dashboard_config.get_data_sources()
+        data_sources = dashboard_config.get_data_feeds()
         self.assertEqual(1, len(data_sources))
 
         self.assertIsInstance(data_sources[0], RssFeed)

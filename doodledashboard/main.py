@@ -5,8 +5,8 @@ import sys
 import yaml
 from doodledashboard.config import RootCreator, DashboardConfig
 from doodledashboard.dashboard import Dashboard
-from doodledashboard.datasources.rss import RssFeedConfigCreator
-from doodledashboard.datasources.slack import SlackRepositoryConfigCreator
+from doodledashboard.datafeeds.rss import RssFeedConfigCreator
+from doodledashboard.datafeeds.slack import SlackRepositoryConfigCreator
 from doodledashboard.displays.loggingdisplay import LoggingDisplayConfigCreator
 from doodledashboard.filters import MessageMatchesRegexTextFilterCreator, MessageContainsTextFilterCreator
 from doodledashboard.handlers.text.text import TextMessageHandlerConfigCreator
@@ -81,7 +81,7 @@ def start():
     display = dashboard_config.get_display()
     _logger.info('Display loaded: %s' % str(display))
 
-    data_sources = dashboard_config.get_data_sources()
+    data_sources = dashboard_config.get_data_feeds()
     _logger.info('%s data sources loaded' % len(data_sources))
     for data_source in data_sources:
         _logger.info(' - %s' % str(data_source))

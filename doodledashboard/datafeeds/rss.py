@@ -1,7 +1,7 @@
 import feedparser
 
 from doodledashboard.config import MissingRequiredOptionException
-from doodledashboard.datasources.repository import Repository, MessageModel, RepositoryConfigCreator
+from doodledashboard.datafeeds.repository import Repository, MessageModel, RepositoryConfigCreator
 
 
 class RssFeed(Repository):

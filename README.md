@@ -42,7 +42,7 @@ $ python doodledashboard/main.py <ABSOLUTE PATH TO CONFIG FILE>
 ### ImportError: No module named
 
 If you keep getting the ImportError when building the project check that you
-haven't already installed the application via PIP, otherwise you might be pulling
+haven't already installed the application via pip, otherwise you might be pulling
 in the doodle dashboard classes from your local pip packages.
 
 ```

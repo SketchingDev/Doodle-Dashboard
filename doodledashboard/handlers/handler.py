@@ -3,20 +3,27 @@ from doodledashboard.config import Creator
 
 class MessageHandler:
     """
-    Abstract class for a message handler. Handlers are responsible for deciding what to draw to the display.
+    Abstract class for a message handler. Handlers are responsible for deciding what to display based on the messages
+    they are given.
 
-    Message handler's have two 'phases':
-    1. Digest relevant data from messages passed to the update method
-    2. Draw said relevant data to the display in the display method
+    Lifecycle:
+        1. `initialise` is called when the dashboard is starting up. This is a great time to do intensive tasks
+            like downloading images, to make the following phases as quick as possible.
+        2. `update` is called with the messages that the handler can use to decide what data to display
+        3. `draw` is called when it is time to draw something to the display that was likely derived from the messages
+            in the `update` phase
     """
 
     def __init__(self, key_value_store):
         self.key_value_store = key_value_store
         pass
 
+    def initialise(self):
+        pass
+
     def update(self, messages):
         """
-        This method is called with messages from the datasource. It is within
+        This method is called with messages from the data feeds. It is within
         here that you scan the messages for relevant data to your handler and
         prepare what to draw for when the handler's draw method is called.
         """
@@ -42,7 +49,7 @@ class MessageHandlerConfigCreator(Creator):
     def creates_for_id(self, filter_id):
         raise NotImplementedError('Implement this method')
 
-    def create_handler(self, config_section, shelve):
+    def create_handler(self, config_section, key_value_store):
         raise NotImplementedError('Implement this method')
 
     def can_create(self, config_section):

@@ -1,35 +1,34 @@
 import unittest
 
+import pytest
 import yaml
 
 from doodledashboard.config import DashboardConfig
-from doodledashboard.datafeeds.repository import MessageModel
 from doodledashboard.datafeeds.rss import RssFeedConfigCreator, RssFeed
 from doodledashboard.displays.loggingdisplay import LoggingDisplayConfigCreator, LoggingDisplay
-from doodledashboard.filters import MessageContainsTextFilterCreator, MessageMatchesRegexTextFilterCreator
-from doodledashboard.handlers.weather.weather import WeatherMessageHandlerConfigCreator
+from doodledashboard.filters import FilterConfigCreator, MessageFilter
+from doodledashboard.handlers.handler import MessageHandlerConfigCreator
 
 
+@pytest.mark.usefixtures
 class TestYamlConfigurationIT(unittest.TestCase):
-
     _VALID_YAML_CONFIG = '''
         interval: 20
         display: logging
         
         data-feeds:
           - source: rss
-            url: http://example-weather.com/feed.rss
+            url: http://example-image.com/feed.rss
         
         notifications:
-          - title: Local weather
-            handler: weather-handler
+          - title: Dummy Handler
+            handler: dummy-handler
+            text: Hello World
             filter-chain:
-              - description: Keep messages about the weather
-                type: message-contains-text
-                text: weather
-              - description: Keep messages with forecast
-                type: message-matches-regex
-                pattern: (rain|sun|snow)
+              - description: Test filter 1
+                type: dummy filter
+              - description: Test filter 2
+                type: dummy filter
                 
     '''
 
@@ -58,47 +57,74 @@ class TestYamlConfigurationIT(unittest.TestCase):
         self.assertEqual(1, len(data_sources))
 
         self.assertIsInstance(data_sources[0], RssFeed)
-        self.assertEqual('http://example-weather.com/feed.rss', data_sources[0].get_url())
+        self.assertEqual('http://example-image.com/feed.rss', data_sources[0].get_url())
 
     def test_notifications_with_handler_and_filters_created_from_yaml(self):
         config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
+        filter_creator = DummyFilterCreator()
         dashboard_config = DashboardConfig(config)
-        dashboard_config.set_handler_creators(WeatherMessageHandlerConfigCreator({}))
-        dashboard_config.set_filter_creators(MessageContainsTextFilterCreator())
+        dashboard_config.set_handler_creators(DummyHandlerConfigCreator({}))
+        dashboard_config.set_filter_creators(filter_creator)
 
         notifications = dashboard_config.get_notifications()
         self.assertEqual(1, len(notifications))
+
+        configs = filter_creator.get_configs()
+        self.assertEqual(2, len(configs))
+        self.assertEquals('Test filter 1', configs[0]['description'])
+        self.assertEquals('Test filter 2', configs[1]['description'])
 
     def test_notifications_with_handler_and_no_filters_created_from_yaml(self):
         config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
         dashboard_config = DashboardConfig(config)
-        dashboard_config.set_handler_creators(WeatherMessageHandlerConfigCreator({}))
+
+        handlerCreator = DummyHandlerConfigCreator({})
+        dashboard_config.set_handler_creators(handlerCreator)
 
         notifications = dashboard_config.get_notifications()
         self.assertEqual(1, len(notifications))
 
-    def test_notifications_with_handler_and_with_filters_created_from_yaml(self):
-        config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        configs = handlerCreator.get_configs()
+        self.assertEqual(1, len(configs))
+        self.assertEquals('Hello World', configs[0]['text'])
 
-        dashboard_config = DashboardConfig(config)
-        dashboard_config.set_handler_creators(WeatherMessageHandlerConfigCreator({}))
 
-        filter_creators_chain = MessageContainsTextFilterCreator()
-        filter_creators_chain.add(MessageMatchesRegexTextFilterCreator())
-        dashboard_config.set_filter_creators(filter_creators_chain)
+class DummyHandlerConfigCreator(MessageHandlerConfigCreator):
+    _DUMMY_HANDLER = True
 
-        notifications = dashboard_config.get_notifications()
+    def __init__(self, key_value_storage):
+        MessageHandlerConfigCreator.__init__(self, key_value_storage)
+        self._configs_passed_in = []
 
-        self.assertEqual(1, len(notifications))
+    def creates_for_id(self, filter_id):
+        return True
 
-        messages = notifications[0]\
-            .get_filter_chain()\
-            .filter([MessageModel("weather sun"), MessageModel("weather spoons"), MessageModel("test")])
+    def create_handler(self, config_section, key_value_store):
+        self._configs_passed_in.append(config_section)
+        return DummyHandlerConfigCreator._DUMMY_HANDLER
 
-        self.assertEqual(1, len(messages))
-        self.assertEqual("weather sun", messages[0].get_text())
+    def get_configs(self):
+        return self._configs_passed_in
+
+
+class DummyFilterCreator(FilterConfigCreator):
+    _DUMMY_FILTER = MessageFilter()
+
+    def __init__(self):
+        FilterConfigCreator.__init__(self)
+        self._configs_passed_in = []
+
+    def creates_for_id(self, filter_id):
+        return True
+
+    def create_item(self, config_section):
+        self._configs_passed_in.append(config_section)
+        return DummyFilterCreator._DUMMY_FILTER
+
+    def get_configs(self):
+        return self._configs_passed_in
 
 
 if __name__ == '__main__':

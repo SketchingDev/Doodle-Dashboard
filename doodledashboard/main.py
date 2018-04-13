@@ -9,8 +9,7 @@ from doodledashboard.datafeeds.rss import RssFeedConfigCreator
 from doodledashboard.datafeeds.slack import SlackRepositoryConfigCreator
 from doodledashboard.displays.loggingdisplay import LoggingDisplayConfigCreator
 from doodledashboard.filters import MessageMatchesRegexTextFilterCreator, MessageContainsTextFilterCreator
-from doodledashboard.handlers.text.text import TextMessageHandlerConfigCreator
-from doodledashboard.handlers.weather.weather import WeatherMessageHandlerConfigCreator
+from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader
 import pkgutil
 
 
@@ -44,8 +43,7 @@ def get_data_source_creators():
 
 def get_handler_creators(key_value_store):
     creator = RootCreator()
-    creator.add(WeatherMessageHandlerConfigCreator(key_value_store))
-    creator.add(TextMessageHandlerConfigCreator(key_value_store))
+    creator.add(ImageMessageHandlerConfigCreator(key_value_store, FileDownloader()))
 
     return creator
 

@@ -5,6 +5,8 @@ from doodledashboard.datafeeds.repository import Repository, MessageModel, Repos
 
 
 class RssFeed(Repository):
+    _COMMON_RSS_ITEM_FIELDS = ['title', 'link', 'description', 'published', 'id']
+
     def __init__(self, url):
         Repository.__init__(self)
         self._feed_url = url
@@ -14,18 +16,20 @@ class RssFeed(Repository):
 
     def get_latest_messages(self):
         feed = feedparser.parse(self._feed_url)
-        return [self._convert_to_message(item) for item in feed['entries']]
+        return [self._convert_to_message(item) for item in feed.entries]
 
     def __str__(self):
         return "RSS feed for %s" % self._feed_url
 
     @staticmethod
     def _convert_to_message(feed_item):
-        title = feed_item['title']
-        link = feed_item['link']
-        summary = feed_item['summary']
+        feed_fields = []
 
-        return MessageModel('%s \n %s \n %s' % (title, link, summary))
+        for field in RssFeed._COMMON_RSS_ITEM_FIELDS:
+            if field in feed_item:
+                feed_fields.append(feed_item[field])
+
+        return MessageModel('\n'.join(feed_fields))
 
 
 class RssFeedConfigCreator(RepositoryConfigCreator):

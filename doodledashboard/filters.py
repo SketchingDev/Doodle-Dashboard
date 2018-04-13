@@ -74,10 +74,13 @@ class MessageContainsTextFilterCreator(FilterConfigCreator):
 class MessageMatchesRegexFilter(MessageFilter):
     def __init__(self, regex):
         MessageFilter.__init__(self)
-        self._pattern = re.compile(regex, re.IGNORECASE)
+        self._regex = re.compile(regex, re.IGNORECASE)
 
     def do_filter(self, messages):
-        return [m for m in messages if self._pattern.search(m.get_text())]
+        return [m for m in messages if self._regex.search(m.get_text())]
+
+    def get_pattern(self):
+        return self._regex.pattern
 
 
 class MessageMatchesRegexTextFilterCreator(FilterConfigCreator):

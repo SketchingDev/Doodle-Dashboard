@@ -60,9 +60,5 @@ class Notification:
         else:
             return messages
 
-    # TODO Only used for testing. Find better way of testing method
-    def get_filter_chain(self):
-        return self._filter_chain
-
     def __str__(self):
         return "Displays messages using: %s" % str(self._handler)

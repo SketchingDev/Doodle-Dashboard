@@ -29,7 +29,6 @@ class TestYamlConfigurationIT(unittest.TestCase):
                 type: dummy filter
               - description: Test filter 2
                 type: dummy filter
-                
     '''
 
     def test_interval_read_from_yaml(self):

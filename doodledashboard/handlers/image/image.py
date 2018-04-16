@@ -20,14 +20,14 @@ class ImageHandler(MessageHandler):
 
     def add_image_filter(self, absolute_path, choice_filter=None):
         if choice_filter:
-            self._filtered_images.append({"path": absolute_path, "filter": choice_filter})
+            self._filtered_images.append({'path': absolute_path, 'filter': choice_filter})
         else:
             self._default_image_path = absolute_path
 
     def update(self, messages):
         for image_filter in self._filtered_images:
-            if image_filter["filter"].do_filter(messages):
-                self._chosen_image_path = image_filter["path"]
+            if image_filter['filter'].do_filter(messages):
+                self._chosen_image_path = image_filter['path']
                 return
 
         self._chosen_image_path = self._default_image_path
@@ -57,7 +57,7 @@ class FileDownloader:
     def download(self, url):
         data = urllib2.urlopen(url)
 
-        fd, path = tempfile.mkstemp("-%s" % self._extract_filename(url))
+        fd, path = tempfile.mkstemp('-%s' % self._extract_filename(url))
         with os.fdopen(fd, 'w') as f:
             f.write(data.read())
 
@@ -83,23 +83,28 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigCreator):
         return filter_id == 'image-handler'
 
     def create_handler(self, config_section, key_value_store):
-        if 'images' not in config_section:
-            raise MissingRequiredOptionException("Expected 'images' list to exist")
-
         handler = ImageHandler(key_value_store)
 
-        if 'default-image' in config_section:
-            handler.add_image_filter(config_section['default-image'])
+        has_images = 'images' in config_section
+        has_default_image = 'default-image' in config_section
 
-        for image_config_section in config_section['images']:
-            if 'uri' not in image_config_section:
-                raise MissingRequiredOptionException("Expected 'uri' option to exist")
+        if not has_images and not has_default_image:
+            raise MissingRequiredOptionException("Expected 'images' list and/or default-image to exist")
 
-            image_uri = image_config_section["uri"]
-            image_filter = self._create_filter(image_config_section)
+        if has_default_image:
+            image_path = self._file_downloader.download(config_section['default-image'])
+            handler.add_image_filter(image_path)
 
-            image_path = self._file_downloader.download(image_uri)
-            handler.add_image_filter(image_path, image_filter)
+        if has_images:
+            for image_config_section in config_section['images']:
+                if 'uri' not in image_config_section:
+                    raise MissingRequiredOptionException("Expected 'uri' option to exist")
+
+                image_uri = image_config_section["uri"]
+                image_filter = self._create_filter(image_config_section)
+
+                image_path = self._file_downloader.download(image_uri)
+                handler.add_image_filter(image_path, image_filter)
 
         return handler
 

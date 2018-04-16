@@ -36,7 +36,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         creator = ImageMessageHandlerConfigCreator({}, None)
         self.assertFalse(creator.can_create(config))
 
-    def test_exception_thrown_if_config_missing_images_list(self):
+    def test_exception_thrown_if_config_missing_images_list_and_default_image(self):
         config = {
             "handler": "image-handler"
         }
@@ -46,7 +46,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             creator.create_item(config)
-        self.assertEqual("\"Expected \'images\' list to exist\"", str(exception.value))
+        self.assertEqual("\"Expected 'images' list and/or default-image to exist\"", str(exception.value))
 
     def test_exception_thrown_if_config_images_list_missing_image_uri(self):
         config = {
@@ -163,6 +163,30 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
                          'Image path in handler matches path to downloaded file')
         self.assertEquals('test pattern2', str(image_and_filter['filter'].get_text()),
                           "Image filter's 'contains' matches config")
+
+        # Tidy up
+        os.remove(download_path)
+
+    def test_handler_created_with_default_image(self):
+        self.http_server.serve_content('<IMAGE CONTENT>')
+
+        config = {
+            'handler': 'image-handler',
+            'default-image': '%s/default-image.png' % self.http_server.url
+        }
+
+        downloader = FileDownloader()
+        creator = ImageMessageHandlerConfigCreator({}, downloader)
+        self.assertTrue(creator.can_create(config))
+
+        handler = creator.create_item(config)
+        image = handler.get_image()
+
+        downloaded_files = downloader.get_downloaded_files()
+        self.assertEquals(1, len(downloaded_files))
+        download_path = downloaded_files[0]
+
+        self.assertEqual(download_path, image, 'Image path in handler matches path to downloaded file')
 
         # Tidy up
         os.remove(download_path)

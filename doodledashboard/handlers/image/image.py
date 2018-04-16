@@ -45,6 +45,9 @@ class ImageHandler(MessageHandler):
         else:
             return self._default_image_path
 
+    def __str__(self):
+        return 'Image handler with %s images' % len(self._filtered_images)
+
 
 class FileDownloader:
 

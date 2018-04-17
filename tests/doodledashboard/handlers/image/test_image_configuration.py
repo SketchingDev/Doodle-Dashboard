@@ -119,7 +119,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
 
         image_filters = handler.get_filtered_images()
         self.assertEqual(1, len(image_filters))
-        
+
         image_and_filter = image_filters[0]
 
         downloaded_files = downloader.get_downloaded_files()
@@ -129,7 +129,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         self.assertEqual(download_path, image_and_filter['path'],
                          'Image path in handler matches path to downloaded file')
         self.assertEqual('test pattern1', str(image_and_filter['filter'].get_pattern()),
-                          "Image filter's pattern matches config")
+                         "Image filter's pattern matches config")
 
         # Tidy up
         os.remove(download_path)
@@ -164,7 +164,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         self.assertEqual(download_path, image_and_filter['path'],
                          'Image path in handler matches path to downloaded file')
         self.assertEqual('test pattern2', str(image_and_filter['filter'].get_text()),
-                          "Image filter's 'contains' matches config")
+                         "Image filter's 'contains' matches config")
 
         # Tidy up
         os.remove(download_path)

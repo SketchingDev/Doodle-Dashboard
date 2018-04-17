@@ -1,9 +1,9 @@
 from doodledashboard.config import MissingRequiredOptionException
 from doodledashboard.filters import MessageMatchesRegexFilter, MessageContainsTextFilter
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigCreator
-import urllib2
+import urllib.request
 import tempfile
-import urlparse
+from urllib.parse import urlparse
 import os
 
 
@@ -55,11 +55,10 @@ class FileDownloader:
         self._downloaded_files = []
 
     def download(self, url):
-        data = urllib2.urlopen(url)
-
         fd, path = tempfile.mkstemp('-%s' % self._extract_filename(url))
-        with os.fdopen(fd, 'w') as f:
-            f.write(data.read())
+
+        with urllib.request.urlopen(url) as response, os.fdopen(fd, 'wb') as out_file:
+            out_file.write(response.read())
 
         self._downloaded_files.append(path)
 
@@ -70,7 +69,7 @@ class FileDownloader:
 
     @staticmethod
     def _extract_filename(url):
-        parsed_url = urlparse.urlparse(url)
+        parsed_url = urlparse(url)
         return os.path.basename(parsed_url.path)
 
 

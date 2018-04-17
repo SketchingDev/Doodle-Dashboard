@@ -31,7 +31,7 @@ class TestFileDownloader(unittest.TestCase):
         image_downloader.download('%s/%s' % (self.http_server.url, file_name))
 
         downloads = image_downloader.get_downloaded_files()
-        self.assertEquals(1, len(downloads))
+        self.assertEqual(1, len(downloads))
 
         file_path = downloads[0]
         self.assertTrue(file_name in file_path)

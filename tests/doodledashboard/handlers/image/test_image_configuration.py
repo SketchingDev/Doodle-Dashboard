@@ -117,16 +117,16 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         handler = creator.create_item(config)
         image_filters = handler.get_filtered_images()
 
-        self.assertEquals(1, len(image_filters))
+        self.assertEqual(1, len(image_filters))
         image_and_filter = image_filters[0]
 
         downloaded_files = downloader.get_downloaded_files()
-        self.assertEquals(1, len(downloaded_files))
+        self.assertEqual(1, len(downloaded_files))
         download_path = downloaded_files[0]
 
         self.assertEqual(download_path, image_and_filter['path'],
                          'Image path in handler matches path to downloaded file')
-        self.assertEquals('test pattern1', str(image_and_filter['filter'].get_pattern()),
+        self.assertEqual('test pattern1', str(image_and_filter['filter'].get_pattern()),
                           "Image filter's pattern matches config")
 
         # Tidy up
@@ -152,16 +152,16 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         handler = creator.create_item(config)
         image_filters = handler.get_filtered_images()
 
-        self.assertEquals(1, len(image_filters))
+        self.assertEqual(1, len(image_filters))
         image_and_filter = image_filters[0]
 
         downloaded_files = downloader.get_downloaded_files()
-        self.assertEquals(1, len(downloaded_files))
+        self.assertEqual(1, len(downloaded_files))
         download_path = downloaded_files[0]
 
         self.assertEqual(download_path, image_and_filter['path'],
                          'Image path in handler matches path to downloaded file')
-        self.assertEquals('test pattern2', str(image_and_filter['filter'].get_text()),
+        self.assertEqual('test pattern2', str(image_and_filter['filter'].get_text()),
                           "Image filter's 'contains' matches config")
 
         # Tidy up
@@ -183,7 +183,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         image = handler.get_image()
 
         downloaded_files = downloader.get_downloaded_files()
-        self.assertEquals(1, len(downloaded_files))
+        self.assertEqual(1, len(downloaded_files))
         download_path = downloaded_files[0]
 
         self.assertEqual(download_path, image, 'Image path in handler matches path to downloaded file')

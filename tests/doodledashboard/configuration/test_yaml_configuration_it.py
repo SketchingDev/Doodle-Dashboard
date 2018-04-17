@@ -71,8 +71,8 @@ class TestYamlConfigurationIT(unittest.TestCase):
 
         configs = filter_creator.get_configs()
         self.assertEqual(2, len(configs))
-        self.assertEquals('Test filter 1', configs[0]['description'])
-        self.assertEquals('Test filter 2', configs[1]['description'])
+        self.assertEqual('Test filter 1', configs[0]['description'])
+        self.assertEqual('Test filter 2', configs[1]['description'])
 
     def test_notifications_with_handler_and_no_filters_created_from_yaml(self):
         config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
@@ -87,7 +87,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
 
         configs = handlerCreator.get_configs()
         self.assertEqual(1, len(configs))
-        self.assertEquals('Hello World', configs[0]['text'])
+        self.assertEqual('Hello World', configs[0]['text'])
 
 
 class DummyHandlerConfigCreator(MessageHandlerConfigCreator):

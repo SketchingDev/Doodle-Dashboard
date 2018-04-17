@@ -42,9 +42,9 @@ class TestRssFeedIT(unittest.TestCase):
         repo = RssFeed(self.http_server.url)
         messages = repo.get_latest_messages()
 
-        self.assertEquals(2, len(messages))
-        self.assertEquals(messages[0].get_text(), 'Dummy Item 1\nhttps://dummy-link/1\nDesc for 1')
-        self.assertEquals(messages[1].get_text(), 'Dummy Item 2\nhttps://dummy-link/2')
+        self.assertEqual(2, len(messages))
+        self.assertEqual('Dummy Item 1\nhttps://dummy-link/1\nDesc for 1', messages[0].get_text())
+        self.assertEqual('Dummy Item 2\nhttps://dummy-link/2', messages[1].get_text())
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@ from pytest_localserver import http
 import os
 
 from doodledashboard.config import MissingRequiredOptionException
-from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader
+from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader, ImageHandler
 
 
 @pytest.mark.usefixtures
@@ -115,9 +115,11 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         self.assertTrue(creator.can_create(config))
 
         handler = creator.create_item(config)
-        image_filters = handler.get_filtered_images()
+        self.assertIsInstance(handler, ImageHandler)
 
+        image_filters = handler.get_filtered_images()
         self.assertEqual(1, len(image_filters))
+        
         image_and_filter = image_filters[0]
 
         downloaded_files = downloader.get_downloaded_files()

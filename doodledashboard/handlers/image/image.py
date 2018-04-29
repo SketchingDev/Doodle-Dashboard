@@ -1,4 +1,4 @@
-from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.configuration.config import MissingRequiredOptionException
 from doodledashboard.filters import MessageMatchesRegexFilter, MessageContainsTextFilter
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigCreator
 import urllib.request
@@ -33,8 +33,7 @@ class ImageHandler(MessageHandler):
         self._chosen_image_path = self._default_image_path
 
     def draw(self, display):
-        display.draw_image(self._chosen_image_path, 0, 0, display.get_size())
-        display.flush()
+        display.draw_image(self._chosen_image_path)
 
     def get_filtered_images(self):
         return self._filtered_images
@@ -55,7 +54,7 @@ class FileDownloader:
         self._downloaded_files = []
 
     def download(self, url):
-        fd, path = tempfile.mkstemp('-%s' % self._extract_filename(url))
+        fd, path = tempfile.mkstemp('-doodledashboard-%s' % self._extract_filename(url))
 
         with urllib.request.urlopen(url) as response, os.fdopen(fd, 'wb') as out_file:
             out_file.write(response.read())

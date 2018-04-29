@@ -11,10 +11,11 @@ setup(
         'requests',
         'slackclient',
         'feedparser',
-        'pyyaml'
+        'pyyaml',
+        'click'
     ],
     entry_points={
-        'console_scripts': ['doodledashboard=doodledashboard.command_line:main'],
+        'console_scripts': ['doodledashboard=doodledashboard.cli:main'],
     },
     classifiers=[
         'Development Status :: 3 - Alpha',

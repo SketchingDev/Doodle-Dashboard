@@ -2,7 +2,7 @@ import unittest
 
 from mock import Mock
 
-from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.configuration.config import MissingRequiredOptionException
 from doodledashboard.filters import MessageContainsTextFilter, MessageContainsTextFilterCreator
 
 

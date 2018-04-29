@@ -1,4 +1,4 @@
-from doodledashboard.config import Creator
+from doodledashboard.configuration.config import Creator
 
 
 class MessageHandler:

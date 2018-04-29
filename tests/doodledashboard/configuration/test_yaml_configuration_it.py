@@ -3,9 +3,10 @@ import unittest
 import pytest
 import yaml
 
-from doodledashboard.config import DashboardConfig
+from doodledashboard.configuration.config import DashboardConfig
 from doodledashboard.datafeeds.rss import RssFeedConfigCreator, RssFeed
-from doodledashboard.displays.loggingdisplay import LoggingDisplayConfigCreator, LoggingDisplay
+from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
+from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
 from doodledashboard.filters import FilterConfigCreator, MessageFilter
 from doodledashboard.handlers.handler import MessageHandlerConfigCreator
 
@@ -14,7 +15,7 @@ from doodledashboard.handlers.handler import MessageHandlerConfigCreator
 class TestYamlConfigurationIT(unittest.TestCase):
     _VALID_YAML_CONFIG = '''
         interval: 20
-        display: logging
+        display: console
         
         data-feeds:
           - source: rss
@@ -41,10 +42,10 @@ class TestYamlConfigurationIT(unittest.TestCase):
         config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
         dashboard_config = DashboardConfig(config)
-        dashboard_config.set_display_creator(LoggingDisplayConfigCreator())
+        dashboard_config.set_display_creator(ConsoleDisplayConfigCreator())
 
         display = dashboard_config.get_display()
-        self.assertIsInstance(display, LoggingDisplay)
+        self.assertIsInstance(display, LoggingDisplayDecorator)
 
     def test_data_source_created_from_yaml(self):
         config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)

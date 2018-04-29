@@ -2,7 +2,7 @@ import logging
 
 from requests import ConnectionError
 
-from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.configuration.config import MissingRequiredOptionException
 from doodledashboard.datafeeds.repository import Repository, MessageModel, RepositoryConfigCreator
 
 from slackclient import SlackClient
@@ -15,7 +15,7 @@ class SlackFeed(Repository):
         Repository.__init__(self)
         self._client = client
         self._channel_name = channel_name
-        self._logger = logging.getLogger('doodle_dashboard.SlackRepository')
+        self._logger = logging.getLogger('doodledashboard.SlackRepository')
         self._connected = False
         self._connected_previously = False
 

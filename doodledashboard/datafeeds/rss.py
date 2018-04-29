@@ -1,6 +1,6 @@
 import feedparser
 
-from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.configuration.config import MissingRequiredOptionException
 from doodledashboard.datafeeds.repository import Repository, MessageModel, RepositoryConfigCreator
 
 

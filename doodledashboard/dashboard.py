@@ -8,7 +8,7 @@ class Dashboard:
 
     def __init__(self, display, data_sources, notifications):
         self._display = display
-        self._logger = logging.getLogger('doodle_dashboard.Dashboard')
+        self._logger = logging.getLogger('doodledashboard.Dashboard')
         self._data_sources = data_sources
         self._notifications = notifications
         self._update_interval = Dashboard._FIVE_SECONDS

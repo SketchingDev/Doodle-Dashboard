@@ -1,7 +1,7 @@
 import re
 
-from doodledashboard.config import MissingRequiredOptionException
-from doodledashboard.config import Creator
+from doodledashboard.configuration.config import MissingRequiredOptionException
+from doodledashboard.configuration.config import Creator
 
 
 class MessageFilter:

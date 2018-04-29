@@ -1,23 +1,22 @@
-from doodledashboard.config import Creator
+from doodledashboard.configuration.config import Creator
 
 
 class Display:
+    # TODO Provide way to say what operations the display supports
+
     def __init__(self):
         pass
 
     def clear(self):
         raise NotImplementedError('Implement this method')
 
-    def write_text(self, text, x, y, font_size=10, font_face=None):
+    def write_text(self, text, font_face=None):
         raise NotImplementedError('Implement this method')
 
-    def draw_image(self, image_path, x, y, size):
+    def draw_image(self, image_path):
         raise NotImplementedError('Implement this method')
 
-    def flush(self):
-        raise NotImplementedError('Implement this method')
-
-    def get_size(self):
+    def fill_colour(self, colour):
         raise NotImplementedError('Implement this method')
 
 

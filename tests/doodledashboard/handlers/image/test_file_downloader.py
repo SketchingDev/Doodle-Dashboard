@@ -40,7 +40,8 @@ class TestFileDownloader(unittest.TestCase):
             self.assertEquals(file_contents, f.read())
 
         # Tidy up
-        os.remove(file_path)
+        if file_path.endswith(file_name):
+            os.remove(file_path)
 
 
 if __name__ == '__main__':

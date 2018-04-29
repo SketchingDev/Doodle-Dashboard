@@ -5,7 +5,7 @@ from pytest_localserver import http
 
 import os
 
-from doodledashboard.config import MissingRequiredOptionException
+from doodledashboard.configuration.config import MissingRequiredOptionException
 from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader, ImageHandler
 
 
@@ -114,25 +114,25 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         creator = ImageMessageHandlerConfigCreator({}, downloader)
         self.assertTrue(creator.can_create(config))
 
-        handler = creator.create_item(config)
-        self.assertIsInstance(handler, ImageHandler)
+        try:
+            handler = creator.create_item(config)
+            self.assertIsInstance(handler, ImageHandler)
 
-        image_filters = handler.get_filtered_images()
-        self.assertEqual(1, len(image_filters))
+            image_filters = handler.get_filtered_images()
+            self.assertEqual(1, len(image_filters))
 
-        image_and_filter = image_filters[0]
+            image_and_filter = image_filters[0]
 
-        downloaded_files = downloader.get_downloaded_files()
-        self.assertEqual(1, len(downloaded_files))
-        download_path = downloaded_files[0]
+            downloaded_files = downloader.get_downloaded_files()
+            self.assertEqual(1, len(downloaded_files))
+            download_path = downloaded_files[0]
 
-        self.assertEqual(download_path, image_and_filter['path'],
-                         'Image path in handler matches path to downloaded file')
-        self.assertEqual('test pattern1', str(image_and_filter['filter'].get_pattern()),
-                         "Image filter's pattern matches config")
-
-        # Tidy up
-        os.remove(download_path)
+            self.assertEqual(download_path, image_and_filter['path'],
+                             'Image path in handler matches path to downloaded file')
+            self.assertEqual('test pattern1', str(image_and_filter['filter'].get_pattern()),
+                             "Image filter's pattern matches configuration")
+        finally:
+            self.cleanup_downloaded_files(downloader, 'test-filename-1.png')
 
     def test_handler_created_with_uri_and_contains(self):
         self.http_server.serve_content('<IMAGE CONTENT>')
@@ -151,23 +151,23 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         creator = ImageMessageHandlerConfigCreator({}, downloader)
         self.assertTrue(creator.can_create(config))
 
-        handler = creator.create_item(config)
-        image_filters = handler.get_filtered_images()
+        try:
+            handler = creator.create_item(config)
+            image_filters = handler.get_filtered_images()
 
-        self.assertEqual(1, len(image_filters))
-        image_and_filter = image_filters[0]
+            self.assertEqual(1, len(image_filters))
+            image_and_filter = image_filters[0]
 
-        downloaded_files = downloader.get_downloaded_files()
-        self.assertEqual(1, len(downloaded_files))
-        download_path = downloaded_files[0]
+            downloaded_files = downloader.get_downloaded_files()
+            self.assertEqual(1, len(downloaded_files))
+            download_path = downloaded_files[0]
 
-        self.assertEqual(download_path, image_and_filter['path'],
-                         'Image path in handler matches path to downloaded file')
-        self.assertEqual('test pattern2', str(image_and_filter['filter'].get_text()),
-                         "Image filter's 'contains' matches config")
-
-        # Tidy up
-        os.remove(download_path)
+            self.assertEqual(download_path, image_and_filter['path'],
+                             'Image path in handler matches path to downloaded file')
+            self.assertEqual('test pattern2', str(image_and_filter['filter'].get_text()),
+                             "Image filter's 'contains' matches configuration")
+        finally:
+            self.cleanup_downloaded_files(downloader, 'test-filename-2.png')
 
     def test_handler_created_with_default_image(self):
         self.http_server.serve_content('<IMAGE CONTENT>')
@@ -181,17 +181,23 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
         creator = ImageMessageHandlerConfigCreator({}, downloader)
         self.assertTrue(creator.can_create(config))
 
-        handler = creator.create_item(config)
-        image = handler.get_image()
+        try:
+            handler = creator.create_item(config)
+            image = handler.get_image()
 
-        downloaded_files = downloader.get_downloaded_files()
-        self.assertEqual(1, len(downloaded_files))
-        download_path = downloaded_files[0]
+            downloaded_files = downloader.get_downloaded_files()
+            self.assertEqual(1, len(downloaded_files))
+            download_path = downloaded_files[0]
 
-        self.assertEqual(download_path, image, 'Image path in handler matches path to downloaded file')
+            self.assertEqual(download_path, image, 'Image path in handler matches path to downloaded file')
+        finally:
+            self.cleanup_downloaded_files(downloader, 'default-image.png')
 
-        # Tidy up
-        os.remove(download_path)
+    @staticmethod
+    def cleanup_downloaded_files(downloader, filename):
+        for downloaded_file in downloader.get_downloaded_files():
+            if downloaded_file.endswith(filename):
+                os.remove(downloaded_file)
 
 
 if __name__ == '__main__':

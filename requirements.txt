@@ -2,3 +2,4 @@ requests
 slackclient==1.0.9
 feedparser==5.2.1
 pyyaml==3.11
+click==6.7

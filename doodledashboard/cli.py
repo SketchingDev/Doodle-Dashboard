@@ -35,7 +35,7 @@ def start(config, verbose):
         dashboard = dashboard_config.read_yaml(config)
         explain_dashboard(dashboard)
     except YAMLError as err:
-        click.echo("Error reading YAML in configuration file '%s':\n%s" % (config, err), err=True)
+        click.echo("Error reading YAML in configuration file '%s':\n%s" % (config.name, err), err=True)
     except MissingConfigurationValueException as err:
         click.echo("Missing value in your configuration:\n%s" % err, err=True)
 

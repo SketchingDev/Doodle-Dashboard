@@ -10,6 +10,25 @@ from doodledashboard.cli import start
 @mock.patch('itertools.cycle', side_effect=(lambda values: values))
 class TestCli(unittest.TestCase):
 
+    def test_invalid_yaml_in_config_prints_error_message(self, time_sleep, itertools_cycle):
+        result = self._run_cli_with_config(':')
+
+        self.assertEqual(result.exit_code, 1)
+        self.assertEqual(
+            result.output.splitlines()[0],
+            "Error reading YAML in configuration file 'config.yml':"
+        )
+
+    def test_invalid_value_in_config_prints_error_message(self, time_sleep, itertools_cycle):
+        result = self._run_cli_with_config('display: testing')
+
+        self.assertEqual(result.exit_code, 1)
+        self.assertEqual(result.output, (
+            'Missing value in your configuration:\n'
+            "'Missing display option'\n"
+            'Aborted!\n'
+        ))
+
     def test_config_with_no_sources_nor_handlers_prints_info_about_none_being_loaded(self, time_sleep, itertools_cycle):
         result = self._run_cli_with_config('''
             interval: 10

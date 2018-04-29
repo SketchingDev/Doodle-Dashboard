@@ -2,11 +2,11 @@ import logging
 import shelve
 
 import click
-import yaml
+from yaml import YAMLError
 
-from doodledashboard.configuration.config import DashboardConfig
+from doodledashboard.configuration.config import DashboardConfigReader, MissingConfigurationValueException
 from doodledashboard.configuration.defaultconfig import DefaultConfiguration
-from doodledashboard.dashboard import Dashboard
+from doodledashboard.dashboard_runner import DashboardRunner
 
 
 @click.help_option('-h', '--help')
@@ -25,24 +25,25 @@ def start(config, verbose):
     if verbose:
         attach_logging('doodledashboard')
 
-    _config = yaml.load(config)
     _state_storage = shelve.open('/tmp/shelve')
 
-    dashboard_config = DashboardConfig(_config)
+    dashboard_config = DashboardConfigReader()
     DefaultConfiguration.set_creators(_state_storage, dashboard_config)
 
-    echo_config(dashboard_config)
+    dashboard = None
+    try:
+        dashboard = dashboard_config.read_yaml(config)
+        explain_dashboard(dashboard)
+    except YAMLError as err:
+        click.echo("Error reading YAML in configuration file '%s':\n%s" % (config, err), err=True)
+    except MissingConfigurationValueException as err:
+        click.echo("Missing value in your configuration:\n%s" % err, err=True)
 
-    _dashboard = Dashboard(
-        dashboard_config.get_display(),
-        dashboard_config.get_data_feeds(),
-        dashboard_config.get_notifications()
-    )
-
-    _dashboard.set_update_interval(dashboard_config.get_interval())
+    if not dashboard:
+        raise click.Abort()
 
     try:
-        _dashboard.start()
+        DashboardRunner(dashboard).run()
     finally:
         _state_storage.close()
 
@@ -58,19 +59,19 @@ def attach_logging(name):
     _logger.addHandler(ch)
 
 
-def echo_config(dashboard_config):
-    interval = dashboard_config.get_interval()
+def explain_dashboard(dashboard):
+    interval = dashboard.get_interval()
     click.echo('Interval: %s' % str(interval))
 
-    display = dashboard_config.get_display()
+    display = dashboard.get_display()
     click.echo('Display loaded: %s' % str(display))
 
-    data_sources = dashboard_config.get_data_feeds()
+    data_sources = dashboard.get_data_feeds()
     click.echo('%s data sources loaded' % len(data_sources))
     for data_source in data_sources:
         click.echo(' - %s' % str(data_source))
 
-    notifications = dashboard_config.get_notifications()
+    notifications = dashboard.get_notifications()
     click.echo('%s notifications loaded' % len(notifications))
     for notification in notifications:
         click.echo(' - %s' % str(notification))

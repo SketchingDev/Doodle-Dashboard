@@ -2,7 +2,7 @@ import unittest
 
 from mock import Mock
 
-from doodledashboard.dashboard import Notification
+from doodledashboard.dashboard_runner import Notification
 
 
 class TestNotification(unittest.TestCase):

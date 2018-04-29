@@ -1,4 +1,6 @@
-from doodledashboard.dashboard import Notification
+import yaml
+
+from doodledashboard.dashboard_runner import Notification, Dashboard
 
 
 class Creator:
@@ -57,14 +59,13 @@ class MissingRequiredOptionException(Exception):
         return repr(self.value)
 
 
-class DashboardConfig:
+class DashboardConfigReader:
     _FIVE_SECONDS = 5
 
-    def __init__(self, config):
-        self._config = config
+    def __init__(self):
         self._filter_creator = None
         self._handler_creator = None
-        self._data_source_creator = None
+        self._data_feed_creator = None
         self._display_creator = None
 
     def set_filter_creators(self, filter_creator):
@@ -74,42 +75,61 @@ class DashboardConfig:
         self._handler_creator = handler_creator
 
     def set_data_source_creators(self, data_source_creator):
-        self._data_source_creator = data_source_creator
+        self._data_feed_creator = data_source_creator
 
     def set_display_creator(self, display_creator):
         self._display_creator = display_creator
 
-    def get_interval(self):
-        if 'interval' in self._config:
-            return self._config['interval']
-        else:
-            return DashboardConfig._FIVE_SECONDS
+    def read_yaml(self, config_yaml):
+        config = yaml.safe_load(config_yaml)
 
-    def get_display(self):
+        return Dashboard(
+            self._extract_interval(config),
+            self._extract_display(config),
+            self._extract_data_feeds(config),
+            self._extract_notifications(config)
+        )
+
+    def _extract_interval(self, config):
+        if 'interval' in config:
+            return config['interval']
+        else:
+            return DashboardConfigReader._FIVE_SECONDS
+
+    def _extract_display(self, config):
+        if not self._display_creator:
+            return None
+
         # TODO: Fix issue with circular dependency that I get when this import is moved to the top
         # https://stackoverflow.com/questions/9252543/importerror-cannot-import-name-x
         from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
 
-        display = self._display_creator.create(self._config)
+        display = self._display_creator.create(config)
         if not display:
             raise MissingConfigurationValueException('Missing display option')
 
         return LoggingDisplayDecorator(display)
 
-    def get_data_feeds(self):
+    def _extract_data_feeds(self, config):
+        if not self._data_feed_creator:
+            return []
+
         data_source_elements = []
         # DataSourceConfigSection
-        if 'data-feeds' in self._config:
-            data_source_elements = self._config['data-feeds']
+        if 'data-feeds' in config:
+            data_source_elements = config['data-feeds']
 
-        return self._create_items(self._data_source_creator, data_source_elements)
+        return self._create_items(self._data_feed_creator, data_source_elements)
 
-    def get_notifications(self):
+    def _extract_notifications(self, config):
+        if not self._handler_creator:
+            return []
+
         notifications = []
 
         # NotificationsConfigSection
-        if 'notifications' in self._config:
-            for notification_element in self._config['notifications']:
+        if 'notifications' in config:
+            for notification_element in config['notifications']:
 
                 handler = self._handler_creator.create(notification_element)
                 if handler:

@@ -1,9 +1,6 @@
 import unittest
 
-import pytest
-import yaml
-
-from doodledashboard.configuration.config import DashboardConfig
+from doodledashboard.configuration.config import DashboardConfigReader
 from doodledashboard.datafeeds.rss import RssFeedConfigCreator, RssFeed
 from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
 from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
@@ -11,7 +8,6 @@ from doodledashboard.filters import FilterConfigCreator, MessageFilter
 from doodledashboard.handlers.handler import MessageHandlerConfigCreator
 
 
-@pytest.mark.usefixtures
 class TestYamlConfigurationIT(unittest.TestCase):
     _VALID_YAML_CONFIG = '''
         interval: 20
@@ -33,41 +29,38 @@ class TestYamlConfigurationIT(unittest.TestCase):
     '''
 
     def test_interval_read_from_yaml(self):
-        config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
-
-        dashboard_config = DashboardConfig(config)
-        self.assertEqual(20, dashboard_config.get_interval())
+        dashboard = DashboardConfigReader().read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        self.assertEqual(20, dashboard.get_interval())
 
     def test_display_created_from_yaml(self):
-        config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        config_reader = DashboardConfigReader()
+        config_reader.set_display_creator(ConsoleDisplayConfigCreator())
+        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
-        dashboard_config = DashboardConfig(config)
-        dashboard_config.set_display_creator(ConsoleDisplayConfigCreator())
-
-        display = dashboard_config.get_display()
-        self.assertIsInstance(display, LoggingDisplayDecorator)
+        self.assertIsInstance(dashboard.get_display(), LoggingDisplayDecorator)
 
     def test_data_source_created_from_yaml(self):
-        config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        config_reader = DashboardConfigReader()
+        config_reader.set_data_source_creators(RssFeedConfigCreator())
 
-        dashboard_config = DashboardConfig(config)
-        dashboard_config.set_data_source_creators(RssFeedConfigCreator())
+        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
-        data_sources = dashboard_config.get_data_feeds()
-        self.assertEqual(1, len(data_sources))
+        data_feeds = dashboard.get_data_feeds()
+        self.assertEqual(1, len(data_feeds))
 
-        self.assertIsInstance(data_sources[0], RssFeed)
-        self.assertEqual('http://example-image.com/feed.rss', data_sources[0].get_url())
+        self.assertIsInstance(data_feeds[0], RssFeed)
+        self.assertEqual('http://example-image.com/feed.rss', data_feeds[0].get_url())
 
     def test_notifications_with_handler_and_filters_created_from_yaml(self):
-        config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
-
         filter_creator = DummyFilterCreator()
-        dashboard_config = DashboardConfig(config)
-        dashboard_config.set_handler_creators(DummyHandlerConfigCreator({}))
-        dashboard_config.set_filter_creators(filter_creator)
 
-        notifications = dashboard_config.get_notifications()
+        config_reader = DashboardConfigReader()
+        config_reader.set_handler_creators(DummyHandlerConfigCreator({}))
+        config_reader.set_filter_creators(filter_creator)
+
+        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+
+        notifications = dashboard.get_notifications()
         self.assertEqual(1, len(notifications))
 
         configs = filter_creator.get_configs()
@@ -76,14 +69,14 @@ class TestYamlConfigurationIT(unittest.TestCase):
         self.assertEqual('Test filter 2', configs[1]['description'])
 
     def test_notifications_with_handler_and_no_filters_created_from_yaml(self):
-        config = yaml.safe_load(TestYamlConfigurationIT._VALID_YAML_CONFIG)
-
-        dashboard_config = DashboardConfig(config)
+        config_reader = DashboardConfigReader()
 
         handlerCreator = DummyHandlerConfigCreator({})
-        dashboard_config.set_handler_creators(handlerCreator)
+        config_reader.set_handler_creators(handlerCreator)
 
-        notifications = dashboard_config.get_notifications()
+        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+
+        notifications = dashboard.get_notifications()
         self.assertEqual(1, len(notifications))
 
         configs = handlerCreator.get_configs()

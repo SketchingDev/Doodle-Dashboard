@@ -29,19 +29,23 @@ class TestYamlConfigurationIT(unittest.TestCase):
     '''
 
     def test_interval_read_from_yaml(self):
-        dashboard = DashboardConfigReader().read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        config_reader = DashboardConfigReader()
+        config_reader.add_display_creators([ConsoleDisplayConfigCreator()])
+        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+
         self.assertEqual(20, dashboard.get_interval())
 
     def test_display_created_from_yaml(self):
         config_reader = DashboardConfigReader()
-        config_reader.set_display_creator(ConsoleDisplayConfigCreator())
+        config_reader.add_display_creators([ConsoleDisplayConfigCreator()])
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
         self.assertIsInstance(dashboard.get_display(), LoggingDisplayDecorator)
 
     def test_data_source_created_from_yaml(self):
         config_reader = DashboardConfigReader()
-        config_reader.set_data_source_creators(RssFeedConfigCreator())
+        config_reader.add_display_creators([ConsoleDisplayConfigCreator()])
+        config_reader.add_data_source_creators([RssFeedConfigCreator()])
 
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
@@ -55,8 +59,9 @@ class TestYamlConfigurationIT(unittest.TestCase):
         filter_creator = DummyFilterCreator()
 
         config_reader = DashboardConfigReader()
-        config_reader.set_handler_creators(DummyHandlerConfigCreator({}))
-        config_reader.set_filter_creators(filter_creator)
+        config_reader.add_display_creators([ConsoleDisplayConfigCreator()])
+        config_reader.add_handler_creators([DummyHandlerConfigCreator({})])
+        config_reader.add_filter_creators([filter_creator])
 
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
@@ -72,7 +77,8 @@ class TestYamlConfigurationIT(unittest.TestCase):
         config_reader = DashboardConfigReader()
 
         handlerCreator = DummyHandlerConfigCreator({})
-        config_reader.set_handler_creators(handlerCreator)
+        config_reader.add_display_creators([ConsoleDisplayConfigCreator()])
+        config_reader.add_handler_creators([handlerCreator])
 
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 

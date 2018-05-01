@@ -62,23 +62,31 @@ class MissingRequiredOptionException(Exception):
 class DashboardConfigReader:
     _FIVE_SECONDS = 5
 
-    def __init__(self):
-        self._filter_creator = None
-        self._handler_creator = None
-        self._data_feed_creator = None
-        self._display_creator = None
+    def __init__(self, config_creators=None):
+        self._filter_creator = RootCreator()
+        self._handler_creator = RootCreator()
+        self._data_feed_creator = RootCreator()
+        self._display_creator = RootCreator()
 
-    def set_filter_creators(self, filter_creator):
-        self._filter_creator = filter_creator
+        if config_creators:
+            config_creators.configure(self)
 
-    def set_handler_creators(self, handler_creator):
-        self._handler_creator = handler_creator
+    def add_filter_creators(self, creators):
+        self._add_creator_to_chain(self._filter_creator, creators)
 
-    def set_data_source_creators(self, data_source_creator):
-        self._data_feed_creator = data_source_creator
+    def add_handler_creators(self, creators):
+        self._add_creator_to_chain(self._handler_creator, creators)
 
-    def set_display_creator(self, display_creator):
-        self._display_creator = display_creator
+    def add_data_source_creators(self, creators):
+        self._add_creator_to_chain(self._data_feed_creator, creators)
+
+    def add_display_creators(self, creators):
+        self._add_creator_to_chain(self._display_creator, creators)
+
+    @staticmethod
+    def _add_creator_to_chain(chain, creators):
+        for creator in creators:
+            chain.add(creator)
 
     def read_yaml(self, config_yaml):
         config = yaml.safe_load(config_yaml)
@@ -97,9 +105,6 @@ class DashboardConfigReader:
             return DashboardConfigReader._FIVE_SECONDS
 
     def _extract_display(self, config):
-        if not self._display_creator:
-            return None
-
         # TODO: Fix issue with circular dependency that I get when this import is moved to the top
         # https://stackoverflow.com/questions/9252543/importerror-cannot-import-name-x
         from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
@@ -111,9 +116,6 @@ class DashboardConfigReader:
         return LoggingDisplayDecorator(display)
 
     def _extract_data_feeds(self, config):
-        if not self._data_feed_creator:
-            return []
-
         data_source_elements = []
         # DataSourceConfigSection
         if 'data-feeds' in config:
@@ -122,9 +124,6 @@ class DashboardConfigReader:
         return self._create_items(self._data_feed_creator, data_source_elements)
 
     def _extract_notifications(self, config):
-        if not self._handler_creator:
-            return []
-
         notifications = []
 
         # NotificationsConfigSection
@@ -149,9 +148,6 @@ class DashboardConfigReader:
         from doodledashboard.filters import MessageFilter
 
         root_filter = MessageFilter()
-
-        if not self._filter_creator:
-            return root_filter
 
         # FilterChainConfigSection
         if 'filter-chain' in notification_element:

@@ -1,6 +1,5 @@
 import pkgutil
 
-from doodledashboard.configuration.config import RootCreator
 from doodledashboard.datafeeds.datetime import DateTimeFeedConfigCreator
 from doodledashboard.datafeeds.rss import RssFeedConfigCreator
 from doodledashboard.datafeeds.slack import SlackRepositoryConfigCreator
@@ -10,47 +9,46 @@ from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreato
 from doodledashboard.handlers.text.text import TextHandlerConfigCreator
 
 
-class DefaultConfiguration:
-    @staticmethod
-    def set_creators(state_storage, dashboard_config):
-        dashboard_config.set_display_creator(DefaultConfiguration._get_display_creators())
-        dashboard_config.set_data_source_creators(DefaultConfiguration._get_data_source_creators())
-        dashboard_config.set_handler_creators(DefaultConfiguration._get_handler_creators(state_storage))
-        dashboard_config.set_filter_creators(DefaultConfiguration._get_filter_creators())
+class DefaultConfigCreators:
+
+    def __init__(self, state_storage):
+        self._state_storage = state_storage
+
+    def configure(self, dashboard_config):
+        dashboard_config.add_display_creators(DefaultConfigCreators._get_display_creators())
+        dashboard_config.add_data_source_creators(DefaultConfigCreators._get_data_source_creators())
+        dashboard_config.add_handler_creators(DefaultConfigCreators._get_handler_creators(self._state_storage))
+        dashboard_config.add_filter_creators(DefaultConfigCreators._get_filter_creators())
 
     @staticmethod
     def _get_display_creators():
-        creator = RootCreator()
-        creator.add(ConsoleDisplayConfigCreator())
+        creators = [ConsoleDisplayConfigCreator()]
 
         papirus_loader = pkgutil.find_loader('papirus')
         if papirus_loader:
             from doodledashboard.displays.papirusdisplay import PapirusDisplayConfigCreator
-            creator.add(PapirusDisplayConfigCreator())
+            creators.append(PapirusDisplayConfigCreator())
 
-        return creator
+        return creators
 
     @staticmethod
     def _get_data_source_creators():
-        creator = RootCreator()
-        creator.add(RssFeedConfigCreator())
-        creator.add(SlackRepositoryConfigCreator())
-        creator.add(DateTimeFeedConfigCreator())
-
-        return creator
+        return [
+            RssFeedConfigCreator(),
+            SlackRepositoryConfigCreator(),
+            DateTimeFeedConfigCreator()
+        ]
 
     @staticmethod
     def _get_handler_creators(key_value_store):
-        creator = RootCreator()
-        creator.add(ImageMessageHandlerConfigCreator(key_value_store, FileDownloader()))
-        creator.add(TextHandlerConfigCreator(key_value_store))
-
-        return creator
+        return [
+            ImageMessageHandlerConfigCreator(key_value_store, FileDownloader()),
+            TextHandlerConfigCreator(key_value_store)
+        ]
 
     @staticmethod
     def _get_filter_creators():
-        creator = RootCreator()
-        creator.add(MessageMatchesRegexTextFilterCreator())
-        creator.add(MessageContainsTextFilterCreator())
-
-        return creator
+        return [
+            MessageMatchesRegexTextFilterCreator(),
+            MessageContainsTextFilterCreator()
+        ]

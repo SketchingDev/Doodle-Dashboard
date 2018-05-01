@@ -5,7 +5,7 @@ import click
 from yaml import YAMLError
 
 from doodledashboard.configuration.config import DashboardConfigReader, MissingConfigurationValueException
-from doodledashboard.configuration.defaultconfig import DefaultConfiguration
+from doodledashboard.configuration.defaultconfig import DefaultConfigCreators
 from doodledashboard.dashboard_runner import DashboardRunner
 
 
@@ -25,27 +25,22 @@ def start(config, verbose):
     if verbose:
         attach_logging('doodledashboard')
 
-    _state_storage = shelve.open('/tmp/shelve')
+    with shelve.open('/tmp/shelve') as state_storage:
 
-    dashboard_config = DashboardConfigReader()
-    DefaultConfiguration.set_creators(_state_storage, dashboard_config)
+        dashboard_config = DashboardConfigReader(DefaultConfigCreators(state_storage))
+        dashboard = None
+        try:
+            dashboard = dashboard_config.read_yaml(config)
+            explain_dashboard(dashboard)
+        except YAMLError as err:
+            click.echo("Error reading YAML in configuration file '%s':\n%s" % (config.name, err), err=True)
+        except MissingConfigurationValueException as err:
+            click.echo("Missing value in your configuration:\n%s" % err, err=True)
 
-    dashboard = None
-    try:
-        dashboard = dashboard_config.read_yaml(config)
-        explain_dashboard(dashboard)
-    except YAMLError as err:
-        click.echo("Error reading YAML in configuration file '%s':\n%s" % (config.name, err), err=True)
-    except MissingConfigurationValueException as err:
-        click.echo("Missing value in your configuration:\n%s" % err, err=True)
+        if not dashboard:
+            raise click.Abort()
 
-    if not dashboard:
-        raise click.Abort()
-
-    try:
         DashboardRunner(dashboard).run()
-    finally:
-        _state_storage.close()
 
 
 cli.add_command(start)

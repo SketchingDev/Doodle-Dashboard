@@ -1,3 +1,6 @@
+# virtualenv
+doodledashboard_project/
+
 # Ignore configuration files
 *.json
 

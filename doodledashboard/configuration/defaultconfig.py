@@ -9,16 +9,16 @@ from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreato
 from doodledashboard.handlers.text.text import TextHandlerConfigCreator
 
 
-class DefaultConfigCreators:
+class FullConfigCollection:
 
     def __init__(self, state_storage):
         self._state_storage = state_storage
 
     def configure(self, dashboard_config):
-        dashboard_config.add_display_creators(DefaultConfigCreators._get_display_creators())
-        dashboard_config.add_data_source_creators(DefaultConfigCreators._get_data_source_creators())
-        dashboard_config.add_handler_creators(DefaultConfigCreators._get_handler_creators(self._state_storage))
-        dashboard_config.add_filter_creators(DefaultConfigCreators._get_filter_creators())
+        dashboard_config.add_display_creators(FullConfigCollection._get_display_creators())
+        dashboard_config.add_data_source_creators(FullConfigCollection._get_data_source_creators())
+        dashboard_config.add_handler_creators(FullConfigCollection._get_handler_creators(self._state_storage))
+        dashboard_config.add_filter_creators(FullConfigCollection._get_filter_creators())
 
     @staticmethod
     def _get_display_creators():
@@ -51,4 +51,21 @@ class DefaultConfigCreators:
         return [
             MessageMatchesRegexTextFilterCreator(),
             MessageContainsTextFilterCreator()
+        ]
+
+
+class DatafeedConfigCollection:
+
+    def __init__(self):
+        pass
+
+    def configure(self, dashboard_config):
+        dashboard_config.add_data_source_creators(FullConfigCollection._get_data_source_creators())
+
+    @staticmethod
+    def _get_data_source_creators():
+        return [
+            RssFeedConfigCreator(),
+            SlackRepositoryConfigCreator(),
+            DateTimeFeedConfigCreator()
         ]

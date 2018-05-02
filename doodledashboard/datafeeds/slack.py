@@ -32,12 +32,12 @@ class SlackFeed(Repository):
             self._channel = self._try_find_channel(self._channel_name)
 
         events = self._client.rtm_read()
-        self._logger.info('Events from Slack: %s' % events)
+        self._logger.info(f'Events from Slack: {events}')
 
         if len(events) is 1 and events[0]['type'] == 'hello':
-            self._logger.info('Slack connection confirmed with hello: %s' % events)
+            self._logger.info(f'Slack connection confirmed with hello: {events}')
             events = self._client.rtm_read()
-            self._logger.info('Events from Slack: %s' % events)
+            self._logger.info(f'Events from Slack: {events}')
 
         events = SlackFeed._filter_events_by_channel(self._channel, events)
         events = SlackFeed._filter_events_by_type(events, 'message')
@@ -48,11 +48,11 @@ class SlackFeed(Repository):
     def _test_connection(self):
         connected = False
         try:
-            response = self._client.api_call("api.test")
+            response = self._client.api_call('api.test')
             if response['ok']:
                 connected = True
             else:
-                self._logger.info("Slack threw the error '%s'" % response['error'])
+                self._logger.info(f"Slack threw the error '{response['error']}'")
         except ConnectionError:
             connected = False
         return connected
@@ -64,7 +64,7 @@ class SlackFeed(Repository):
             self._connected_previously = True
         else:
             if self._connected_previously:
-                message = 'Failed to connect to Slack. I\'ve connected before so likely the internet is just down.'
+                message = "Failed to connect to Slack. I've connected before so likely the internet is just down."
             else:
                 message = 'Failed to connect to Slack. Is the Slack token correct?'
 
@@ -78,14 +78,14 @@ class SlackFeed(Repository):
             channel = self._find_channel(channel_name)
             if not channel:
                 self._logger.info(
-                    "Failed to find Slack channel '%s'. Have you provided created it?" % self._channel_name)
+                    f"Failed to find Slack channel '{self._channel_name}'. Have you provided created it?")
         except ConnectionError:
             pass
 
         return channel
 
     def _find_channel(self, channel_name):
-        channel_list = self._client.api_call("channels.list", exclude_archived=1)
+        channel_list = self._client.api_call('channels.list', exclude_archived=1)
         return next(iter([c for c in channel_list['channels'] if c['name'] == channel_name]), None)
 
     @staticmethod
@@ -110,10 +110,10 @@ class SlackRepositoryConfigCreator(RepositoryConfigCreator):
 
     def create_item(self, config_section):
         if 'token' not in config_section:
-            raise MissingRequiredOptionException('Expected \'token\' option to exist')
+            raise MissingRequiredOptionException("Expected 'token' option to exist")
 
         if 'channel' not in config_section:
-            raise MissingRequiredOptionException('Expected \'channel\' option to exist')
+            raise MissingRequiredOptionException("Expected 'channel' option to exist")
 
         slack_client = SlackClient(config_section['token'])
         channel = config_section['channel']

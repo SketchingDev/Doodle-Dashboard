@@ -9,7 +9,7 @@ from doodledashboard.cli import start
 @mock.patch('time.sleep')
 @mock.patch('itertools.cycle', side_effect=(lambda values: values))
 @mock.patch('dbm.open') # Click uses file system isolation which breaks shelve when opening file
-class TestCli(unittest.TestCase):
+class TestCliStart(unittest.TestCase):
     """
     Click exception messages thrown by the program that aren't written to its output stream via click.echo
     """
@@ -20,16 +20,16 @@ class TestCli(unittest.TestCase):
         self.assertIn("Error reading YAML in configuration file 'config.yml':", result.output)
         self.assertEqual(1, result.exit_code)
 
-    def test_invalid_value_in_config_prints_error_message(self, time_sleep, itertools_cycle, dbm_open):
-        result = self._run_cli_with_config('display: testing')
-
-        self.assertEqual((
-            'Missing value in your configuration:\n'
-            "'Missing display option'\n"
-            'Aborted!\n'),
-            result.output
-        )
-        self.assertEqual(1, result.exit_code)
+    # def test_invalid_value_in_config_prints_error_message(self, time_sleep, itertools_cycle, dbm_open):
+    #     result = self._run_cli_with_config('display: testing')
+    #
+    #     self.assertEqual((
+    #         'Missing value in your configuration:\n'
+    #         "'Missing display option'\n"
+    #         'Aborted!\n'),
+    #         result.output
+    #     )
+    #     self.assertEqual(1, result.exit_code)
 
     def test_config_with_no_sources_nor_handlers_prints_info_about_none_being_loaded(self, time_sleep, itertools_cycle, dbm_open):
         result = self._run_cli_with_config('''

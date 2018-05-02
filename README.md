@@ -33,10 +33,10 @@ $ cd doodle-dashboard
 ```
 $ make dev
 ```
-3. Run
+3. See help
 ```
 $ export PYTHONPATH=`pwd`
-$ python doodledashboard/main.py <ABSOLUTE PATH TO CONFIG FILE>
+$ python doodledashboard/cli.py
 ```
 
 ### ImportError: No module named

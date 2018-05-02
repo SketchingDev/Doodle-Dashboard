@@ -19,7 +19,7 @@ class RssFeed(Repository):
         return [self._convert_to_message(item) for item in feed.entries]
 
     def __str__(self):
-        return "RSS feed for %s" % self._feed_url
+        return f'RSS feed for {self._feed_url}'
 
     @staticmethod
     def _convert_to_message(feed_item):
@@ -41,6 +41,6 @@ class RssFeedConfigCreator(RepositoryConfigCreator):
 
     def create_item(self, config_section):
         if 'url' not in config_section:
-            raise MissingRequiredOptionException('Expected \'url\' option to exist')
+            raise MissingRequiredOptionException("Expected 'url' option to exist")
 
         return RssFeed(config_section['url'])

@@ -110,10 +110,12 @@ class DashboardConfigReader:
         from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
 
         display = self._display_creator.create(config)
-        if not display:
-            raise MissingConfigurationValueException('Missing display option')
-
-        return LoggingDisplayDecorator(display)
+        # if not display:
+        #     raise MissingConfigurationValueException('Missing display option')
+        if display:
+            return LoggingDisplayDecorator(display)
+        else:
+            return None
 
     def _extract_data_feeds(self, config):
         data_source_elements = []

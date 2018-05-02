@@ -43,8 +43,8 @@ class TestRssFeedIT(unittest.TestCase):
         messages = repo.get_latest_messages()
 
         self.assertEqual(2, len(messages))
-        self.assertEqual('Dummy Item 1\nhttps://dummy-link/1\nDesc for 1', messages[0].get_text())
-        self.assertEqual('Dummy Item 2\nhttps://dummy-link/2', messages[1].get_text())
+        self.assertMultiLineEqual('Dummy Item 1\nhttps://dummy-link/1\nDesc for 1', messages[0].get_text())
+        self.assertMultiLineEqual('Dummy Item 2\nhttps://dummy-link/2', messages[1].get_text())
 
 
 if __name__ == '__main__':

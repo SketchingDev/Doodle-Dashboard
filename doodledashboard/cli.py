@@ -5,7 +5,7 @@ import click
 from yaml import YAMLError
 
 from doodledashboard.configuration.config import DashboardConfigReader, MissingConfigurationValueException
-from doodledashboard.configuration.defaultconfig import DefaultConfigCreators
+from doodledashboard.configuration.defaultconfig import FullConfigCollection, DatafeedConfigCollection
 from doodledashboard.dashboard_runner import DashboardRunner
 
 
@@ -27,23 +27,38 @@ def start(config, verbose):
 
     with shelve.open('/tmp/shelve') as state_storage:
 
-        dashboard_config = DashboardConfigReader(DefaultConfigCreators(state_storage))
-        dashboard = None
-        try:
-            dashboard = dashboard_config.read_yaml(config)
-            explain_dashboard(dashboard)
-        except YAMLError as err:
-            click.echo("Error reading YAML in configuration file '%s':\n%s" % (config.name, err), err=True)
-        except MissingConfigurationValueException as err:
-            click.echo("Missing value in your configuration:\n%s" % err, err=True)
+        dashboard_config = DashboardConfigReader(FullConfigCollection(state_storage))
+        dashboard = try_read_dashboard_config(dashboard_config, config)
 
-        if not dashboard:
-            raise click.Abort()
-
+        explain_dashboard(dashboard)
         DashboardRunner(dashboard).run()
 
 
-cli.add_command(start)
+@cli.command()
+@click.argument('type', type=click.Choice(['datafeeds']))
+@click.argument('config', type=click.File('rb'))
+def view(type, config):
+    """View what the datafeeds in the CONFIG are returning"""
+
+    dashboard_config = DashboardConfigReader(DatafeedConfigCollection())
+    dashboard = try_read_dashboard_config(dashboard_config, config)
+
+    for feed in dashboard.get_data_feeds():
+        click.echo(f'{feed} --------------')
+        for message in feed.get_latest_messages():
+            click.echo('Message:')
+            click.echo(message.get_text())
+
+
+def try_read_dashboard_config(dashboard_config, config):
+    try:
+        return dashboard_config.read_yaml(config)
+    except YAMLError as err:
+        click.echo(f"Error reading YAML in configuration file '{config.name}':\n{err}", err=True)
+    except MissingConfigurationValueException as err:
+        click.echo(f"Missing value in your configuration:\n{err}", err=True)
+
+    raise click.Abort()
 
 
 def attach_logging(name):
@@ -56,20 +71,20 @@ def attach_logging(name):
 
 def explain_dashboard(dashboard):
     interval = dashboard.get_interval()
-    click.echo('Interval: %s' % str(interval))
+    click.echo(f'Interval: {str(interval)}')
 
     display = dashboard.get_display()
-    click.echo('Display loaded: %s' % str(display))
+    click.echo(f'Display loaded: {str(display)}')
 
     data_sources = dashboard.get_data_feeds()
-    click.echo('%s data sources loaded' % len(data_sources))
+    click.echo(f'{len(data_sources)} data sources loaded')
     for data_source in data_sources:
-        click.echo(' - %s' % str(data_source))
+        click.echo(f' - {str(data_source)}')
 
     notifications = dashboard.get_notifications()
-    click.echo('%s notifications loaded' % len(notifications))
+    click.echo(f'{len(notifications)} notifications loaded')
     for notification in notifications:
-        click.echo(' - %s' % str(notification))
+        click.echo(f' - {str(notification)}')
 
 
 if __name__ == '__main__':

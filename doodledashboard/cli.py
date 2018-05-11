@@ -9,23 +9,23 @@ from doodledashboard.configuration.defaultconfig import FullConfigCollection, Da
 from doodledashboard.dashboard_runner import DashboardRunner
 
 
-@click.help_option('-h', '--help')
-@click.version_option('0.0.4', '-v', '--version', message='%(prog)s v%(version)s')
+@click.help_option("-h", "--help")
+@click.version_option("0.0.4", "-v", "--version", message="%(prog)s v%(version)s")
 @click.group()
 def cli():
     pass
 
 
 @cli.command()
-@click.argument('config', type=click.File('rb'))
-@click.option('--verbose', is_flag=True)
+@click.argument("config", type=click.File("rb"))
+@click.option("--verbose", is_flag=True)
 def start(config, verbose):
     """Start dashboard with CONFIG file"""
 
     if verbose:
-        attach_logging('doodledashboard')
+        attach_logging("doodledashboard")
 
-    with shelve.open('/tmp/shelve') as state_storage:
+    with shelve.open("/tmp/shelve") as state_storage:
 
         dashboard_config = DashboardConfigReader(FullConfigCollection(state_storage))
         dashboard = try_read_dashboard_config(dashboard_config, config)
@@ -35,8 +35,8 @@ def start(config, verbose):
 
 
 @cli.command()
-@click.argument('type', type=click.Choice(['datafeeds']))
-@click.argument('config', type=click.File('rb'))
+@click.argument("type", type=click.Choice(["datafeeds"]))
+@click.argument("config", type=click.File("rb"))
 def view(type, config):
     """View what the datafeeds in the CONFIG are returning"""
 
@@ -44,9 +44,9 @@ def view(type, config):
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
     for feed in dashboard.get_data_feeds():
-        click.echo(f'{feed} --------------')
+        click.echo(f"{feed} --------------")
         for message in feed.get_latest_messages():
-            click.echo('Message:')
+            click.echo("Message:")
             click.echo(message.get_text())
 
 
@@ -71,21 +71,21 @@ def attach_logging(name):
 
 def explain_dashboard(dashboard):
     interval = dashboard.get_interval()
-    click.echo(f'Interval: {str(interval)}')
+    click.echo(f"Interval: {str(interval)}")
 
     display = dashboard.get_display()
-    click.echo(f'Display loaded: {str(display)}')
+    click.echo(f"Display loaded: {str(display)}")
 
     data_sources = dashboard.get_data_feeds()
-    click.echo(f'{len(data_sources)} data sources loaded')
+    click.echo(f"{len(data_sources)} data sources loaded")
     for data_source in data_sources:
-        click.echo(f' - {str(data_source)}')
+        click.echo(f" - {str(data_source)}")
 
     notifications = dashboard.get_notifications()
-    click.echo(f'{len(notifications)} notifications loaded')
+    click.echo(f"{len(notifications)} notifications loaded")
     for notification in notifications:
-        click.echo(f' - {str(notification)}')
+        click.echo(f" - {str(notification)}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

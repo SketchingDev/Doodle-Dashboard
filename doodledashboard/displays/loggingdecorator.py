@@ -6,7 +6,7 @@ from doodledashboard.displays.display import Display
 class LoggingDisplayDecorator(Display):
     def __init__(self, display):
         Display.__init__(self)
-        self._logger = logging.getLogger('doodledashboard')
+        self._logger = logging.getLogger("doodledashboard")
         self._display = display
 
     def fill_colour(self, colour):

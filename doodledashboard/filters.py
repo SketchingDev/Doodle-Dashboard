@@ -31,13 +31,13 @@ class FilterConfigCreator(Creator):
         Creator.__init__(self)
 
     def creates_for_id(self, filter_id):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
     def can_create(self, config_section):
-        return 'type' in config_section and self.creates_for_id(config_section['type'])
+        return "type" in config_section and self.creates_for_id(config_section["type"])
 
     def create_item(self, config_section):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
 
 class MessageContainsTextFilter(MessageFilter):
@@ -50,7 +50,7 @@ class MessageContainsTextFilter(MessageFilter):
 
     def remove_text(self, message):
         return message.get_text() \
-            .replace(self._text, '') \
+            .replace(self._text, "") \
             .strip()
 
     def get_text(self):
@@ -62,13 +62,13 @@ class MessageContainsTextFilterCreator(FilterConfigCreator):
         FilterConfigCreator.__init__(self)
 
     def creates_for_id(self, filter_id):
-        return filter_id == 'message-contains-text'
+        return filter_id == "message-contains-text"
 
     def create_item(self, config_section):
-        if 'text' not in config_section:
-            raise MissingRequiredOptionException('Expected \'text\' option to exist')
+        if "text" not in config_section:
+            raise MissingRequiredOptionException("Expected 'text' option to exist")
 
-        return MessageContainsTextFilter(str(config_section['text']))
+        return MessageContainsTextFilter(str(config_section["text"]))
 
 
 class MessageMatchesRegexFilter(MessageFilter):
@@ -88,10 +88,10 @@ class MessageMatchesRegexTextFilterCreator(FilterConfigCreator):
         FilterConfigCreator.__init__(self)
 
     def creates_for_id(self, filter_id):
-        return filter_id == 'message-matches-regex'
+        return filter_id == "message-matches-regex"
 
     def create_item(self, config_section):
-        if 'pattern' not in config_section:
-            raise MissingRequiredOptionException('Expected \'pattern\' option to exist')
+        if "pattern" not in config_section:
+            raise MissingRequiredOptionException("Expected 'pattern' option to exist")
 
-        return MessageMatchesRegexFilter(str(config_section['pattern']))
+        return MessageMatchesRegexFilter(str(config_section["pattern"]))

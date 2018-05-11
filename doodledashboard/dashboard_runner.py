@@ -50,7 +50,7 @@ class Notification:
 
 class DashboardRunner:
     def __init__(self, dashboard):
-        self._logger = logging.getLogger('doodledashboard.Dashboard')
+        self._logger = logging.getLogger("doodledashboard.Dashboard")
         self._dashboard = dashboard
 
     def run(self):
@@ -58,9 +58,9 @@ class DashboardRunner:
         for notification in itertools.cycle(self._dashboard.get_notifications()):
 
             if self._is_at_beginning(notification):
-                self._logger.info('At beginning of notification cycle, will poll data sources')
+                self._logger.info("At beginning of notification cycle, will poll data sources")
                 messages = self._collect_all_messages(self._dashboard.get_data_feeds())
-                self._logger.info(f'{len(messages)} messages collected')
+                self._logger.info(f"{len(messages)} messages collected")
 
             notification.handle_messages(self._dashboard.get_display(), messages)
             time.sleep(self._dashboard.get_interval())

@@ -9,7 +9,7 @@ from doodledashboard.handlers.handler import MessageHandlerConfigCreator
 
 
 class TestYamlConfigurationIT(unittest.TestCase):
-    _VALID_YAML_CONFIG = '''
+    _VALID_YAML_CONFIG = """
         interval: 20
         display: console
         
@@ -26,7 +26,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
                 type: dummy filter
               - description: Test filter 2
                 type: dummy filter
-    '''
+    """
 
     def test_interval_read_from_yaml(self):
         config_reader = DashboardConfigReader()
@@ -53,7 +53,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         self.assertEqual(1, len(data_feeds))
 
         self.assertIsInstance(data_feeds[0], RssFeed)
-        self.assertEqual('http://example-image.com/feed.rss', data_feeds[0].get_url())
+        self.assertEqual("http://example-image.com/feed.rss", data_feeds[0].get_url())
 
     def test_notifications_with_handler_and_filters_created_from_yaml(self):
         filter_creator = DummyFilterCreator()
@@ -70,8 +70,8 @@ class TestYamlConfigurationIT(unittest.TestCase):
 
         configs = filter_creator.get_configs()
         self.assertEqual(2, len(configs))
-        self.assertEqual('Test filter 1', configs[0]['description'])
-        self.assertEqual('Test filter 2', configs[1]['description'])
+        self.assertEqual("Test filter 1", configs[0]["description"])
+        self.assertEqual("Test filter 2", configs[1]["description"])
 
     def test_notifications_with_handler_and_no_filters_created_from_yaml(self):
         config_reader = DashboardConfigReader()
@@ -87,7 +87,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
 
         configs = handlerCreator.get_configs()
         self.assertEqual(1, len(configs))
-        self.assertEqual('Hello World', configs[0]['text'])
+        self.assertEqual("Hello World", configs[0]["text"])
 
 
 class DummyHandlerConfigCreator(MessageHandlerConfigCreator):
@@ -126,5 +126,5 @@ class DummyFilterCreator(FilterConfigCreator):
         return self._configs_passed_in
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

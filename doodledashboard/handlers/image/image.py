@@ -20,14 +20,14 @@ class ImageHandler(MessageHandler):
 
     def add_image_filter(self, absolute_path, choice_filter=None):
         if choice_filter:
-            self._filtered_images.append({'path': absolute_path, 'filter': choice_filter})
+            self._filtered_images.append({"path": absolute_path, "filter": choice_filter})
         else:
             self._default_image_path = absolute_path
 
     def update(self, messages):
         for image_filter in self._filtered_images:
-            if image_filter['filter'].do_filter(messages):
-                self._chosen_image_path = image_filter['path']
+            if image_filter["filter"].do_filter(messages):
+                self._chosen_image_path = image_filter["path"]
                 return
 
         self._chosen_image_path = self._default_image_path
@@ -45,7 +45,7 @@ class ImageHandler(MessageHandler):
             return self._default_image_path
 
     def __str__(self):
-        return f'Image handler with {len(self._filtered_images)} images'
+        return f"Image handler with {len(self._filtered_images)} images"
 
 
 class FileDownloader:
@@ -54,9 +54,9 @@ class FileDownloader:
         self._downloaded_files = []
 
     def download(self, url):
-        fd, path = tempfile.mkstemp(f'-doodledashboard-{self._extract_filename(url)}')
+        fd, path = tempfile.mkstemp(f"-doodledashboard-{self._extract_filename(url)}")
 
-        with urllib.request.urlopen(url) as response, os.fdopen(fd, 'wb') as out_file:
+        with urllib.request.urlopen(url) as response, os.fdopen(fd, "wb") as out_file:
             out_file.write(response.read())
 
         self._downloaded_files.append(path)
@@ -78,24 +78,24 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigCreator):
         self._file_downloader = file_downloader
 
     def creates_for_id(self, filter_id):
-        return filter_id == 'image-handler'
+        return filter_id == "image-handler"
 
     def create_handler(self, config_section, key_value_store):
         handler = ImageHandler(key_value_store)
 
-        has_images = 'images' in config_section
-        has_default_image = 'default-image' in config_section
+        has_images = "images" in config_section
+        has_default_image = "default-image" in config_section
 
         if not has_images and not has_default_image:
             raise MissingRequiredOptionException("Expected 'images' list and/or default-image to exist")
 
         if has_default_image:
-            image_path = self._file_downloader.download(config_section['default-image'])
+            image_path = self._file_downloader.download(config_section["default-image"])
             handler.add_image_filter(image_path)
 
         if has_images:
-            for image_config_section in config_section['images']:
-                if 'uri' not in image_config_section:
+            for image_config_section in config_section["images"]:
+                if "uri" not in image_config_section:
                     raise MissingRequiredOptionException("Expected 'uri' option to exist")
 
                 image_uri = image_config_section["uri"]
@@ -108,8 +108,8 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigCreator):
 
     @staticmethod
     def _create_filter(image_config_section):
-        pattern_exists = 'pattern' in image_config_section
-        contains_exists = 'contains' in image_config_section
+        pattern_exists = "pattern" in image_config_section
+        contains_exists = "contains" in image_config_section
 
         if not pattern_exists and not contains_exists:
             raise MissingRequiredOptionException("Expected either 'pattern' or 'contains' option to exist")
@@ -118,6 +118,6 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigCreator):
             raise MissingRequiredOptionException("Expected either 'pattern' or 'contains' option, but not both")
 
         if pattern_exists:
-            return MessageMatchesRegexFilter(image_config_section['pattern'])
+            return MessageMatchesRegexFilter(image_config_section["pattern"])
         else:
-            return MessageContainsTextFilter(image_config_section['contains'])
+            return MessageContainsTextFilter(image_config_section["contains"])

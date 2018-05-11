@@ -24,7 +24,7 @@ class FullConfigCollection:
     def _get_display_creators():
         creators = [ConsoleDisplayConfigCreator()]
 
-        papirus_loader = pkgutil.find_loader('papirus')
+        papirus_loader = pkgutil.find_loader("papirus")
         if papirus_loader:
             from doodledashboard.displays.papirusdisplay import PapirusDisplayConfigCreator
             creators.append(PapirusDisplayConfigCreator())

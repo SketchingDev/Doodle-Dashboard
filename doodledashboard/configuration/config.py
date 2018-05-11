@@ -8,10 +8,10 @@ class Creator:
         self._successor = None
 
     def can_create(self, config_section):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
     def create_item(self, config_section):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
     def add(self, successor):
         if not self._successor:
@@ -42,13 +42,13 @@ class FilterConfigCreator(Creator):
         Creator.__init__(self)
 
     def creates_for_id(self, filter_id):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
     def can_create(self, config_section):
-        return 'type' in config_section and self.creates_for_id(config_section['type'])
+        return "type" in config_section and self.creates_for_id(config_section["type"])
 
     def create_item(self, config_section):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
 
 class MissingRequiredOptionException(Exception):
@@ -99,8 +99,8 @@ class DashboardConfigReader:
         )
 
     def _extract_interval(self, config):
-        if 'interval' in config:
-            return config['interval']
+        if "interval" in config:
+            return config["interval"]
         else:
             return DashboardConfigReader._FIVE_SECONDS
 
@@ -111,7 +111,7 @@ class DashboardConfigReader:
 
         display = self._display_creator.create(config)
         # if not display:
-        #     raise MissingConfigurationValueException('Missing display option')
+        #     raise MissingConfigurationValueException("Missing display option")
         if display:
             return LoggingDisplayDecorator(display)
         else:
@@ -120,8 +120,8 @@ class DashboardConfigReader:
     def _extract_data_feeds(self, config):
         data_source_elements = []
         # DataSourceConfigSection
-        if 'data-feeds' in config:
-            data_source_elements = config['data-feeds']
+        if "data-feeds" in config:
+            data_source_elements = config["data-feeds"]
 
         return self._create_items(self._data_feed_creator, data_source_elements)
 
@@ -129,8 +129,8 @@ class DashboardConfigReader:
         notifications = []
 
         # NotificationsConfigSection
-        if 'notifications' in config:
-            for notification_element in config['notifications']:
+        if "notifications" in config:
+            for notification_element in config["notifications"]:
 
                 handler = self._handler_creator.create(notification_element)
                 if handler:
@@ -152,8 +152,8 @@ class DashboardConfigReader:
         root_filter = MessageFilter()
 
         # FilterChainConfigSection
-        if 'filter-chain' in notification_element:
-            filter_chain_elements = notification_element['filter-chain']
+        if "filter-chain" in notification_element:
+            filter_chain_elements = notification_element["filter-chain"]
 
             for filter_element in filter_chain_elements:
                 new_filter = self._filter_creator.create(filter_element)

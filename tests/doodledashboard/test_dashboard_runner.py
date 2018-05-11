@@ -5,8 +5,8 @@ from mock import Mock, mock
 from doodledashboard.dashboard_runner import DashboardRunner, Dashboard
 
 
-@mock.patch('time.sleep')
-@mock.patch('itertools.cycle', side_effect=(lambda values: values))
+@mock.patch("time.sleep")
+@mock.patch("itertools.cycle", side_effect=(lambda values: values))
 class TestDashboardRunner(unittest.TestCase):
 
     def test_messages_from_data_feeds_are_passed_to_notification(self, time_sleep, itertools_cycle):
@@ -60,5 +60,5 @@ class TestDashboardRunner(unittest.TestCase):
         return data_feed
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -31,7 +31,7 @@ class ConsoleDisplayConfigCreator(DisplayConfigCreator):
         DisplayConfigCreator.__init__(self)
 
     def creates_for_id(self, display_id):
-        return display_id == 'console'
+        return display_id == "console"
 
     def create_item(self, config_section):
         return ConsoleDisplay()

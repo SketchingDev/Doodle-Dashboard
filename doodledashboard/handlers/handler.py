@@ -27,10 +27,10 @@ class MessageHandler:
         here that you scan the messages for relevant data to your handler and
         prepare what to draw for when the handler's draw method is called.
         """
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
     def draw(self, display):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
 
 class MessageHandlerConfigCreator(Creator):
@@ -47,13 +47,13 @@ class MessageHandlerConfigCreator(Creator):
         self._key_value_store = key_value_store
 
     def creates_for_id(self, filter_id):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
     def create_handler(self, config_section, key_value_store):
-        raise NotImplementedError('Implement this method')
+        raise NotImplementedError("Implement this method")
 
     def can_create(self, config_section):
-        return 'handler' in config_section and self.creates_for_id(config_section['handler'])
+        return "handler" in config_section and self.creates_for_id(config_section["handler"])
 
     def create_item(self, config_section):
         return self.create_handler(config_section, self._key_value_store)

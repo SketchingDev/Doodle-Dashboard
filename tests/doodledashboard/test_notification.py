@@ -53,5 +53,5 @@ class TestNotification(unittest.TestCase):
         handler.draw.assert_called_with(display)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

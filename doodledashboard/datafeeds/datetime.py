@@ -10,7 +10,7 @@ class DateTimeFeed(Repository):
     def get_latest_messages(self):
 
         date_time = datetime.now().isoformat(timespec="minutes")
-        return [MessageModel(str(date_time))]
+        return [MessageModel(str(date_time), self)]
 
     def __str__(self):
         return "Date/Time (e.g. 2002-12-25T00:00)"

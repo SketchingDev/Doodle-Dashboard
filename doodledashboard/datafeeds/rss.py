@@ -21,15 +21,14 @@ class RssFeed(Repository):
     def __str__(self):
         return f"RSS feed for {self._feed_url}"
 
-    @staticmethod
-    def _convert_to_message(feed_item):
+    def _convert_to_message(self, feed_item):
         feed_fields = []
 
         for field in RssFeed._COMMON_RSS_ITEM_FIELDS:
             if field in feed_item:
                 feed_fields.append(feed_item[field])
 
-        return MessageModel("\n".join(feed_fields))
+        return MessageModel("\n".join(feed_fields), self)
 
 
 class RssFeedConfigCreator(RepositoryConfigCreator):

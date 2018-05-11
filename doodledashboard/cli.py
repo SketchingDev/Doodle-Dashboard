@@ -1,3 +1,4 @@
+import json
 import logging
 import shelve
 
@@ -7,6 +8,7 @@ from yaml import YAMLError
 from doodledashboard.configuration.config import DashboardConfigReader, MissingConfigurationValueException
 from doodledashboard.configuration.defaultconfig import FullConfigCollection, DatafeedConfigCollection
 from doodledashboard.dashboard_runner import DashboardRunner
+from doodledashboard.datafeeds.repository import MessageModelEncoder
 
 
 @click.help_option("-h", "--help")
@@ -43,11 +45,8 @@ def view(type, config):
     dashboard_config = DashboardConfigReader(DatafeedConfigCollection())
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
-    for feed in dashboard.get_data_feeds():
-        click.echo(f"{feed} --------------")
-        for message in feed.get_latest_messages():
-            click.echo("Message:")
-            click.echo(message.get_text())
+    datafeed_responses = [feed.get_latest_messages() for feed in dashboard.get_data_feeds()]
+    click.echo(json.dumps(datafeed_responses, sort_keys=True, indent=4, cls=MessageModelEncoder))
 
 
 def try_read_dashboard_config(dashboard_config, config):

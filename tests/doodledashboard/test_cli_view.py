@@ -32,23 +32,44 @@ class TestCliView(unittest.TestCase):
     Click exception messages thrown by the program aren't written to its output stream via click.echo
     """
 
-    def test_datetime_datafeed_in_config_produces_output_from_feed(self, time_sleep, itertools_cycle, dbm_open):
-        result = self._run_cli_with_config("""
-            data-feeds:
-              - source: datetime
-            """)
+    def test_one_message_shown_correctly(self, time_sleep, itertools_cycle, dbm_open):
+        feed = \
+            '<?xml version="1.0" encoding="UTF-8"?>\
+            <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">\
+              <channel>\
+                <title>Example RSS Feed</title>\
+                <link>https://exmaple/rss/feed/</link>\
+                <description>Example RSS feed used for tests</description>\
+                <item>\
+                  <title>Dummy Item 1</title>\
+                  <link>https://dummy-link/1</link>\
+                  <description>Desc for 1</description>\
+                </item>\
+              </channel>\
+            </rss>'
 
-        self.assertIn((
-            "Date/Time (e.g. 2002-12-25T00:00) --------------\n"
-            "Message:\n"),
+        self.http_server.serve_content(feed)
+
+        result = self._run_cli_with_config("""
+                    data-feeds:
+                        - source: rss
+                          url: %s
+                    """ % self.http_server.url)
+
+        self.assertEqual((
+            "[\n"
+            "    [\n"
+            "        {\n"
+            f'            "source": "RSS feed for {self.http_server.url}",\n'
+            '            "text": "Dummy Item 1\\nhttps://dummy-link/1\\nDesc for 1"\n'
+            "        }\n"
+            "    ]\n"
+            "]\n"),
             result.output
         )
-        last_line = result.output.splitlines()[-1]
-        self.assertRegex(last_line, "\d{4}-\d{2}-\d{2}[A-Z]{1}\d{2}:\d{2}")
-
         self.assertEqual(0, result.exit_code)
 
-    def test_rss_datafeed_in_config_produces_output_from_feed(self, time_sleep, itertools_cycle, dbm_open):
+    def test_two_messages_shown_correctly(self, time_sleep, itertools_cycle, dbm_open):
         feed = \
             '<?xml version="1.0" encoding="UTF-8"?>\
             <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">\
@@ -78,15 +99,18 @@ class TestCliView(unittest.TestCase):
             """ % self.http_server.url)
 
         self.assertEqual((
-            f"RSS feed for {self.http_server.url} --------------\n"
-            "Message:\n"
-            "Dummy Item 1\n"
-            "https://dummy-link/1\n"
-            "Desc for 1\n"
-            "Message:\n"
-            "Dummy Item 2\n"
-            "https://dummy-link/2\n"
-            "Desc for 2\n"),
+            "[\n"
+            "    [\n"
+            "        {\n"
+            f'            "source": "RSS feed for {self.http_server.url}",\n'
+            '            "text": "Dummy Item 1\\nhttps://dummy-link/1\\nDesc for 1"\n'
+            "        },\n"
+            "        {\n"
+            f'            "source": "RSS feed for {self.http_server.url}",\n'
+            '            "text": "Dummy Item 2\\nhttps://dummy-link/2\\nDesc for 2"\n'
+            "        }\n"
+            "    ]\n"
+            "]\n"),
             result.output
         )
         self.assertEqual(0, result.exit_code)

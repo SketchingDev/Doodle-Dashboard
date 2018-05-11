@@ -43,7 +43,7 @@ class SlackFeed(Repository):
         events = SlackFeed._filter_events_by_type(events, "message")
         events = SlackFeed._filter_events_with_text(events)
 
-        return [MessageModel(event["text"]) for event in events]
+        return [MessageModel(event["text"], self) for event in events]
 
     def _test_connection(self):
         connected = False

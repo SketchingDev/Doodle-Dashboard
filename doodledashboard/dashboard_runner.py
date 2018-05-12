@@ -4,7 +4,6 @@ import time
 
 
 class Dashboard:
-
     def __init__(self, interval, display, data_feeds, notifications):
         self._interval = interval
         self._display = display

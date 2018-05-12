@@ -5,6 +5,7 @@ import shelve
 import click
 from yaml import YAMLError
 
+from doodledashboard import __about__
 from doodledashboard.configuration.config import DashboardConfigReader, MissingConfigurationValueException
 from doodledashboard.configuration.defaultconfig import FullConfigCollection, DatafeedConfigCollection
 from doodledashboard.dashboard_runner import DashboardRunner
@@ -12,7 +13,7 @@ from doodledashboard.datafeeds.repository import MessageModelEncoder
 
 
 @click.help_option("-h", "--help")
-@click.version_option("0.0.4", "-v", "--version", message="%(prog)s v%(version)s")
+@click.version_option(__about__.__version__, "-v", "--version", message="%(prog)s v%(version)s")
 @click.group()
 def cli():
     pass

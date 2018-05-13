@@ -88,6 +88,9 @@ class SlackFeed(Repository):
         channel_list = self._client.api_call("channels.list", exclude_archived=1)
         return next(iter([c for c in channel_list["channels"] if c["name"] == channel_name]), None)
 
+    def __str__(self):
+        return "Slack feed for %s channel" % self._channel_name
+
     @staticmethod
     def _filter_events_with_text(events):
         return [e for e in events if "text" in e]

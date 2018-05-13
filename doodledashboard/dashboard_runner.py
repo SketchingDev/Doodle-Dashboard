@@ -1,6 +1,7 @@
 import itertools
 import logging
 import time
+import click
 
 
 class Dashboard:
@@ -33,7 +34,13 @@ class Notification:
         self._filter_chain = filter_chain
 
     def handle_messages(self, display, messages):
+        message_count_before = len(messages)
         filtered_messages = self._filter_messages(messages)
+        message_count_after = len(filtered_messages)
+
+        click.echo("Notification: %s" % self)
+        click.echo(" - Filtered %s messages down to %s" % (message_count_before, message_count_after))
+
         self._logger.debug("Messages after filters: %s", [filtered_messages])
 
         self._handler.update(filtered_messages)
@@ -59,9 +66,9 @@ class DashboardRunner:
         for notification in itertools.cycle(self._dashboard.get_notifications()):
 
             if self._is_at_beginning(notification):
-                self._logger.info("At beginning of notification cycle, will poll data sources")
+                click.echo("At beginning of notification cycle, will poll data sources")
                 messages = self._collect_all_messages(self._dashboard.get_data_feeds())
-                self._logger.info("%s messages collected" % len(messages))
+                click.echo("%s messages collected" % len(messages))
 
             notification.handle_messages(self._dashboard.get_display(), messages)
             time.sleep(self._dashboard.get_interval())

@@ -29,7 +29,7 @@ class PapirusDisplay(Display):
         return self._screen_size
 
     def __str__(self):
-        return "Papirus display %s" % self._screen_size
+        return "Papirus display %sx%s" % (self._screen_size[0], self._screen_size[1])
 
 
 class PapirusDisplayConfigCreator(DisplayConfigCreator):

@@ -39,6 +39,17 @@ class TestImageHandler(unittest.TestCase):
         handler.update([MessageModel('456'), MessageModel('789')])
         self.assertEqual('/tmp/sad.png', handler.get_image())
 
+    def test_get_image_returns_previous_image_when_no_messages_match(self):
+        handler = ImageHandler({})
+        handler.add_image_filter('/tmp/happy.png', MessageContainsTextFilter('123'))
+        handler.add_image_filter('/tmp/default.png')
+
+        handler.update([MessageModel('123')])
+        self.assertEqual('/tmp/happy.png', handler.get_image())
+
+        handler.update([])
+        self.assertEqual('/tmp/happy.png', handler.get_image())
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -30,12 +30,15 @@ class ImageHandler(MessageHandler):
         for image_filter in self._filtered_images:
             if image_filter["filter"].do_filter(messages):
                 self._chosen_image_path = image_filter["path"]
-                return
-
-        self._chosen_image_path = self._default_image_path
 
     def draw(self, display):
-        display.draw_image(self._chosen_image_path)
+        if self._chosen_image_path:
+            image = self._chosen_image_path
+        else:
+            image = self._default_image_path
+
+        if image:
+            display.draw_image(image)
 
     def get_filtered_images(self):
         return self._filtered_images

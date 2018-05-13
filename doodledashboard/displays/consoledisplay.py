@@ -14,7 +14,7 @@ class ConsoleDisplay(Display):
         click.echo(text)
 
     def draw_image(self, image_path):
-        click.echo(f"One day I'll draw an ASCII version of {image_path}")
+        click.echo("One day I'll draw an ASCII version of %s" % image_path)
 
     def fill_colour(self, colour):
         click.secho(colour, fg=colour)

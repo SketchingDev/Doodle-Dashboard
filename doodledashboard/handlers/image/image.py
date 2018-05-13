@@ -45,7 +45,7 @@ class ImageHandler(MessageHandler):
             return self._default_image_path
 
     def __str__(self):
-        return f"Image handler with {len(self._filtered_images)} images"
+        return "Image handler with %s images" % len(self._filtered_images)
 
 
 class FileDownloader:
@@ -54,7 +54,7 @@ class FileDownloader:
         self._downloaded_files = []
 
     def download(self, url):
-        fd, path = tempfile.mkstemp(f"-doodledashboard-{self._extract_filename(url)}")
+        fd, path = tempfile.mkstemp("-doodledashboard-%s" % self._extract_filename(url))
 
         with urllib.request.urlopen(url) as response, os.fdopen(fd, "wb") as out_file:
             out_file.write(response.read())

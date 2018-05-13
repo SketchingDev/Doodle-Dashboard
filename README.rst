@@ -17,7 +17,7 @@ Tweets from your favourite Twitterers, weather reports for your local area or br
 Requirements
 ------------
 
-  * `Python 3.6+ <https://www.python.org/downloads/>`_
+  * `Python 3.5+ <https://www.python.org/downloads/>`_
   * `pip <https://pip.pypa.io/en/stable/installing/>`_
 
 Getting started

@@ -44,7 +44,7 @@ class Notification:
             return messages
 
     def __str__(self):
-        return f"Displays messages using: {str(self._handler)}"
+        return "Displays messages using: %s" % str(self._handler)
 
 
 class DashboardRunner:
@@ -59,7 +59,7 @@ class DashboardRunner:
             if self._is_at_beginning(notification):
                 self._logger.info("At beginning of notification cycle, will poll data sources")
                 messages = self._collect_all_messages(self._dashboard.get_data_feeds())
-                self._logger.info(f"{len(messages)} messages collected")
+                self._logger.info("%s messages collected" % len(messages))
 
             notification.handle_messages(self._dashboard.get_display(), messages)
             time.sleep(self._dashboard.get_interval())

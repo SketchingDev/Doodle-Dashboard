@@ -10,7 +10,7 @@ class LoggingDisplayDecorator(Display):
         self._display = display
 
     def fill_colour(self, colour):
-        self._logger.info(f"Fill with {colour}")
+        self._logger.info("Fill with %s" % colour)
         self._display.fill_colour(colour)
 
     def clear(self):
@@ -18,11 +18,11 @@ class LoggingDisplayDecorator(Display):
         self._display.clear()
 
     def write_text(self, text, font_face=None):
-        self._logger.info(f"Write text: '{text}'")
+        self._logger.info("Write text: '%s'" % text)
         self._display.write_text(text, font_face)
 
     def draw_image(self, image_path):
-        self._logger.info(f"Draw image: {image_path}")
+        self._logger.info("Draw image: %s" % image_path)
         self._display.draw_image(image_path)
 
     def __str__(self):

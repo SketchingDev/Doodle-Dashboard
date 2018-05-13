@@ -1,10 +1,8 @@
-from papirus import Papirus, PapirusComposite
-
+from papirus import Papirus, PapirusText, PapirusImage
 from doodledashboard.displays.display import Display, DisplayConfigCreator
 
 
 class PapirusDisplay(Display):
-
     A_1_44_INCH = (128, 90)
     A_1_9_INCH = (144, 128)
     A_2_0_INCH = (200, 96)
@@ -14,21 +12,18 @@ class PapirusDisplay(Display):
     def __init__(self, size):
         Display.__init__(self)
         self._screen = Papirus()
-        self._screen_composite = PapirusComposite(False)
+        self._image = PapirusImage()
+        self._text = PapirusText()
         self._screen_size = size
 
     def clear(self):
         self._screen.update()
 
-    def draw_image(self, image_path, x, y, size):
-        self._screen_composite.AddImg(image_path, x, y, size)
+    def draw_image(self, image_path):
+        self._image.write(image_path)
 
-    def write_text(self, text, x, y, font_size=10, font_face=None):
-        self._screen_composite.AddText(text, x, y, font_size, fontPath=font_face)
-
-    def flush(self):
-        self._screen_composite.WriteAll()
-        self._screen_composite = PapirusComposite(False)
+    def write_text(self, text, font_face=None):
+        self._text.write(text)
 
     def get_size(self):
         return self._screen_size
@@ -38,7 +33,6 @@ class PapirusDisplay(Display):
 
 
 class PapirusDisplayConfigCreator(DisplayConfigCreator):
-
     _DISPLAYS = {
         "papirus-1.44inch": PapirusDisplay.A_1_44_INCH,
         "papirus-1.9inch": PapirusDisplay.A_1_9_INCH,

@@ -1,3 +1,5 @@
+import logging
+
 from doodledashboard.configuration.config import MissingRequiredOptionException
 from doodledashboard.filters import MessageMatchesRegexFilter, MessageContainsTextFilter
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigCreator
@@ -52,10 +54,12 @@ class FileDownloader:
 
     def __init__(self):
         self._downloaded_files = []
+        self._logger = logging.getLogger("doodledashboard")
 
     def download(self, url):
         fd, path = tempfile.mkstemp("-doodledashboard-%s" % self._extract_filename(url))
 
+        logging.info("Downloading %s to %s", [url, path])
         with urllib.request.urlopen(url) as response, os.fdopen(fd, "wb") as out_file:
             out_file.write(response.read())
 

@@ -34,6 +34,7 @@ def start(config, verbose):
         dashboard = try_read_dashboard_config(dashboard_config, config)
 
         explain_dashboard(dashboard)
+        click.echo("Dashboard running...")
         DashboardRunner(dashboard).run()
 
 

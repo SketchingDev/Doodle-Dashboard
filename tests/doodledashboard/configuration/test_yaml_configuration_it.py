@@ -1,10 +1,10 @@
 import unittest
 
-from doodledashboard.configuration.config import DashboardConfigReader
+from doodledashboard.configuration.config import DashboardConfigReader, FilterConfigCreator
 from doodledashboard.datafeeds.rss import RssFeedConfigCreator, RssFeed
 from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
 from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
-from doodledashboard.filters import FilterConfigCreator, MessageFilter
+from doodledashboard.filters.filter import MessageFilter
 from doodledashboard.handlers.handler import MessageHandlerConfigCreator
 
 

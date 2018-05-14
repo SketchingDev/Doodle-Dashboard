@@ -1,7 +1,8 @@
 import logging
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.filters import MessageMatchesRegexFilter, MessageContainsTextFilter
+from doodledashboard.filters.message_contains_text import MessageContainsTextFilter
+from doodledashboard.filters.message_matches_regex import MessageMatchesRegexFilter
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigCreator
 import urllib.request
 import tempfile

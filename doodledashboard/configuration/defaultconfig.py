@@ -4,7 +4,8 @@ from doodledashboard.datafeeds.datetime import DateTimeFeedConfigCreator
 from doodledashboard.datafeeds.rss import RssFeedConfigCreator
 from doodledashboard.datafeeds.slack import SlackRepositoryConfigCreator
 from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
-from doodledashboard.filters import MessageMatchesRegexTextFilterCreator, MessageContainsTextFilterCreator
+from doodledashboard.filters.message_contains_text import MessageContainsTextFilterCreator
+from doodledashboard.filters.message_matches_regex import MessageMatchesRegexTextFilterCreator
 from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader
 from doodledashboard.handlers.text.text import TextHandlerConfigCreator
 

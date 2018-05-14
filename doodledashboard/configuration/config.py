@@ -2,7 +2,6 @@ import yaml
 
 from doodledashboard.dashboard_runner import Notification, Dashboard
 
-
 class Creator:
     def __init__(self):
         self._successor = None
@@ -156,7 +155,7 @@ class DashboardConfigReader:
     def _extract_from_filter_chain(self, notification_element):
         # TODO: Fix issue with circular dependency that I get when this import is moved to the top
         # https://stackoverflow.com/questions/9252543/importerror-cannot-import-name-x
-        from doodledashboard.filters import MessageFilter
+        from doodledashboard.filters.filter import MessageFilter
 
         root_filter = MessageFilter()
 

@@ -32,7 +32,7 @@ class MessageModelEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class Repository:
+class DataFeed:
     def __init__(self):
         pass
 
@@ -40,7 +40,7 @@ class Repository:
         raise NotImplementedError("Implement this method")
 
 
-class RepositoryConfigCreator(Creator):
+class DataFeedConfigCreator(Creator):
     def __init__(self):
         Creator.__init__(self)
 

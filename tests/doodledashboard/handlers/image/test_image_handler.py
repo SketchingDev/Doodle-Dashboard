@@ -1,6 +1,6 @@
 import unittest
 
-from doodledashboard.datafeeds.repository import MessageModel
+from doodledashboard.datafeeds.datafeed import MessageModel
 from doodledashboard.filters.message_contains_text import MessageContainsTextFilter
 from doodledashboard.filters.message_matches_regex import MessageMatchesRegexFilter
 from doodledashboard.handlers.image.image import ImageHandler

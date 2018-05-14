@@ -10,7 +10,7 @@ from doodledashboard.configuration.config import DashboardConfigReader, \
     ValidateDashboard, InvalidConfigurationException
 from doodledashboard.configuration.defaultconfig import FullConfigCollection, DatafeedConfigCollection
 from doodledashboard.dashboard_runner import DashboardRunner
-from doodledashboard.datafeeds.repository import MessageModelEncoder
+from doodledashboard.datafeeds.datafeed import MessageModelEncoder
 
 
 @click.help_option("-h", "--help")

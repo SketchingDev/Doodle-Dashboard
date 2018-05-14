@@ -2,6 +2,7 @@ import yaml
 
 from doodledashboard.dashboard_runner import Notification, Dashboard
 
+
 class Creator:
     def __init__(self):
         self._successor = None
@@ -204,4 +205,3 @@ class InvalidConfigurationException(Exception):
 
     def __str__(self):
         return repr(self.value)
-

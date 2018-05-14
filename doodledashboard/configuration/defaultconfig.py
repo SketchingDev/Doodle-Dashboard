@@ -2,7 +2,7 @@ import pkgutil
 
 from doodledashboard.datafeeds.datetime import DateTimeFeedConfigCreator
 from doodledashboard.datafeeds.rss import RssFeedConfigCreator
-from doodledashboard.datafeeds.slack import SlackRepositoryConfigCreator
+from doodledashboard.datafeeds.slack import SlackDataFeedConfigCreator
 from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
 from doodledashboard.filters.message_contains_text import MessageContainsTextFilterCreator
 from doodledashboard.filters.message_matches_regex import MessageMatchesRegexTextFilterCreator
@@ -36,7 +36,7 @@ class FullConfigCollection:
     def _get_data_source_creators():
         return [
             RssFeedConfigCreator(),
-            SlackRepositoryConfigCreator(),
+            SlackDataFeedConfigCreator(),
             DateTimeFeedConfigCreator()
         ]
 
@@ -67,6 +67,6 @@ class DatafeedConfigCollection:
     def _get_data_source_creators():
         return [
             RssFeedConfigCreator(),
-            SlackRepositoryConfigCreator(),
+            SlackDataFeedConfigCreator(),
             DateTimeFeedConfigCreator()
         ]

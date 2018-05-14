@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from doodledashboard.datafeeds.repository import Repository, MessageModel, RepositoryConfigCreator
+from doodledashboard.datafeeds.datafeed import DataFeed, MessageModel, DataFeedConfigCreator
 
 
-class DateTimeFeed(Repository):
+class DateTimeFeed(DataFeed):
     def __init__(self):
-        Repository.__init__(self)
+        DataFeed.__init__(self)
 
     def get_latest_messages(self):
 
@@ -16,9 +16,9 @@ class DateTimeFeed(Repository):
         return "Date/Time (e.g. 2002-12-25T00:00)"
 
 
-class DateTimeFeedConfigCreator(RepositoryConfigCreator):
+class DateTimeFeedConfigCreator(DataFeedConfigCreator):
     def __init__(self):
-        RepositoryConfigCreator.__init__(self)
+        DataFeedConfigCreator.__init__(self)
 
     def creates_for_id(self, filter_id):
         return filter_id == "datetime"

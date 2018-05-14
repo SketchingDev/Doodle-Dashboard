@@ -1,14 +1,14 @@
 import feedparser
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.datafeeds.repository import Repository, MessageModel, RepositoryConfigCreator
+from doodledashboard.datafeeds.datafeed import DataFeed, MessageModel, DataFeedConfigCreator
 
 
-class RssFeed(Repository):
+class RssFeed(DataFeed):
     _COMMON_RSS_ITEM_FIELDS = ["title", "link", "description", "published", "id"]
 
     def __init__(self, url):
-        Repository.__init__(self)
+        DataFeed.__init__(self)
         self._feed_url = url
 
     def get_url(self):
@@ -31,9 +31,9 @@ class RssFeed(Repository):
         return MessageModel("\n".join(feed_fields), self)
 
 
-class RssFeedConfigCreator(RepositoryConfigCreator):
+class RssFeedConfigCreator(DataFeedConfigCreator):
     def __init__(self):
-        RepositoryConfigCreator.__init__(self)
+        DataFeedConfigCreator.__init__(self)
 
     def creates_for_id(self, filter_id):
         return filter_id == "rss"

@@ -3,16 +3,16 @@ import logging
 from requests import ConnectionError
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.datafeeds.repository import Repository, MessageModel, RepositoryConfigCreator
+from doodledashboard.datafeeds.datafeed import DataFeed, MessageModel, DataFeedConfigCreator
 
 from slackclient import SlackClient
 
 
-class SlackFeed(Repository):
+class SlackFeed(DataFeed):
     _channel = None
 
     def __init__(self, client, channel_name):
-        Repository.__init__(self)
+        DataFeed.__init__(self)
         self._client = client
         self._channel_name = channel_name
         self._logger = logging.getLogger("doodledashboard.SlackRepository")
@@ -104,9 +104,9 @@ class SlackFeed(Repository):
         return [e for e in events if "channel" in e and e["channel"] == channel["id"]]
 
 
-class SlackRepositoryConfigCreator(RepositoryConfigCreator):
+class SlackDataFeedConfigCreator(DataFeedConfigCreator):
     def __init__(self):
-        RepositoryConfigCreator.__init__(self)
+        DataFeedConfigCreator.__init__(self)
 
     def creates_for_id(self, filter_id):
         return filter_id == "slack"

@@ -60,6 +60,14 @@ class MissingRequiredOptionException(Exception):
 
 
 class DashboardConfigReader:
+    """
+    Validation
+    ---
+    There are two types of validation:
+    1. The definition of a filter, handler or display. When a ConfigCreator creates a section it will validate
+       the parameters being passed into that section i.e. passing an invalid regex into the regex filter.
+    2. Validation of the entire configuration i.e. is a display missing
+    """
     _FIVE_SECONDS = 5
 
     def __init__(self, config_creators=None):
@@ -91,6 +99,9 @@ class DashboardConfigReader:
     def read_yaml(self, config_yaml):
         config = yaml.safe_load(config_yaml)
 
+        if not config:
+            raise InvalidConfigurationException("Configuration file is empty")
+
         return Dashboard(
             self._extract_interval(config),
             self._extract_display(config),
@@ -110,8 +121,6 @@ class DashboardConfigReader:
         from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
 
         display = self._display_creator.create(config)
-        # if not display:
-        #     raise MissingConfigurationValueException("Missing display option")
         if display:
             return LoggingDisplayDecorator(display)
         else:
@@ -173,9 +182,27 @@ class DashboardConfigReader:
         return creation
 
 
-class MissingConfigurationValueException(Exception):
+class ValidateDashboard:
+
+    def validate(self, dashboard):
+        self._check_not_empty(dashboard)
+        self._check_has_display(dashboard)
+
+    @staticmethod
+    def _check_not_empty(dashboard):
+        if not dashboard:
+            raise InvalidConfigurationException("Configuration is empty")
+
+    @staticmethod
+    def _check_has_display(dashboard):
+        if not dashboard.get_display():
+            raise InvalidConfigurationException("No display defined. Check that the ID you provided is valid.")
+
+
+class InvalidConfigurationException(Exception):
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
         return repr(self.value)
+

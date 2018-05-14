@@ -14,22 +14,28 @@ class TestCliStart(unittest.TestCase):
     Click exception messages thrown by the program that aren"t written to its output stream via click.echo
     """
 
+    def test_empty_yaml_in_config_prints_error_message(self, time_sleep, itertools_cycle, dbm_open):
+        result = self._run_cli_with_config("")
+
+        self.assertIn("Configuration file is empty", result.output)
+        self.assertEqual(1, result.exit_code)
+
     def test_invalid_yaml_in_config_prints_error_message(self, time_sleep, itertools_cycle, dbm_open):
         result = self._run_cli_with_config(":")
 
-        self.assertIn("Error reading YAML in configuration file 'config.yml':", result.output)
+        self.assertIn("Error parsing configuration file 'config.yml':", result.output)
         self.assertEqual(1, result.exit_code)
 
-    # def test_invalid_value_in_config_prints_error_message(self, time_sleep, itertools_cycle, dbm_open):
-    #     result = self._run_cli_with_config("display: testing")
-    #
-    #     self.assertEqual((
-    #         "Missing value in your configuration:\n"
-    #         ""Missing display option"\n"
-    #         "Aborted!\n"),
-    #         result.output
-    #     )
-    #     self.assertEqual(1, result.exit_code)
+    def test_invalid_value_in_config_prints_error_message(self, time_sleep, itertools_cycle, dbm_open):
+        result = self._run_cli_with_config("display: testing")
+
+        self.assertEqual((
+            "Error reading configuration file 'config.yml':\n"
+            "'No display defined. Check that the ID you provided is valid.'\n"
+            "Aborted!\n"),
+            result.output
+        )
+        self.assertEqual(1, result.exit_code)
 
     def test_config_with_no_sources_nor_handlers_prints_info_about_none_being_loaded(self, time_sleep, itertools_cycle, dbm_open):
         result = self._run_cli_with_config("""

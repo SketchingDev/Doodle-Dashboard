@@ -6,7 +6,8 @@ import click
 from yaml import YAMLError
 
 from doodledashboard import __about__
-from doodledashboard.configuration.config import DashboardConfigReader, MissingConfigurationValueException
+from doodledashboard.configuration.config import DashboardConfigReader, \
+    ValidateDashboard, InvalidConfigurationException
 from doodledashboard.configuration.defaultconfig import FullConfigCollection, DatafeedConfigCollection
 from doodledashboard.dashboard_runner import DashboardRunner
 from doodledashboard.datafeeds.repository import MessageModelEncoder
@@ -33,7 +34,14 @@ def start(config, verbose):
         dashboard_config = DashboardConfigReader(FullConfigCollection(state_storage))
         dashboard = try_read_dashboard_config(dashboard_config, config)
 
+        try:
+            ValidateDashboard().validate(dashboard)
+        except InvalidConfigurationException as err:
+            click.echo("Error reading configuration file '%s':\n%s" % (config.name, err), err=True)
+            raise click.Abort()
+
         explain_dashboard(dashboard)
+
         click.echo("Dashboard running...")
         DashboardRunner(dashboard).run()
 
@@ -55,9 +63,9 @@ def try_read_dashboard_config(dashboard_config, config):
     try:
         return dashboard_config.read_yaml(config)
     except YAMLError as err:
-        click.echo("Error reading YAML in configuration file '%s':\n%s" % (config.name, err), err=True)
-    except MissingConfigurationValueException as err:
-        click.echo("Missing value in your configuration:\n%s" % err, err=True)
+        click.echo("Error parsing configuration file '%s':\n%s" % (config.name, err), err=True)
+    except InvalidConfigurationException:
+        click.echo("Configuration file is empty", err=True)
 
     raise click.Abort()
 
@@ -86,7 +94,6 @@ def explain_dashboard(dashboard):
     click.echo("%s notifications loaded" % len(notifications))
     for notification in notifications:
         click.echo(" - %s" % str(notification))
-
 
 if __name__ == "__main__":
     cli()

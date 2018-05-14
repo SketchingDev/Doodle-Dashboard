@@ -1,6 +1,7 @@
 import itertools
 import logging
 import time
+import click
 
 
 class Dashboard:
@@ -27,12 +28,15 @@ class Notification:
     def __init__(self, handler):
         self._handler = handler
         self._filter_chain = None
+        self._logger = logging.getLogger("doodledashboard")
 
     def set_filter_chain(self, filter_chain):
         self._filter_chain = filter_chain
 
     def handle_messages(self, display, messages):
         filtered_messages = self._filter_messages(messages)
+
+        self._logger.debug("Messages after filters: %s", [filtered_messages])
 
         self._handler.update(filtered_messages)
         self._handler.draw(display)
@@ -44,7 +48,7 @@ class Notification:
             return messages
 
     def __str__(self):
-        return f"Displays messages using: {str(self._handler)}"
+        return "Displays messages using: %s" % str(self._handler)
 
 
 class DashboardRunner:
@@ -59,7 +63,7 @@ class DashboardRunner:
             if self._is_at_beginning(notification):
                 self._logger.info("At beginning of notification cycle, will poll data sources")
                 messages = self._collect_all_messages(self._dashboard.get_data_feeds())
-                self._logger.info(f"{len(messages)} messages collected")
+                self._logger.info("%s messages collected" % len(messages))
 
             notification.handle_messages(self._dashboard.get_display(), messages)
             time.sleep(self._dashboard.get_interval())

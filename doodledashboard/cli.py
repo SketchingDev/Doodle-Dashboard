@@ -34,6 +34,7 @@ def start(config, verbose):
         dashboard = try_read_dashboard_config(dashboard_config, config)
 
         explain_dashboard(dashboard)
+        click.echo("Dashboard running...")
         DashboardRunner(dashboard).run()
 
 
@@ -54,9 +55,9 @@ def try_read_dashboard_config(dashboard_config, config):
     try:
         return dashboard_config.read_yaml(config)
     except YAMLError as err:
-        click.echo(f"Error reading YAML in configuration file '{config.name}':\n{err}", err=True)
+        click.echo("Error reading YAML in configuration file '%s':\n%s" % (config.name, err), err=True)
     except MissingConfigurationValueException as err:
-        click.echo(f"Missing value in your configuration:\n{err}", err=True)
+        click.echo("Missing value in your configuration:\n%s" % err, err=True)
 
     raise click.Abort()
 
@@ -71,20 +72,20 @@ def attach_logging(name):
 
 def explain_dashboard(dashboard):
     interval = dashboard.get_interval()
-    click.echo(f"Interval: {str(interval)}")
+    click.echo("Interval: %s" % str(interval))
 
     display = dashboard.get_display()
-    click.echo(f"Display loaded: {str(display)}")
+    click.echo("Display loaded: %s" % str(display))
 
     data_sources = dashboard.get_data_feeds()
-    click.echo(f"{len(data_sources)} data sources loaded")
+    click.echo("%s data sources loaded" % len(data_sources))
     for data_source in data_sources:
-        click.echo(f" - {str(data_source)}")
+        click.echo(" - %s" % str(data_source))
 
     notifications = dashboard.get_notifications()
-    click.echo(f"{len(notifications)} notifications loaded")
+    click.echo("%s notifications loaded" % len(notifications))
     for notification in notifications:
-        click.echo(f" - {str(notification)}")
+        click.echo(" - %s" % str(notification))
 
 
 if __name__ == "__main__":

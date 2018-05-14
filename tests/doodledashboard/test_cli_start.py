@@ -41,7 +41,8 @@ class TestCliStart(unittest.TestCase):
             "Interval: 10\n"
             "Display loaded: Console display\n"
             "0 data sources loaded\n"
-            "0 notifications loaded\n"),
+            "0 notifications loaded\n"
+            "Dashboard running...\n"),
             result.output
         )
         self.assertEqual(0, result.exit_code)
@@ -59,7 +60,8 @@ class TestCliStart(unittest.TestCase):
             "Display loaded: Console display\n"
             "1 data sources loaded\n"
             " - Date/Time (e.g. 2002-12-25T00:00)\n"
-            "0 notifications loaded\n"),
+            "0 notifications loaded\n"
+            "Dashboard running...\n"),
             result.output
         )
         self.assertEqual(0, result.exit_code)
@@ -78,7 +80,8 @@ class TestCliStart(unittest.TestCase):
             "Display loaded: Console display\n"
             "0 data sources loaded\n"
             "1 notifications loaded\n"
-            " - Displays messages using: Text handler\n\n"),
+            " - Displays messages using: Text handler\n"
+            "Dashboard running...\n\n"),
             result.output
         )
         self.assertEqual(0, result.exit_code)

@@ -1,3 +1,5 @@
+import logging
+
 from doodledashboard.configuration.config import MissingRequiredOptionException
 from doodledashboard.filters import MessageMatchesRegexFilter, MessageContainsTextFilter
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigCreator
@@ -28,12 +30,15 @@ class ImageHandler(MessageHandler):
         for image_filter in self._filtered_images:
             if image_filter["filter"].do_filter(messages):
                 self._chosen_image_path = image_filter["path"]
-                return
-
-        self._chosen_image_path = self._default_image_path
 
     def draw(self, display):
-        display.draw_image(self._chosen_image_path)
+        if self._chosen_image_path:
+            image = self._chosen_image_path
+        else:
+            image = self._default_image_path
+
+        if image:
+            display.draw_image(image)
 
     def get_filtered_images(self):
         return self._filtered_images
@@ -45,17 +50,19 @@ class ImageHandler(MessageHandler):
             return self._default_image_path
 
     def __str__(self):
-        return f"Image handler with {len(self._filtered_images)} images"
+        return "Image handler with %s images" % len(self._filtered_images)
 
 
 class FileDownloader:
 
     def __init__(self):
         self._downloaded_files = []
+        self._logger = logging.getLogger("doodledashboard")
 
     def download(self, url):
-        fd, path = tempfile.mkstemp(f"-doodledashboard-{self._extract_filename(url)}")
+        fd, path = tempfile.mkstemp("-doodledashboard-%s" % self._extract_filename(url))
 
+        logging.info("Downloading %s to %s", [url, path])
         with urllib.request.urlopen(url) as response, os.fdopen(fd, "wb") as out_file:
             out_file.write(response.read())
 

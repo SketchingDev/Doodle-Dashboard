@@ -19,7 +19,7 @@ class RssFeed(Repository):
         return [self._convert_to_message(item) for item in feed.entries]
 
     def __str__(self):
-        return f"RSS feed for {self._feed_url}"
+        return "RSS feed for %s" % self._feed_url
 
     def _convert_to_message(self, feed_item):
         feed_fields = []

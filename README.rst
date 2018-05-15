@@ -9,7 +9,7 @@ Doodle-Dashboard: Simple dashboards for all!
 
 ---------------
 
-**Doodle-Dashboard** is used to create fun little dashboards that display useful information from multiple sources, like
+**Doodle-Dashboard** is used to create little dashboards that display useful information from multiple sources, like
 Tweets from your favourite Twitterers, weather reports for your local area or breaking news.
 
 .. image:: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/docs/images/flow-diagram.png
@@ -31,23 +31,25 @@ Getting started
 
 3. Start the dashboard::
 
-    $ doodledashboard <ABSOLUTE PATH TO YAML CONFIGURATION>
+    $ doodledashboard start <PATH TO CONFIGURATION>
 
 Development
 -----------
+
+These steps assume that you're using virtualenv.
 
 1. Clone the repository::
 
     $ git clone https://github.com/SketchingDev/Doodle-Dashboard.git
     $ cd doodle-dashboard
 
-2. Install project dependencies::
+2. Prepare project dependencies::
 
     $ make dev
-
-3. See help::
-
     $ export PYTHONPATH=`pwd`
+
+3. See usage help::
+
     $ python doodledashboard/cli.py
 
 ImportError: No module named
@@ -60,3 +62,4 @@ in the doodle dashboard classes from your local pip packages.
 Remove the library with::
 
     $ sudo rm -rf /Library/Python/3.6/site-packages/doodledashboard/
+

@@ -1,4 +1,4 @@
-from doodledashboard.configuration.config import Creator
+from doodledashboard.configuration.config import ConfigSection
 
 
 class MessageHandler:
@@ -33,7 +33,7 @@ class MessageHandler:
         raise NotImplementedError("Implement this method")
 
 
-class MessageHandlerConfigCreator(Creator):
+class MessageHandlerConfigSection(ConfigSection):
     """
     Abstract class for creating a MessageHandler from a dictionary structured like so:
 
@@ -43,7 +43,7 @@ class MessageHandlerConfigCreator(Creator):
     """
 
     def __init__(self, key_value_store):
-        Creator.__init__(self)
+        ConfigSection.__init__(self)
         self._key_value_store = key_value_store
 
     def creates_for_id(self, filter_id):

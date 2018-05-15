@@ -1,12 +1,12 @@
 import re
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.filters.filter import MessageFilter, FilterConfigCreator
+from doodledashboard.filters.filter import TextEntityFilter, FilterConfigSection
 
 
-class MessageMatchesRegexFilter(MessageFilter):
+class MatchesRegexFilter(TextEntityFilter):
     def __init__(self, regex):
-        MessageFilter.__init__(self)
+        TextEntityFilter.__init__(self)
         self._regex = re.compile(regex, re.IGNORECASE)
 
     def do_filter(self, messages):
@@ -16,9 +16,9 @@ class MessageMatchesRegexFilter(MessageFilter):
         return self._regex.pattern
 
 
-class MessageMatchesRegexTextFilterCreator(FilterConfigCreator):
+class MatchesRegexFilterSection(FilterConfigSection):
     def __init__(self):
-        FilterConfigCreator.__init__(self)
+        FilterConfigSection.__init__(self)
 
     def creates_for_id(self, filter_id):
         return filter_id == "message-matches-regex"
@@ -27,4 +27,4 @@ class MessageMatchesRegexTextFilterCreator(FilterConfigCreator):
         if "pattern" not in config_section:
             raise MissingRequiredOptionException("Expected 'pattern' option to exist")
 
-        return MessageMatchesRegexFilter(str(config_section["pattern"]))
+        return MatchesRegexFilter(str(config_section["pattern"]))

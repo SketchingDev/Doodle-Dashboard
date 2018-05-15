@@ -86,7 +86,7 @@ class TestCliStart(unittest.TestCase):
             "Display loaded: Console display\n"
             "0 data sources loaded\n"
             "1 notifications loaded\n"
-            " - Displays messages using: Text handler\n"
+            " - Displays entities using: Text handler\n"
             "Dashboard running...\n\n"),
             result.output
         )

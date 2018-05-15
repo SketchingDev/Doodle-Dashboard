@@ -1,6 +1,6 @@
 import click
 
-from doodledashboard.displays.display import DisplayConfigCreator, Display
+from doodledashboard.displays.display import DisplayConfigSection, Display
 
 
 class ConsoleDisplay(Display):
@@ -26,9 +26,9 @@ class ConsoleDisplay(Display):
         return "Console display"
 
 
-class ConsoleDisplayConfigCreator(DisplayConfigCreator):
+class ConsoleDisplayConfigCreator(DisplayConfigSection):
     def __init__(self):
-        DisplayConfigCreator.__init__(self)
+        DisplayConfigSection.__init__(self)
 
     def creates_for_id(self, display_id):
         return display_id == "console"

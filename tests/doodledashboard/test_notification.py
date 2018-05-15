@@ -15,7 +15,7 @@ class TestNotification(unittest.TestCase):
         notification = Notification(Mock())
         notification.set_filter_chain(filter_chain)
 
-        notification.handle_messages(Mock(), messages)
+        notification.handle_entities(Mock(), messages)
 
         filter_chain.filter.assert_called_with(messages)
 
@@ -29,7 +29,7 @@ class TestNotification(unittest.TestCase):
 
         notification = Notification(handler)
         notification.set_filter_chain(filter_chain)
-        notification.handle_messages(Mock(), messages)
+        notification.handle_entities(Mock(), messages)
 
         handler.update.assert_called_with(messages)
 
@@ -39,7 +39,7 @@ class TestNotification(unittest.TestCase):
         handler = Mock()
 
         notification = Notification(handler)
-        notification.handle_messages(Mock(), messages)
+        notification.handle_entities(Mock(), messages)
 
         handler.update.assert_called_with(messages)
 
@@ -48,7 +48,7 @@ class TestNotification(unittest.TestCase):
         display = Mock()
 
         notification = Notification(handler)
-        notification.handle_messages(display, [])
+        notification.handle_entities(display, [])
 
         handler.draw.assert_called_with(display)
 

@@ -3,7 +3,7 @@ import yaml
 from doodledashboard.dashboard_runner import Notification, Dashboard
 
 
-class Creator:
+class ConfigSection:
     def __init__(self):
         self._successor = None
 
@@ -28,8 +28,7 @@ class Creator:
             return None
 
 
-class RootCreator(Creator):
-
+class RootConfigSection(ConfigSection):
     def can_create(self, config_section):
         return False
 
@@ -37,9 +36,9 @@ class RootCreator(Creator):
         pass
 
 
-class FilterConfigCreator(Creator):
+class FilterConfigSection(ConfigSection):
     def __init__(self):
-        Creator.__init__(self)
+        ConfigSection.__init__(self)
 
     def creates_for_id(self, filter_id):
         raise NotImplementedError("Implement this method")
@@ -71,10 +70,10 @@ class DashboardConfigReader:
     _FIVE_SECONDS = 5
 
     def __init__(self, config_creators=None):
-        self._filter_creator = RootCreator()
-        self._handler_creator = RootCreator()
-        self._data_feed_creator = RootCreator()
-        self._display_creator = RootCreator()
+        self._filter_creator = RootConfigSection()
+        self._handler_creator = RootConfigSection()
+        self._data_feed_creator = RootConfigSection()
+        self._display_creator = RootConfigSection()
 
         if config_creators:
             config_creators.configure(self)
@@ -156,9 +155,9 @@ class DashboardConfigReader:
     def _extract_from_filter_chain(self, notification_element):
         # TODO: Fix issue with circular dependency that I get when this import is moved to the top
         # https://stackoverflow.com/questions/9252543/importerror-cannot-import-name-x
-        from doodledashboard.filters.filter import MessageFilter
+        from doodledashboard.filters.filter import TextEntityFilter
 
-        root_filter = MessageFilter()
+        root_filter = TextEntityFilter()
 
         # FilterChainConfigSection
         if "filter-chain" in notification_element:

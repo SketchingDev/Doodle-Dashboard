@@ -1,9 +1,9 @@
 import json
 
-from doodledashboard.configuration.config import Creator
+from doodledashboard.configuration.config import ConfigSection
 
 
-class TextData:
+class TextEntity:
 
     def __init__(self, text, source=None):
         """
@@ -21,9 +21,9 @@ class TextData:
         return self._text
 
 
-class MessageModelEncoder(json.JSONEncoder):
+class TextEntityJsonEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, TextData):
+        if isinstance(obj, TextEntity):
             return {
                 "text": obj.get_text(),
                 "source": str(obj.get_source_name())
@@ -36,13 +36,13 @@ class DataFeed:
     def __init__(self):
         pass
 
-    def get_latest_messages(self):
+    def get_latest_entities(self):
         raise NotImplementedError("Implement this method")
 
 
-class DataFeedConfigCreator(Creator):
+class DataFeedConfigSection(ConfigSection):
     def __init__(self):
-        Creator.__init__(self)
+        ConfigSection.__init__(self)
 
     def creates_for_id(self, filter_id):
         raise NotImplementedError("Implement this method")

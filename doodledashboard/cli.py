@@ -10,7 +10,7 @@ from doodledashboard.configuration.config import DashboardConfigReader, \
     ValidateDashboard, InvalidConfigurationException
 from doodledashboard.configuration.defaultconfig import FullConfigCollection, DatafeedConfigCollection
 from doodledashboard.dashboard_runner import DashboardRunner
-from doodledashboard.datafeeds.datafeed import MessageModelEncoder
+from doodledashboard.datafeeds.datafeed import TextEntityJsonEncoder
 
 
 @click.help_option("-h", "--help")
@@ -55,8 +55,8 @@ def view(type, config):
     dashboard_config = DashboardConfigReader(DatafeedConfigCollection())
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
-    datafeed_responses = [feed.get_latest_messages() for feed in dashboard.get_data_feeds()]
-    click.echo(json.dumps(datafeed_responses, sort_keys=True, indent=4, cls=MessageModelEncoder))
+    datafeed_responses = [feed.get_latest_entities() for feed in dashboard.get_data_feeds()]
+    click.echo(json.dumps(datafeed_responses, sort_keys=True, indent=4, cls=TextEntityJsonEncoder))
 
 
 def try_read_dashboard_config(dashboard_config, config):

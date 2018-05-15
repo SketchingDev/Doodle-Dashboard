@@ -1,9 +1,9 @@
 import logging
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.filters.message_contains_text import MessageContainsTextFilter
-from doodledashboard.filters.message_matches_regex import MessageMatchesRegexFilter
-from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigCreator
+from doodledashboard.filters.contains_text import ContainsTextFilter
+from doodledashboard.filters.matches_regex import MatchesRegexFilter
+from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigSection
 import urllib.request
 import tempfile
 from urllib.parse import urlparse
@@ -80,9 +80,9 @@ class FileDownloader:
         return os.path.basename(parsed_url.path)
 
 
-class ImageMessageHandlerConfigCreator(MessageHandlerConfigCreator):
+class ImageMessageHandlerConfigCreator(MessageHandlerConfigSection):
     def __init__(self, key_value_storage, file_downloader):
-        MessageHandlerConfigCreator.__init__(self, key_value_storage)
+        MessageHandlerConfigSection.__init__(self, key_value_storage)
         self._file_downloader = file_downloader
 
     def creates_for_id(self, filter_id):
@@ -126,6 +126,6 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigCreator):
             raise MissingRequiredOptionException("Expected either 'pattern' or 'contains' option, but not both")
 
         if pattern_exists:
-            return MessageMatchesRegexFilter(image_config_section["pattern"])
+            return MatchesRegexFilter(image_config_section["pattern"])
         else:
-            return MessageContainsTextFilter(image_config_section["contains"])
+            return ContainsTextFilter(image_config_section["contains"])

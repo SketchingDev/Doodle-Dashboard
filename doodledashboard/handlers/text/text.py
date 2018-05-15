@@ -1,4 +1,4 @@
-from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigCreator
+from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigSection
 
 
 class TextHandler(MessageHandler):
@@ -18,9 +18,9 @@ class TextHandler(MessageHandler):
         return "Text handler"
 
 
-class TextHandlerConfigCreator(MessageHandlerConfigCreator):
+class TextHandlerConfigCreator(MessageHandlerConfigSection):
     def __init__(self, key_value_storage):
-        MessageHandlerConfigCreator.__init__(self, key_value_storage)
+        MessageHandlerConfigSection.__init__(self, key_value_storage)
 
     def creates_for_id(self, filter_id):
         return filter_id == "text-handler"

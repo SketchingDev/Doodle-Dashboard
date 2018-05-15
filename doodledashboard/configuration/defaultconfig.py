@@ -1,11 +1,11 @@
 import pkgutil
 
-from doodledashboard.datafeeds.datetime import DateTimeFeedConfigCreator
-from doodledashboard.datafeeds.rss import RssFeedConfigCreator
-from doodledashboard.datafeeds.slack import SlackDataFeedConfigCreator
+from doodledashboard.datafeeds.datetime import DateTimeFeedSection
+from doodledashboard.datafeeds.rss import RssFeedSection
+from doodledashboard.datafeeds.slack import SlackFeedSection
 from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
-from doodledashboard.filters.message_contains_text import MessageContainsTextFilterCreator
-from doodledashboard.filters.message_matches_regex import MessageMatchesRegexTextFilterCreator
+from doodledashboard.filters.contains_text import ContainsTextFilterSection
+from doodledashboard.filters.matches_regex import MatchesRegexFilterSection
 from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader
 from doodledashboard.handlers.text.text import TextHandlerConfigCreator
 
@@ -35,9 +35,9 @@ class FullConfigCollection:
     @staticmethod
     def _get_data_source_creators():
         return [
-            RssFeedConfigCreator(),
-            SlackDataFeedConfigCreator(),
-            DateTimeFeedConfigCreator()
+            RssFeedSection(),
+            SlackFeedSection(),
+            DateTimeFeedSection()
         ]
 
     @staticmethod
@@ -50,8 +50,8 @@ class FullConfigCollection:
     @staticmethod
     def _get_filter_creators():
         return [
-            MessageMatchesRegexTextFilterCreator(),
-            MessageContainsTextFilterCreator()
+            MatchesRegexFilterSection(),
+            ContainsTextFilterSection()
         ]
 
 
@@ -66,7 +66,7 @@ class DatafeedConfigCollection:
     @staticmethod
     def _get_data_source_creators():
         return [
-            RssFeedConfigCreator(),
-            SlackDataFeedConfigCreator(),
-            DateTimeFeedConfigCreator()
+            RssFeedSection(),
+            SlackFeedSection(),
+            DateTimeFeedSection()
         ]

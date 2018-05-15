@@ -3,7 +3,7 @@ import logging
 from requests import ConnectionError
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.datafeeds.datafeed import DataFeed, TextData, DataFeedConfigCreator
+from doodledashboard.datafeeds.datafeed import DataFeed, TextEntity, DataFeedConfigSection
 
 from slackclient import SlackClient
 
@@ -19,7 +19,7 @@ class SlackFeed(DataFeed):
         self._connected = False
         self._connected_previously = False
 
-    def get_latest_messages(self):
+    def get_latest_entities(self):
         if not self._connected:
             self._connected = self._try_connect()
 
@@ -43,7 +43,7 @@ class SlackFeed(DataFeed):
         events = SlackFeed._filter_events_by_type(events, "message")
         events = SlackFeed._filter_events_with_text(events)
 
-        return [TextData(event["text"], self) for event in events]
+        return [TextEntity(event["text"], self) for event in events]
 
     def _test_connection(self):
         connected = False
@@ -104,9 +104,9 @@ class SlackFeed(DataFeed):
         return [e for e in events if "channel" in e and e["channel"] == channel["id"]]
 
 
-class SlackDataFeedConfigCreator(DataFeedConfigCreator):
+class SlackFeedSection(DataFeedConfigSection):
     def __init__(self):
-        DataFeedConfigCreator.__init__(self)
+        DataFeedConfigSection.__init__(self)
 
     def creates_for_id(self, filter_id):
         return filter_id == "slack"

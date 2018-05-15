@@ -1,11 +1,11 @@
 import unittest
 
-from doodledashboard.configuration.config import DashboardConfigReader, FilterConfigCreator
-from doodledashboard.datafeeds.rss import RssFeedConfigCreator, RssFeed
+from doodledashboard.configuration.config import DashboardConfigReader, FilterConfigSection
+from doodledashboard.datafeeds.rss import RssFeedSection, RssFeed
 from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
 from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
-from doodledashboard.filters.filter import MessageFilter
-from doodledashboard.handlers.handler import MessageHandlerConfigCreator
+from doodledashboard.filters.filter import TextEntityFilter
+from doodledashboard.handlers.handler import MessageHandlerConfigSection
 
 
 class TestYamlConfigurationIT(unittest.TestCase):
@@ -45,7 +45,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
     def test_data_source_created_from_yaml(self):
         config_reader = DashboardConfigReader()
         config_reader.add_display_creators([ConsoleDisplayConfigCreator()])
-        config_reader.add_data_source_creators([RssFeedConfigCreator()])
+        config_reader.add_data_source_creators([RssFeedSection()])
 
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
@@ -90,11 +90,11 @@ class TestYamlConfigurationIT(unittest.TestCase):
         self.assertEqual("Hello World", configs[0]["text"])
 
 
-class DummyHandlerConfigCreator(MessageHandlerConfigCreator):
+class DummyHandlerConfigCreator(MessageHandlerConfigSection):
     _DUMMY_HANDLER = True
 
     def __init__(self, key_value_storage):
-        MessageHandlerConfigCreator.__init__(self, key_value_storage)
+        MessageHandlerConfigSection.__init__(self, key_value_storage)
         self._configs_passed_in = []
 
     def creates_for_id(self, filter_id):
@@ -108,11 +108,11 @@ class DummyHandlerConfigCreator(MessageHandlerConfigCreator):
         return self._configs_passed_in
 
 
-class DummyFilterCreator(FilterConfigCreator):
-    _DUMMY_FILTER = MessageFilter()
+class DummyFilterCreator(FilterConfigSection):
+    _DUMMY_FILTER = TextEntityFilter()
 
     def __init__(self):
-        FilterConfigCreator.__init__(self)
+        FilterConfigSection.__init__(self)
         self._configs_passed_in = []
 
     def creates_for_id(self, filter_id):

@@ -2,14 +2,14 @@ import unittest
 
 from mock import Mock
 
-from doodledashboard.filters.message_matches_regex import MessageMatchesRegexFilter
+from doodledashboard.filters.matches_regex import MatchesRegexFilter
 
 
 class TestMessageContainsTextFilter(unittest.TestCase):
 
     def test_regex_matches_single_message(self):
         message = TestMessageContainsTextFilter.create_mock_message_with_text('test1 test2')
-        filtered_messages = MessageMatchesRegexFilter('test1|test3').filter([message])
+        filtered_messages = MatchesRegexFilter('test1|test3').filter([message])
 
         self.assertEqual(1, len(filtered_messages))
 
@@ -17,14 +17,14 @@ class TestMessageContainsTextFilter(unittest.TestCase):
         message_1 = TestMessageContainsTextFilter.create_mock_message_with_text('test1')
         message_2 = TestMessageContainsTextFilter.create_mock_message_with_text('test2')
 
-        filtered_messages = MessageMatchesRegexFilter('test1|test3').filter([message_1, message_2])
+        filtered_messages = MatchesRegexFilter('test1|test3').filter([message_1, message_2])
 
         self.assertEqual(1, len(filtered_messages))
         self.assertIn(message_1, filtered_messages)
 
     def test_regex_does_not_match(self):
         message = TestMessageContainsTextFilter.create_mock_message_with_text('test1 test2')
-        filtered_messages = MessageMatchesRegexFilter('test3').filter([message])
+        filtered_messages = MatchesRegexFilter('test3').filter([message])
 
         self.assertEqual(0, len(filtered_messages))
 

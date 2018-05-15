@@ -1,8 +1,8 @@
 import unittest
 
-from doodledashboard.datafeeds.datafeed import TextData
-from doodledashboard.filters.message_contains_text import MessageContainsTextFilter
-from doodledashboard.filters.message_matches_regex import MessageMatchesRegexFilter
+from doodledashboard.datafeeds.datafeed import TextEntity
+from doodledashboard.filters.contains_text import ContainsTextFilter
+from doodledashboard.filters.matches_regex import MatchesRegexFilter
 from doodledashboard.handlers.image.image import ImageHandler
 
 
@@ -14,7 +14,7 @@ class TestImageHandler(unittest.TestCase):
 
     def test_image_handler_update_works_when_no_image_filters(self):
         handler = ImageHandler({})
-        handler.update([TextData(''), TextData('')])
+        handler.update([TextEntity(''), TextEntity('')])
         self.assertIsNone(handler.get_image())
 
     def test_get_image_returns_default_image_when_no_filters_set(self):
@@ -25,27 +25,27 @@ class TestImageHandler(unittest.TestCase):
     def test_get_image_returns_default_image_when_no_messages_match(self):
         handler = ImageHandler({})
         handler.add_image_filter('/tmp/default.png')
-        handler.update([TextData('')])
+        handler.update([TextEntity('')])
 
         self.assertEqual('/tmp/default.png', handler.get_image())
 
     def test_get_image_returns_correct_url_for_filtered_messages(self):
         handler = ImageHandler({})
-        handler.add_image_filter('/tmp/happy.png', MessageContainsTextFilter('123'))
-        handler.add_image_filter('/tmp/sad.png', MessageMatchesRegexFilter('[4-6]+'))
+        handler.add_image_filter('/tmp/happy.png', ContainsTextFilter('123'))
+        handler.add_image_filter('/tmp/sad.png', MatchesRegexFilter('[4-6]+'))
 
-        handler.update([TextData('123')])
+        handler.update([TextEntity('123')])
         self.assertEqual('/tmp/happy.png', handler.get_image())
 
-        handler.update([TextData('456'), TextData('789')])
+        handler.update([TextEntity('456'), TextEntity('789')])
         self.assertEqual('/tmp/sad.png', handler.get_image())
 
     def test_get_image_returns_previous_image_when_no_messages_match(self):
         handler = ImageHandler({})
-        handler.add_image_filter('/tmp/happy.png', MessageContainsTextFilter('123'))
+        handler.add_image_filter('/tmp/happy.png', ContainsTextFilter('123'))
         handler.add_image_filter('/tmp/default.png')
 
-        handler.update([TextData('123')])
+        handler.update([TextEntity('123')])
         self.assertEqual('/tmp/happy.png', handler.get_image())
 
         handler.update([])

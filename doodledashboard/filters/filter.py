@@ -1,7 +1,7 @@
-from doodledashboard.configuration.config import Creator
+from doodledashboard.configuration.config import ConfigSection
 
 
-class MessageFilter:
+class TextEntityFilter:
     def __init__(self):
         self._successor = None
 
@@ -23,9 +23,9 @@ class MessageFilter:
             return filtered_messages
 
 
-class FilterConfigCreator(Creator):
+class FilterConfigSection(ConfigSection):
     def __init__(self):
-        Creator.__init__(self)
+        ConfigSection.__init__(self)
 
     def creates_for_id(self, filter_id):
         raise NotImplementedError("Implement this method")

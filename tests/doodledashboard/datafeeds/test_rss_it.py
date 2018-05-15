@@ -40,7 +40,7 @@ class TestRssFeedIT(unittest.TestCase):
         self.http_server.serve_content(feed)
 
         repo = RssFeed(self.http_server.url)
-        messages = repo.get_latest_messages()
+        messages = repo.get_latest_entities()
 
         self.assertEqual(2, len(messages))
         self.assertMultiLineEqual("Dummy Item 1\nhttps://dummy-link/1\nDesc for 1", messages[0].get_text())

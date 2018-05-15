@@ -1,4 +1,4 @@
-from doodledashboard.configuration.config import Creator
+from doodledashboard.configuration.config import ConfigSection
 
 
 class Display:
@@ -20,9 +20,9 @@ class Display:
         raise NotImplementedError("Implement this method")
 
 
-class DisplayConfigCreator(Creator):
+class DisplayConfigSection(ConfigSection):
     def __init__(self):
-        Creator.__init__(self)
+        ConfigSection.__init__(self)
 
     def creates_for_id(self, filter_id):
         raise NotImplementedError("Implement this method")

@@ -1,7 +1,6 @@
 import itertools
 import logging
 import time
-import click
 
 
 class Dashboard:
@@ -33,22 +32,23 @@ class Notification:
     def set_filter_chain(self, filter_chain):
         self._filter_chain = filter_chain
 
-    def handle_messages(self, display, messages):
-        filtered_messages = self._filter_messages(messages)
+    def handle_entities(self, display, messages):
+        filtered_entities = self._filter_entities(messages)
 
-        self._logger.debug("Messages after filters: %s", [filtered_messages])
+        self._logger.debug("Entities before filters: %s", [messages])
+        self._logger.debug("Entities after filters: %s", [filtered_entities])
 
-        self._handler.update(filtered_messages)
+        self._handler.update(filtered_entities)
         self._handler.draw(display)
 
-    def _filter_messages(self, messages):
+    def _filter_entities(self, entities):
         if self._filter_chain:
-            return self._filter_chain.filter(messages)
+            return self._filter_chain.filter(entities)
         else:
-            return messages
+            return entities
 
     def __str__(self):
-        return "Displays messages using: %s" % str(self._handler)
+        return "Displays entities using: %s" % str(self._handler)
 
 
 class DashboardRunner:
@@ -57,24 +57,24 @@ class DashboardRunner:
         self._dashboard = dashboard
 
     def run(self):
-        messages = []
+        entities = []
         for notification in itertools.cycle(self._dashboard.get_notifications()):
 
             if self._is_at_beginning(notification):
                 self._logger.info("At beginning of notification cycle, will poll data sources")
-                messages = self._collect_all_messages(self._dashboard.get_data_feeds())
-                self._logger.info("%s messages collected" % len(messages))
+                entities = self._collect_all_entities(self._dashboard.get_data_feeds())
+                self._logger.info("%s entities collected" % len(entities))
 
-            notification.handle_messages(self._dashboard.get_display(), messages)
+            notification.handle_entities(self._dashboard.get_display(), entities)
             time.sleep(self._dashboard.get_interval())
 
     def _is_at_beginning(self, notification):
         return notification is self._dashboard.get_notifications()[0]
 
     @staticmethod
-    def _collect_all_messages(repositories):
-        messages = []
+    def _collect_all_entities(repositories):
+        entities = []
         for repository in repositories:
-            messages += repository.get_latest_messages()
+            entities += repository.get_latest_entities()
 
-        return messages
+        return entities

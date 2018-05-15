@@ -5,10 +5,14 @@ from doodledashboard.configuration.config import ConfigSection
 
 class TextEntity:
 
+    """
+    Represents a single textual entity from a data feed.
+    """
+
     def __init__(self, text, source=None):
         """
-        :param text: Text of the message
-        :param source: Source of the message, which is converted to a string via `str()` to produce the source name
+        :param text: Entity's text
+        :param source: Source of the entity, which is converted to a string via `str()` to produce the source name
         """
 
         self._text = text

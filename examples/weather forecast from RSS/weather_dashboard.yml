@@ -1,0 +1,22 @@
+interval: 5
+display: console
+
+data-feeds:
+  - source: rss
+    url: https://weather-broker-cdn.api.bbci.co.uk/en/observation/rss/2643743
+
+notifications:
+  - title: Display weather
+    handler: image-handler
+    default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/handlers/weather/rain.bmp
+    images:
+      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/handlers/weather/rain.bmp
+        contains: rain
+      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/handlers/weather/storm.bmp
+        contains: storm
+      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/handlers/weather/sun.bmp
+        contains: sun
+    filter-chain:
+      - description: Keep messages with forecast
+        type: message-matches-regex
+        pattern: (rain|storm|sun)

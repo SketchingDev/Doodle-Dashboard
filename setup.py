@@ -20,7 +20,7 @@ setup(
     long_description=long_description,
     url="https://github.com/SketchingDev/Doodle-Dashboard",
     license="MIT",
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests', 'examples']),
     install_requires=[
         "requests",
         "slackclient",

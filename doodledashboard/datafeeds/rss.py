@@ -1,7 +1,7 @@
 import feedparser
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.datafeeds.datafeed import DataFeed, MessageModel, DataFeedConfigCreator
+from doodledashboard.datafeeds.datafeed import DataFeed, TextData, DataFeedConfigCreator
 
 
 class RssFeed(DataFeed):
@@ -28,7 +28,7 @@ class RssFeed(DataFeed):
             if field in feed_item:
                 feed_fields.append(feed_item[field])
 
-        return MessageModel("\n".join(feed_fields), self)
+        return TextData("\n".join(feed_fields), self)
 
 
 class RssFeedConfigCreator(DataFeedConfigCreator):

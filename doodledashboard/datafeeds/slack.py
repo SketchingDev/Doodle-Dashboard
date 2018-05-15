@@ -3,7 +3,7 @@ import logging
 from requests import ConnectionError
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.datafeeds.datafeed import DataFeed, MessageModel, DataFeedConfigCreator
+from doodledashboard.datafeeds.datafeed import DataFeed, TextData, DataFeedConfigCreator
 
 from slackclient import SlackClient
 
@@ -43,7 +43,7 @@ class SlackFeed(DataFeed):
         events = SlackFeed._filter_events_by_type(events, "message")
         events = SlackFeed._filter_events_with_text(events)
 
-        return [MessageModel(event["text"], self) for event in events]
+        return [TextData(event["text"], self) for event in events]
 
     def _test_connection(self):
         connected = False

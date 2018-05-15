@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from doodledashboard.datafeeds.datafeed import DataFeed, MessageModel, DataFeedConfigCreator
+from doodledashboard.datafeeds.datafeed import DataFeed, TextData, DataFeedConfigCreator
 
 
 class DateTimeFeed(DataFeed):
@@ -10,7 +10,7 @@ class DateTimeFeed(DataFeed):
     def get_latest_messages(self):
 
         date_time = datetime.now().isoformat(timespec="minutes")
-        return [MessageModel(str(date_time), self)]
+        return [TextData(str(date_time), self)]
 
     def __str__(self):
         return "Date/Time (e.g. 2002-12-25T00:00)"

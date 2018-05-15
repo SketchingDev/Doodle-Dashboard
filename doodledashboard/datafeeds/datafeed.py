@@ -3,7 +3,7 @@ import json
 from doodledashboard.configuration.config import Creator
 
 
-class MessageModel:
+class TextData:
 
     def __init__(self, text, source=None):
         """
@@ -23,7 +23,7 @@ class MessageModel:
 
 class MessageModelEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, MessageModel):
+        if isinstance(obj, TextData):
             return {
                 "text": obj.get_text(),
                 "source": str(obj.get_source_name())

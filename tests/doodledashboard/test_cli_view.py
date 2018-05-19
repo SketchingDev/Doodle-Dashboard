@@ -60,11 +60,11 @@ class TestCliView(unittest.TestCase):
             "[\n"
             "    [\n"
             "        {\n"
-            f'            "source": "RSS feed for {self.http_server.url}",\n'
+            '            "source": "RSS feed for %s",\n'
             '            "text": "Dummy Item 1\\nhttps://dummy-link/1\\nDesc for 1"\n'
             "        }\n"
             "    ]\n"
-            "]\n"),
+            "]\n") % self.http_server.url,
             result.output
         )
         self.assertEqual(0, result.exit_code)
@@ -102,15 +102,15 @@ class TestCliView(unittest.TestCase):
             "[\n"
             "    [\n"
             "        {\n"
-            f'            "source": "RSS feed for {self.http_server.url}",\n'
+            '            "source": "RSS feed for %s",\n'
             '            "text": "Dummy Item 1\\nhttps://dummy-link/1\\nDesc for 1"\n'
             "        },\n"
             "        {\n"
-            f'            "source": "RSS feed for {self.http_server.url}",\n'
+            '            "source": "RSS feed for %s",\n'
             '            "text": "Dummy Item 2\\nhttps://dummy-link/2\\nDesc for 2"\n'
             "        }\n"
             "    ]\n"
-            "]\n"),
+            "]\n") % (self.http_server.url, self.http_server.url),
             result.output
         )
         self.assertEqual(0, result.exit_code)

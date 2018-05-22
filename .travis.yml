@@ -1,9 +1,10 @@
+sudo: false
+
 language: python
 
 python:
-  - "3.6"
+  - "3.4"
 
-install:
-  - make dev
+install: pip install tox-travis
 
-script: make test
+script: tox

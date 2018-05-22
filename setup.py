@@ -28,10 +28,11 @@ setup(
         "pyyaml",
         "click"
     ],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     entry_points={
         "console_scripts": [
             "doodledashboard=doodledashboard.cli:main"
-            "doodle-dashboard=doodledashboard.cli:main"
         ]
     },
     classifiers=[

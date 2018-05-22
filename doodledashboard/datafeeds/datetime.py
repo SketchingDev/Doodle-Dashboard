@@ -9,11 +9,11 @@ class DateTimeFeed(DataFeed):
 
     def get_latest_entities(self):
 
-        date_time = datetime.now().isoformat(timespec="minutes")
-        return [TextEntity(str(date_time), self)]
+        date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+        return [TextEntity(date_time, self)]
 
     def __str__(self):
-        return "Date/Time (e.g. 2002-12-25T00:00)"
+        return "Date/Time (e.g. 2002-12-25 00:00)"
 
 
 class DateTimeFeedSection(DataFeedConfigSection):

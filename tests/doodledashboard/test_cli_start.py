@@ -65,7 +65,7 @@ class TestCliStart(unittest.TestCase):
             "Interval: 20\n"
             "Display loaded: Console display\n"
             "1 data sources loaded\n"
-            " - Date/Time (e.g. 2002-12-25T00:00)\n"
+            " - Date/Time (e.g. 2002-12-25 00:00)\n"
             "0 notifications loaded\n"
             "Dashboard running...\n"),
             result.output
@@ -90,21 +90,6 @@ class TestCliStart(unittest.TestCase):
             "Dashboard running...\n\n"),
             result.output
         )
-        self.assertEqual(0, result.exit_code)
-
-    def test_config_with_datetime_source_and_text_handler_prints_datetime(self, time_sleep, itertools_cycle, dbm_open):
-        result = self._run_cli_with_config("""
-            interval: 20
-            display: console
-            data-feeds:
-              - source: datetime
-            notifications:
-              - title: Dummy Handler
-                handler: text-handler
-            """)
-
-        last_line = result.output.splitlines()[-1]
-        self.assertRegex(last_line, "\d{4}-\d{2}-\d{2}[A-Z]{1}\d{2}:\d{2}")
         self.assertEqual(0, result.exit_code)
 
     @staticmethod

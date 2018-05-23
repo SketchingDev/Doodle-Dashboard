@@ -1,38 +1,31 @@
 import unittest
-from click.testing import CliRunner
-from mock import mock
-
-from doodledashboard.cli import start
+from doodledashboard.configuration.config import DashboardConfigReader
+from doodledashboard.datafeeds.datetime import DateTimeFeedSection, DateTimeFeed
 
 
-@mock.patch("time.sleep")
-@mock.patch("itertools.cycle", side_effect=(lambda values: values))
-@mock.patch("dbm.open") # Click uses file system isolation which breaks shelve when opening file
 class TestCliStart(unittest.TestCase):
+    _YAML_CONFIG = """
+        data-feeds:
+          - source: datetime
+    """
 
-    def test_config_with_datetime_source_and_text_handler_prints_datetime(self, time_sleep, itertools_cycle, dbm_open):
-        result = self._run_cli_with_config("""
-            interval: 20
-            display: console
-            data-feeds:
-              - source: datetime
-            notifications:
-              - title: Dummy Handler
-                handler: text-handler
-            """)
+    def test_feed_is_created_from_configuration(self):
+        config_reader = DashboardConfigReader()
+        config_reader.add_data_feed_creators([DateTimeFeedSection()])
 
-        last_line = result.output.splitlines()[-1]
-        self.assertRegex(last_line, "\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
-        self.assertEqual(0, result.exit_code)
+        dashboard = config_reader.read_yaml(TestCliStart._YAML_CONFIG)
 
-    @staticmethod
-    def _run_cli_with_config(input_config):
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-            with open("config.yml", "w") as f:
-                f.write(input_config)
+        data_feeds = dashboard.get_data_feeds()
+        self.assertEqual(1, len(data_feeds))
+        self.assertIsInstance(data_feeds[0], DateTimeFeed)
 
-            return runner.invoke(start, ["config.yml"])
+    def test_feed_returns_date_and_time(self):
+        entities = DateTimeFeed().get_latest_entities()
+
+        self.assertEqual(1, len(entities), "Returns one textual entity per poll")
+
+        entity = entities[0]
+        self.assertRegex(entity.get_text(), "\d{4}-\d{2}-\d{2} \d{2}:\d{2}", "Textual data matches date/time pattern")
 
 
 if __name__ == "__main__":

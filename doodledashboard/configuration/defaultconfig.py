@@ -17,7 +17,7 @@ class FullConfigCollection:
 
     def configure(self, dashboard_config):
         dashboard_config.add_display_creators(FullConfigCollection._get_display_creators())
-        dashboard_config.add_data_source_creators(FullConfigCollection._get_data_source_creators())
+        dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_source_creators())
         dashboard_config.add_handler_creators(FullConfigCollection._get_handler_creators(self._state_storage))
         dashboard_config.add_filter_creators(FullConfigCollection._get_filter_creators())
 
@@ -61,7 +61,7 @@ class DatafeedConfigCollection:
         pass
 
     def configure(self, dashboard_config):
-        dashboard_config.add_data_source_creators(FullConfigCollection._get_data_source_creators())
+        dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_source_creators())
 
     @staticmethod
     def _get_data_source_creators():

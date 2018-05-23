@@ -8,7 +8,6 @@ class DateTimeFeed(DataFeed):
         DataFeed.__init__(self)
 
     def get_latest_entities(self):
-
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
         return [TextEntity(date_time, self)]
 

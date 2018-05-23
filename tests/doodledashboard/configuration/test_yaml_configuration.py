@@ -45,7 +45,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
     def test_data_source_created_from_yaml(self):
         config_reader = DashboardConfigReader()
         config_reader.add_display_creators([ConsoleDisplayConfigCreator()])
-        config_reader.add_data_source_creators([RssFeedSection()])
+        config_reader.add_data_feed_creators([RssFeedSection()])
 
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 

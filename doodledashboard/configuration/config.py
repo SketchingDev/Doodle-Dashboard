@@ -84,7 +84,7 @@ class DashboardConfigReader:
     def add_handler_creators(self, creators):
         self._add_creator_to_chain(self._handler_creator, creators)
 
-    def add_data_source_creators(self, creators):
+    def add_data_feed_creators(self, creators):
         self._add_creator_to_chain(self._data_feed_creator, creators)
 
     def add_display_creators(self, creators):

@@ -95,5 +95,6 @@ def explain_dashboard(dashboard):
     for notification in notifications:
         click.echo(" - %s" % str(notification))
 
+
 if __name__ == "__main__":
     cli()

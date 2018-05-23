@@ -1,5 +1,4 @@
 import unittest
-
 from click.testing import CliRunner
 from mock import mock
 
@@ -8,7 +7,7 @@ from doodledashboard.cli import start
 
 @mock.patch("time.sleep")
 @mock.patch("itertools.cycle", side_effect=(lambda values: values))
-@mock.patch("dbm.open") # Click uses file system isolation which breaks shelve when opening file
+@mock.patch("dbm.open")  # Click uses file system isolation which breaks shelve when opening file
 class TestCliStart(unittest.TestCase):
     """
     Click exception messages thrown by the program that aren"t written to its output stream via click.echo
@@ -37,7 +36,8 @@ class TestCliStart(unittest.TestCase):
         )
         self.assertEqual(1, result.exit_code)
 
-    def test_config_with_no_sources_nor_handlers_prints_info_about_none_being_loaded(self, time_sleep, itertools_cycle, dbm_open):
+    def test_config_with_no_sources_nor_handlers_prints_info_about_none_being_loaded(
+            self, time_sleep, itertools_cycle, dbm_open):
         result = self._run_cli_with_config("""
             interval: 10
             display: console
@@ -72,7 +72,8 @@ class TestCliStart(unittest.TestCase):
         )
         self.assertEqual(0, result.exit_code)
 
-    def test_config_with_one_notification_prints_info_containing_notification(self, time_sleep, itertools_cycle, dbm_open):
+    def test_config_with_one_notification_prints_info_containing_notification(
+            self, time_sleep, itertools_cycle, dbm_open):
         result = self._run_cli_with_config("""
             interval: 20
             display: console

@@ -12,11 +12,11 @@ class TestYamlConfigurationIT(unittest.TestCase):
     _VALID_YAML_CONFIG = """
         interval: 20
         display: console
-        
+
         data-feeds:
           - source: rss
             url: http://example-image.com/feed.rss
-        
+
         notifications:
           - title: Dummy Handler
             handler: dummy-handler

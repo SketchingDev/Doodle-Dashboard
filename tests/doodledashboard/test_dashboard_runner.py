@@ -35,7 +35,8 @@ class TestDashboardRunner(unittest.TestCase):
 
         data_feed.handle_entities.assert_called_once_with(display, mock.ANY)
 
-    def test_get_get_latest_entities_not_run_on_data_feeds_when_no_notifications_given(self, time_sleep, itertools_cycle):
+    def test_get_get_latest_entities_not_run_on_data_feeds_when_no_notifications_given(
+            self, time_sleep, itertools_cycle):
         data_feeds = [self._create_emtpy_data_feed()]
 
         dashboard = Dashboard(0, Mock(), data_feeds, [])

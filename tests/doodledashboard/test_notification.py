@@ -3,12 +3,13 @@ import unittest
 from mock import Mock
 
 from doodledashboard.dashboard_runner import Notification
+from doodledashboard.datafeeds.datafeed import TextEntity
 
 
 class TestNotification(unittest.TestCase):
 
     def test_filter_chain_passed_messages(self):
-        messages = [Mock(), Mock()]
+        messages = [TextEntity(''), TextEntity('')]
 
         filter_chain = Mock()
 
@@ -20,7 +21,7 @@ class TestNotification(unittest.TestCase):
         filter_chain.filter.assert_called_with(messages)
 
     def test_messages_from_filter_passed_handlers_update_method(self):
-        messages = [Mock(), Mock()]
+        messages = [TextEntity(''), TextEntity('')]
 
         filter_chain = Mock()
         filter_chain.filter.return_value = messages
@@ -34,7 +35,7 @@ class TestNotification(unittest.TestCase):
         handler.update.assert_called_with(messages)
 
     def test_messages_passed_to_handlers_update_method_if_filter_chain_is_not_set(self):
-        messages = [Mock(), Mock()]
+        messages = [TextEntity(''), TextEntity('')]
 
         handler = Mock()
 

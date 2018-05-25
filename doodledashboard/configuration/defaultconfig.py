@@ -3,6 +3,7 @@ import pkgutil
 from doodledashboard.datafeeds.datetime import DateTimeFeedSection
 from doodledashboard.datafeeds.rss import RssFeedSection
 from doodledashboard.datafeeds.slack import SlackFeedSection
+from doodledashboard.datafeeds.text import TextFeedSection
 from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
 from doodledashboard.filters.contains_text import ContainsTextFilterSection
 from doodledashboard.filters.matches_regex import MatchesRegexFilterSection
@@ -17,7 +18,7 @@ class FullConfigCollection:
 
     def configure(self, dashboard_config):
         dashboard_config.add_display_creators(FullConfigCollection._get_display_creators())
-        dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_source_creators())
+        dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_feed_creators())
         dashboard_config.add_handler_creators(FullConfigCollection._get_handler_creators(self._state_storage))
         dashboard_config.add_filter_creators(FullConfigCollection._get_filter_creators())
 
@@ -33,11 +34,12 @@ class FullConfigCollection:
         return creators
 
     @staticmethod
-    def _get_data_source_creators():
+    def _get_data_feed_creators():
         return [
             RssFeedSection(),
             SlackFeedSection(),
-            DateTimeFeedSection()
+            DateTimeFeedSection(),
+            TextFeedSection()
         ]
 
     @staticmethod
@@ -61,12 +63,13 @@ class DatafeedConfigCollection:
         pass
 
     def configure(self, dashboard_config):
-        dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_source_creators())
+        dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_feed_creators())
 
     @staticmethod
     def _get_data_source_creators():
         return [
             RssFeedSection(),
             SlackFeedSection(),
-            DateTimeFeedSection()
+            DateTimeFeedSection(),
+            TextFeedSection()
         ]

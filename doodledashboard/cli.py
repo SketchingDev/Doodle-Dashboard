@@ -1,16 +1,16 @@
+import click
 import json
 import logging
 import shelve
-
-import click
 from yaml import YAMLError
 
 from doodledashboard import __about__
 from doodledashboard.configuration.config import DashboardConfigReader, \
     ValidateDashboard, InvalidConfigurationException
-from doodledashboard.configuration.defaultconfig import FullConfigCollection, DatafeedConfigCollection
+from doodledashboard.configuration.defaultconfig import FullConfigCollection
 from doodledashboard.dashboard_runner import DashboardRunner
 from doodledashboard.datafeeds.datafeed import TextEntityJsonEncoder
+from doodledashboard.displays.recorddisplay import RecordDisplay
 
 
 @click.help_option("-h", "--help")
@@ -47,16 +47,37 @@ def start(config, verbose):
 
 
 @cli.command()
-@click.argument("type", type=click.Choice(["datafeeds"]))
+@click.argument("type", type=click.Choice(["datafeeds", "notifications"]))
+# @click.argument("format", type=click.Choice(["json"]))
 @click.argument("config", type=click.File("rb"))
 def view(type, config):
     """View what the datafeeds in the CONFIG are returning"""
 
-    dashboard_config = DashboardConfigReader(DatafeedConfigCollection())
+    dashboard_config = DashboardConfigReader(FullConfigCollection({}))
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
     datafeed_responses = [feed.get_latest_entities() for feed in dashboard.get_data_feeds()]
-    click.echo(json.dumps(datafeed_responses, sort_keys=True, indent=4, cls=TextEntityJsonEncoder))
+
+    output = {"source-data": datafeed_responses}
+    if type is "notifications":
+        notifications_output = []
+        for notification in dashboard.get_notifications():
+            filtered_responses = notification._filter_entities(datafeed_responses[0])
+
+            display = RecordDisplay()
+            notification.handle_entities(display, datafeed_responses[0])
+
+            notifications_output.append(
+                {
+                    "name": str(notification),
+                    "filtered-data": filtered_responses,
+                    "handler-actions": display.get_calls()
+                }
+            )
+
+        output["notifications"] = notifications_output
+
+    click.echo(json.dumps(output, sort_keys=True, indent=4, cls=TextEntityJsonEncoder))
 
 
 def try_read_dashboard_config(dashboard_config, config):

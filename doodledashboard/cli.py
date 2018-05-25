@@ -47,10 +47,10 @@ def start(config, verbose):
 
 
 @cli.command()
-@click.argument("type", type=click.Choice(["datafeeds", "notifications"]))
+@click.argument("action", type=click.Choice(["datafeeds", "notifications"]))
 # @click.argument("format", type=click.Choice(["json"]))
 @click.argument("config", type=click.File("rb"))
-def view(type, config):
+def view(action, config):
     """View what the datafeeds in the CONFIG are returning"""
 
     dashboard_config = DashboardConfigReader(FullConfigCollection({}))
@@ -59,7 +59,7 @@ def view(type, config):
     datafeed_responses = [feed.get_latest_entities() for feed in dashboard.get_data_feeds()]
 
     output = {"source-data": datafeed_responses}
-    if type is "notifications":
+    if action == "notifications":
         notifications_output = []
         for notification in dashboard.get_notifications():
             filtered_responses = notification._filter_entities(datafeed_responses[0])

@@ -77,7 +77,8 @@ class TestCliViewNotifications(unittest.TestCase):
             with open("config.yml", "w") as f:
                 f.write(input_config)
 
-            return runner.invoke(view, ["notifications", "config.yml"])
+            non_interned_argument = "notifications".lower()
+            return runner.invoke(view, [non_interned_argument, "config.yml"])
 
 
 if __name__ == "__main__":

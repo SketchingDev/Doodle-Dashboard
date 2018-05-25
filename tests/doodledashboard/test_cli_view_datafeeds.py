@@ -70,7 +70,8 @@ class TestCliViewDataFeeds(unittest.TestCase):
             with open("config.yml", "w") as f:
                 f.write(input_config)
 
-            return runner.invoke(view, ["datafeeds", "config.yml"])
+            non_interned_argument = "datafeeds".lower()
+            return runner.invoke(view, [non_interned_argument, "config.yml"])
 
 
 if __name__ == "__main__":

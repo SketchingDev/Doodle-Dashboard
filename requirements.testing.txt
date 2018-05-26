@@ -2,3 +2,4 @@ mock==2.0.0
 pytest==3.3.0
 pytest-localserver==0.4.1
 flake8==3.5.0
+behave==1.2.6

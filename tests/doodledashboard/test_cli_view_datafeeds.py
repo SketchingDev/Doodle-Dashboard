@@ -13,6 +13,29 @@ class TestCliViewDataFeeds(unittest.TestCase):
     Click exception messages thrown by the program aren't written to its output stream via click.echo
     """
 
+    def test_empty_config(self, time_sleep, itertools_cycle, dbm_open):
+        result = self._run_cli_with_config("")
+
+        self.assertEqual((
+            "Configuration file is empty\n"
+            "Aborted!\n"),
+            result.output
+        )
+        self.assertEqual(1, result.exit_code)
+
+    def test_no_data_feed_returns_empty(self, time_sleep, itertools_cycle, dbm_open):
+        result = self._run_cli_with_config("""
+                    data-feeds:
+                    """)
+
+        self.assertEqual((
+            "{\n"
+            '    "source-data": []\n'
+            "}\n"),
+            result.output
+        )
+        self.assertEqual(0, result.exit_code)
+
     def test_one_message_shown_correctly(self, time_sleep, itertools_cycle, dbm_open):
         result = self._run_cli_with_config("""
                     data-feeds:

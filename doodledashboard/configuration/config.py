@@ -138,7 +138,7 @@ class DashboardConfigReader:
 
         # NotificationsConfigSection
         if "notifications" in config:
-            for notification_element in config["notifications"]:
+            for notification_element in config["notifications"] or []:
 
                 handler = self._handler_creator.create(notification_element)
                 if handler:
@@ -173,7 +173,7 @@ class DashboardConfigReader:
     @staticmethod
     def _create_items(creator_chain, config_elements):
         creation = []
-        for element in config_elements:
+        for element in config_elements or []:
             repository = creator_chain.create(element)
             if repository:
                 creation.append(repository)

@@ -48,7 +48,6 @@ def start(config, verbose):
 
 @cli.command()
 @click.argument("action", type=click.Choice(["datafeeds", "notifications"]))
-# @click.argument("format", type=click.Choice(["json"]))
 @click.argument("config", type=click.File("rb"))
 def view(action, config):
     """View what the datafeeds in the CONFIG are returning"""
@@ -62,7 +61,7 @@ def view(action, config):
     if action == "notifications":
         notifications_output = []
         for notification in dashboard.get_notifications():
-            filtered_responses = notification._filter_entities(datafeed_responses[0])
+            filtered_responses = notification.filter(datafeed_responses[0])
 
             display = RecordDisplay()
             notification.handle_entities(display, datafeed_responses[0])

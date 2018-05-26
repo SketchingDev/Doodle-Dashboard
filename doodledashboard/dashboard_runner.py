@@ -33,7 +33,7 @@ class Notification:
         self._filter_chain = filter_chain
 
     def handle_entities(self, display, messages):
-        filtered_entities = self._filter_entities(messages)
+        filtered_entities = self.filter(messages)
 
         self._logger.debug("Entities before filters: %s", [messages])
         self._logger.debug("Entities after filters: %s", [filtered_entities])
@@ -41,7 +41,7 @@ class Notification:
         self._handler.update(filtered_entities)
         self._handler.draw(display)
 
-    def _filter_entities(self, entities):
+    def filter(self, entities):
         if self._filter_chain:
             return self._filter_chain.filter(entities)
         else:

@@ -2,7 +2,7 @@ from behave import given, when, then
 from click.testing import CliRunner
 from sure import expect
 
-from doodledashboard.cli import view
+from doodledashboard.cli import view, start
 
 
 @given("I have the configuration")
@@ -10,14 +10,20 @@ def _i_have_the_configuration_x(context):
     context.dashboard_config = context.text
 
 
-@when("I call View with the type {action:w}")
-def _run_cli_with_config(context, action):
+@when("I call '{command} {arguments} config.yml'")
+def _i_call_x_x_config_yml(context, command, arguments):
+    commands = {"start": start, "view": view}
+    assert command in commands.keys()
+
+    arguments_split = arguments.split(" ")
+    arguments_split.append("config.yml")
+
     runner = CliRunner()
     with runner.isolated_filesystem():
         with open("config.yml", "w") as f:
             f.write(context.dashboard_config)
 
-        context.runner_result = runner.invoke(view, [action, "config.yml"])
+        context.runner_result = runner.invoke(commands.get(command), arguments_split, catch_exceptions=False)
 
 
 @then('the output is')

@@ -22,8 +22,9 @@ def cli():
 
 @cli.command()
 @click.argument("config", type=click.File("rb"))
+@click.option('--once', is_flag=True, help='Whether to run once, otherwise will loop through notifications')
 @click.option("--verbose", is_flag=True)
-def start(config, verbose):
+def start(config, once, verbose):
     """Start dashboard with CONFIG file"""
 
     if verbose:
@@ -43,7 +44,11 @@ def start(config, verbose):
         explain_dashboard(dashboard)
 
         click.echo("Dashboard running...")
-        DashboardRunner(dashboard).run()
+
+        if once:
+            DashboardRunner(dashboard).run(iter)
+        else:
+            DashboardRunner(dashboard).run()
 
 
 @cli.command()

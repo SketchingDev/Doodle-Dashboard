@@ -56,9 +56,9 @@ class DashboardRunner:
         self._logger = logging.getLogger("doodledashboard.Dashboard")
         self._dashboard = dashboard
 
-    def run(self):
+    def run(self, iterator=itertools.cycle):
         entities = []
-        for notification in itertools.cycle(self._dashboard.get_notifications()):
+        for notification in iterator(self._dashboard.get_notifications()):
 
             if self._is_at_beginning(notification):
                 self._logger.info("At beginning of notification cycle, will poll data sources")

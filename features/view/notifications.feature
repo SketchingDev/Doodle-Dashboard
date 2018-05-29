@@ -4,7 +4,7 @@ Feature: View output of data-feeds
      Given I have the configuration
         """
         """
-     When I call View with the type notifications
+     When I call 'view notifications config.yml'
      Then the status code is 1
      And the output is
         """
@@ -18,7 +18,7 @@ Feature: View output of data-feeds
        """
        notifications:
        """
-    When I call View with the type notifications
+    When I call 'view notifications config.yml'
     Then the status code is 0
     And the output is
        """
@@ -46,7 +46,7 @@ Feature: View output of data-feeds
              - type: message-matches-regex
                pattern: (Hello)
        """
-    When I call View with the type notifications
+    When I call 'view notifications config.yml'
     Then the status code is 0
     And the output is
        """

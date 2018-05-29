@@ -4,7 +4,7 @@ Feature: View output of data-feeds
      Given I have the configuration
         """
         """
-     When I call View with the type datafeeds
+     When I call 'view datafeeds config.yml'
      Then the status code is 1
      And the output is
         """
@@ -18,7 +18,7 @@ Feature: View output of data-feeds
        """
        data-feeds:
        """
-    When I call View with the type datafeeds
+    When I call 'view datafeeds config.yml'
     Then the status code is 0
     And the output is
        """
@@ -35,7 +35,7 @@ Feature: View output of data-feeds
          - source: text
            text: Test 1
        """
-    When I call View with the type datafeeds
+    When I call 'view datafeeds config.yml'
     Then the status code is 0
     And the output is
        """
@@ -61,7 +61,7 @@ Feature: View output of data-feeds
             - Test 1
             - Test 2
        """
-    When I call View with the type datafeeds
+    When I call 'view datafeeds config.yml'
     Then the status code is 0
     And the output is
        """
@@ -93,7 +93,7 @@ Feature: View output of data-feeds
             - Test 2
             - Test 3
        """
-    When I call View with the type datafeeds
+    When I call 'view datafeeds config.yml'
     Then the status code is 0
     And the output is
        """

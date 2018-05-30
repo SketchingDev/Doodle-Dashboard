@@ -20,7 +20,7 @@ class TestDashboardRunner(unittest.TestCase):
 
         dashboard = Dashboard(0, Mock(), data_feeds, [notification])
 
-        DashboardRunner(dashboard).run(iter)
+        DashboardRunner(dashboard).cycle()
 
         notification.handle_entities.assert_called_once_with(mock.ANY, [entity_1, entity_2, entity_3])
 
@@ -29,24 +29,16 @@ class TestDashboardRunner(unittest.TestCase):
         data_feed = Mock()
 
         dashboard = Dashboard(0, display, [], [data_feed])
-        DashboardRunner(dashboard).run(iter)
+        DashboardRunner(dashboard).cycle()
 
         data_feed.handle_entities.assert_called_once_with(display, mock.ANY)
 
-    def test_get_get_latest_entities_not_run_on_data_feeds_when_no_notifications_given(self, time_sleep):
-        data_feeds = [self._create_emtpy_data_feed()]
-
-        dashboard = Dashboard(0, Mock(), data_feeds, [])
-        DashboardRunner(dashboard).run(iter)
-
-        data_feeds[0].get_latest_entities.assert_not_called()
-
-    def test_get_get_latest_entities_called_for_all_data_feeds_when_start_called(self, time_sleep):
+    def test_get_get_latest_entities_called_for_all_data_feeds_when_cycle_called(self, time_sleep):
         data_feeds = [self._create_emtpy_data_feed(),
                       self._create_emtpy_data_feed()]
 
         dashboard = Dashboard(0, Mock(), data_feeds, [Mock()])
-        DashboardRunner(dashboard).run(iter)
+        DashboardRunner(dashboard).cycle()
 
         data_feeds[0].get_latest_entities.assert_called()
         data_feeds[1].get_latest_entities.assert_called()

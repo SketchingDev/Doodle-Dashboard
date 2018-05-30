@@ -1,6 +1,6 @@
-import itertools
-import logging
 import time
+
+import logging
 
 
 class Dashboard:
@@ -56,20 +56,14 @@ class DashboardRunner:
         self._logger = logging.getLogger("doodledashboard.Dashboard")
         self._dashboard = dashboard
 
-    def run(self, iterator=itertools.cycle):
-        entities = []
-        for notification in iterator(self._dashboard.get_notifications()):
-
-            if self._is_at_beginning(notification):
-                self._logger.info("At beginning of notification cycle, will poll data sources")
-                entities = self._collect_all_entities(self._dashboard.get_data_feeds())
-                self._logger.info("%s entities collected" % len(entities))
-
+    def cycle(self):
+        """
+        Cycles through notifications with latest results from data feeds, pausing after each notification.
+        """
+        entities = self._collect_all_entities(self._dashboard.get_data_feeds())
+        for notification in self._dashboard.get_notifications():
             notification.handle_entities(self._dashboard.get_display(), entities)
             time.sleep(self._dashboard.get_interval())
-
-    def _is_at_beginning(self, notification):
-        return notification is self._dashboard.get_notifications()[0]
 
     @staticmethod
     def _collect_all_entities(repositories):

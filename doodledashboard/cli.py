@@ -45,10 +45,10 @@ def start(config, once, verbose):
 
         click.echo("Dashboard running...")
 
-        if once:
-            DashboardRunner(dashboard).run(iter)
-        else:
-            DashboardRunner(dashboard).run()
+        while True:
+            DashboardRunner(dashboard).cycle()
+            if once:
+                break
 
 
 @cli.command()

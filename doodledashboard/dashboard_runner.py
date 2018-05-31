@@ -26,11 +26,11 @@ class Dashboard:
 class Notification:
     def __init__(self, handler):
         self._handler = handler
-        self._filter_chain = None
+        self._entity_filters = []
         self._logger = logging.getLogger("doodledashboard")
 
-    def set_filter_chain(self, filter_chain):
-        self._filter_chain = filter_chain
+    def set_filters(self, entity_filters):
+        self._entity_filters = entity_filters
 
     def handle_entities(self, display, messages):
         filtered_entities = self.filter(messages)
@@ -42,10 +42,9 @@ class Notification:
         self._handler.draw(display)
 
     def filter(self, entities):
-        if self._filter_chain:
-            return self._filter_chain.filter(entities)
-        else:
-            return entities
+        for f in self._entity_filters:
+            entities = f.filter(entities)
+        return entities
 
     def __str__(self):
         return "Displays entities using: %s" % str(self._handler)

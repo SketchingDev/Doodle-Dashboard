@@ -29,7 +29,7 @@ class ImageHandler(MessageHandler):
 
     def update(self, messages):
         for image_filter in self._filtered_images:
-            if image_filter["filter"].do_filter(messages):
+            if image_filter["filter"].filter(messages):
                 self._chosen_image_path = image_filter["path"]
 
     def draw(self, display):

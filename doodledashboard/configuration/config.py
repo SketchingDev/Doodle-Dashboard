@@ -144,31 +144,27 @@ class DashboardConfigReader:
                 if handler:
                     notification = Notification(handler)
 
-                    filter_chain = self._extract_from_filter_chain(notification_element)
-                    if filter_chain:
-                        notification.set_filter_chain(filter_chain)
+                    entity_filters = self._extract_entity_filters_from_notification(notification_element)
+                    if entity_filters:
+                        notification.set_filters(entity_filters)
 
                     notifications.append(notification)
 
         return notifications
 
-    def _extract_from_filter_chain(self, notification_element):
-        # TODO: Fix issue with circular dependency that I get when this import is moved to the top
-        # https://stackoverflow.com/questions/9252543/importerror-cannot-import-name-x
-        from doodledashboard.filters.filter import TextEntityFilter
-
-        root_filter = TextEntityFilter()
+    def _extract_entity_filters_from_notification(self, notification_element):
+        entity_filters = []
 
         # FilterChainConfigSection
         if "filter-chain" in notification_element:
             filter_chain_elements = notification_element["filter-chain"]
 
             for filter_element in filter_chain_elements:
-                new_filter = self._filter_creator.create(filter_element)
-                if new_filter:
-                    root_filter.add(new_filter)
+                entity_filter = self._filter_creator.create(filter_element)
+                if entity_filter:
+                    entity_filters.append(entity_filter)
 
-        return root_filter
+        return entity_filters
 
     @staticmethod
     def _create_items(creator_chain, config_elements):

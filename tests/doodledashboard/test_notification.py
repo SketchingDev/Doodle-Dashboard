@@ -11,25 +11,25 @@ class TestNotification(unittest.TestCase):
     def test_filter_chain_passed_messages(self):
         messages = [TextEntity(''), TextEntity('')]
 
-        filter_chain = Mock()
+        entity_filters = [Mock()]
 
         notification = Notification(Mock())
-        notification.set_filter_chain(filter_chain)
+        notification.set_filters(entity_filters)
 
         notification.handle_entities(Mock(), messages)
 
-        filter_chain.filter.assert_called_with(messages)
+        entity_filters[0].filter.assert_called_with(messages)
 
     def test_messages_from_filter_passed_handlers_update_method(self):
         messages = [TextEntity(''), TextEntity('')]
 
-        filter_chain = Mock()
-        filter_chain.filter.return_value = messages
+        entity_filters = [Mock()]
+        entity_filters[0].filter.return_value = messages
 
         handler = Mock()
 
         notification = Notification(handler)
-        notification.set_filter_chain(filter_chain)
+        notification.set_filters(entity_filters)
         notification.handle_entities(Mock(), messages)
 
         handler.update.assert_called_with(messages)

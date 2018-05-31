@@ -5,22 +5,8 @@ class TextEntityFilter:
     def __init__(self):
         self._successor = None
 
-    def add(self, successor):
-        if not self._successor:
-            self._successor = successor
-        else:
-            self._successor.add(successor)
-
-    def do_filter(self, messages):
-        return messages
-
     def filter(self, messages):
-        filtered_messages = self.do_filter(messages)
-
-        if self._successor:
-            return self._successor.filter(filtered_messages)
-        else:
-            return filtered_messages
+        raise NotImplementedError("Implement this method")
 
 
 class FilterConfigSection(ConfigSection):

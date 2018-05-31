@@ -7,7 +7,7 @@ class ContainsTextFilter(TextEntityFilter):
         TextEntityFilter.__init__(self)
         self._text = text
 
-    def do_filter(self, messages):
+    def filter(self, messages):
         return [m for m in messages if self._text in m.get_text()]
 
     def remove_text(self, message):

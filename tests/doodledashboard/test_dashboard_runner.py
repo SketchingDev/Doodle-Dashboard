@@ -2,15 +2,16 @@ import unittest
 from mock import Mock, mock
 
 from doodledashboard.dashboard_runner import DashboardRunner, Dashboard
+from doodledashboard.datafeeds.datafeed import TextEntity
 
 
 @mock.patch("time.sleep")
 class TestDashboardRunner(unittest.TestCase):
 
     def test_entities_from_data_feeds_are_passed_to_notification(self, time_sleep):
-        entity_1 = Mock()
-        entity_2 = Mock()
-        entity_3 = Mock()
+        entity_1 = TextEntity('')
+        entity_2 = TextEntity('')
+        entity_3 = TextEntity('')
 
         data_feeds = [Mock(), Mock()]
         data_feeds[0].get_latest_entities.return_value = [entity_1, entity_2]

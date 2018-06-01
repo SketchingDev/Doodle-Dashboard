@@ -32,19 +32,28 @@ class Notification:
     def set_filters(self, entity_filters):
         self._entity_filters = entity_filters
 
-    def handle_entities(self, display, messages):
-        filtered_entities = self.filter(messages)
+    def handle_entities(self, display, text_entities):
+        filtered_entities = self.filter(text_entities)
 
-        self._logger.debug("Entities before filters: %s", [messages])
+        self._logger.debug("Entities before filters: %s", [text_entities])
         self._logger.debug("Entities after filters: %s", [filtered_entities])
 
-        self._handler.update(filtered_entities)
+        for entity in filtered_entities:
+            self._handler.update(entity)
+
         self._handler.draw(display)
 
     def filter(self, entities):
-        for f in self._entity_filters:
-            entities = f.filter(entities)
-        return entities
+        filtered_entities = []
+        for e in entities:
+            keep = True
+            for f in self._entity_filters:
+                if keep:
+                    keep = f.filter(e)
+            if keep:
+                filtered_entities.append(e)
+
+        return filtered_entities
 
     def __str__(self):
         return "Displays entities using: %s" % str(self._handler)
@@ -59,13 +68,13 @@ class DashboardRunner:
         """
         Cycles through notifications with latest results from data feeds, pausing after each notification.
         """
-        entities = self._collect_all_entities(self._dashboard.get_data_feeds())
+        entities = self.collect_all_entities(self._dashboard.get_data_feeds())
         for notification in self._dashboard.get_notifications():
             notification.handle_entities(self._dashboard.get_display(), entities)
             time.sleep(self._dashboard.get_interval())
 
     @staticmethod
-    def _collect_all_entities(repositories):
+    def collect_all_entities(repositories):
         entities = []
         for repository in repositories:
             entities += repository.get_latest_entities()

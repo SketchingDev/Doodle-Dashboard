@@ -9,8 +9,8 @@ class MatchesRegexFilter(TextEntityFilter):
         TextEntityFilter.__init__(self)
         self._regex = re.compile(regex, re.IGNORECASE)
 
-    def filter(self, messages):
-        return [m for m in messages if self._regex.search(m.get_text())]
+    def filter(self, text_entity):
+        return self._regex.search(text_entity.get_text())
 
     def get_pattern(self):
         return self._regex.pattern

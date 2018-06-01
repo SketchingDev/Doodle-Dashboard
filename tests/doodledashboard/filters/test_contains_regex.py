@@ -1,38 +1,33 @@
 import unittest
 
-from mock import Mock
-
+from doodledashboard.datafeeds.datafeed import TextEntity
 from doodledashboard.filters.matches_regex import MatchesRegexFilter
 
 
 class TestMessageContainsTextFilter(unittest.TestCase):
 
     def test_regex_matches_single_message(self):
-        message = TestMessageContainsTextFilter.create_mock_message_with_text('test1 test2')
-        filtered_messages = MatchesRegexFilter('test1|test3').filter([message])
+        message = TextEntity('test1 test2')
+        filtered_message = MatchesRegexFilter('test1|test3').filter(message)
 
-        self.assertEqual(1, len(filtered_messages))
+        self.assertTrue(filtered_message)
 
     def test_regex_matches_multiple_messages(self):
-        message_1 = TestMessageContainsTextFilter.create_mock_message_with_text('test1')
-        message_2 = TestMessageContainsTextFilter.create_mock_message_with_text('test2')
+        message = TextEntity('test 2')
 
-        filtered_messages = MatchesRegexFilter('test1|test3').filter([message_1, message_2])
+        filtered_message = MatchesRegexFilter('test1|test3').filter(message)
 
-        self.assertEqual(1, len(filtered_messages))
-        self.assertIn(message_1, filtered_messages)
+        self.assertFalse(filtered_message)
 
     def test_regex_does_not_match(self):
-        message = TestMessageContainsTextFilter.create_mock_message_with_text('test1 test2')
-        filtered_messages = MatchesRegexFilter('test3').filter([message])
+        message = TextEntity('test1 test2')
+        filtered_message = MatchesRegexFilter('test3').filter(message)
 
-        self.assertEqual(0, len(filtered_messages))
+        self.assertFalse(filtered_message)
 
     @staticmethod
     def create_mock_message_with_text(text):
-        message = Mock()
-        message.get_text.return_value = text
-        return message
+        return TextEntity(text)
 
 
 if __name__ == '__main__':

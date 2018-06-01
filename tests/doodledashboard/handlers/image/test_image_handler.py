@@ -14,7 +14,7 @@ class TestImageHandler(unittest.TestCase):
 
     def test_image_handler_update_works_when_no_image_filters(self):
         handler = ImageHandler({})
-        handler.update([TextEntity(''), TextEntity('')])
+        handler.update(TextEntity(''))
         self.assertIsNone(handler.get_image())
 
     def test_get_image_returns_default_image_when_no_filters_set(self):
@@ -25,7 +25,7 @@ class TestImageHandler(unittest.TestCase):
     def test_get_image_returns_default_image_when_no_messages_match(self):
         handler = ImageHandler({})
         handler.add_image_filter('/tmp/default.png')
-        handler.update([TextEntity('')])
+        handler.update(TextEntity(''))
 
         self.assertEqual('/tmp/default.png', handler.get_image())
 
@@ -34,10 +34,10 @@ class TestImageHandler(unittest.TestCase):
         handler.add_image_filter('/tmp/happy.png', ContainsTextFilter('123'))
         handler.add_image_filter('/tmp/sad.png', MatchesRegexFilter('[4-6]+'))
 
-        handler.update([TextEntity('123')])
+        handler.update(TextEntity('123'))
         self.assertEqual('/tmp/happy.png', handler.get_image())
 
-        handler.update([TextEntity('456'), TextEntity('789')])
+        handler.update(TextEntity('456'))
         self.assertEqual('/tmp/sad.png', handler.get_image())
 
     def test_get_image_returns_previous_image_when_no_messages_match(self):
@@ -45,10 +45,10 @@ class TestImageHandler(unittest.TestCase):
         handler.add_image_filter('/tmp/happy.png', ContainsTextFilter('123'))
         handler.add_image_filter('/tmp/default.png')
 
-        handler.update([TextEntity('123')])
+        handler.update(TextEntity('123'))
         self.assertEqual('/tmp/happy.png', handler.get_image())
 
-        handler.update([])
+        handler.update(TextEntity('Test'))
         self.assertEqual('/tmp/happy.png', handler.get_image())
 
 

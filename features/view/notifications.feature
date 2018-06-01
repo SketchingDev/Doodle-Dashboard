@@ -66,22 +66,18 @@ Feature: View output of data-feeds
                }
            ],
            "source-data": [
-               [
-                   {
-                       "source": "Text",
-                       "text": "Hello"
-                   },
-                   {
-                       "source": "Text",
-                       "text": "Bob"
-                   }
-               ],
-               [
-                   {
-                       "source": "Text",
-                       "text": "World"
-                   }
-               ]
+               {
+                   "source": "Text",
+                   "text": "Hello"
+               },
+               {
+                   "source": "Text",
+                   "text": "Bob"
+               },
+               {
+                   "source": "Text",
+                   "text": "World"
+               }
            ]
        }
 

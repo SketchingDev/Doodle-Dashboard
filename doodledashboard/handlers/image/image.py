@@ -27,9 +27,9 @@ class ImageHandler(MessageHandler):
         else:
             self._default_image_path = absolute_path
 
-    def update(self, messages):
+    def update(self, text_entity):
         for image_filter in self._filtered_images:
-            if image_filter["filter"].filter(messages):
+            if image_filter["filter"].filter(text_entity):
                 self._chosen_image_path = image_filter["path"]
 
     def draw(self, display):

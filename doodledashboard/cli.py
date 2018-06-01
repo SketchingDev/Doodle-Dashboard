@@ -60,16 +60,16 @@ def view(action, config):
     dashboard_config = DashboardConfigReader(FullConfigCollection({}))
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
-    datafeed_responses = [feed.get_latest_entities() for feed in dashboard.get_data_feeds()]
+    datafeed_responses = DashboardRunner.collect_all_entities(dashboard.get_data_feeds())
 
     output = {"source-data": datafeed_responses}
     if action == "notifications":
         notifications_output = []
         for notification in dashboard.get_notifications():
-            filtered_responses = notification.filter(datafeed_responses[0])
+            filtered_responses = notification.filter(datafeed_responses)
 
             display = RecordDisplay()
-            notification.handle_entities(display, datafeed_responses[0])
+            notification.handle_entities(display, datafeed_responses)
 
             notifications_output.append(
                 {

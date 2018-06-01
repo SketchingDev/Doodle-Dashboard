@@ -8,8 +8,8 @@ class TextHandler(MessageHandler):
         self._filtered_images = []
         self._text = ""
 
-    def update(self, messages):
-        self._text = "\n".join([m.get_text() for m in messages])
+    def update(self, text_entity):
+        self._text = text_entity.get_text()
 
     def draw(self, display):
         display.write_text(self._text)

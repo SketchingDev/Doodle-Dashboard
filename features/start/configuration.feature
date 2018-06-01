@@ -1,4 +1,4 @@
-Feature: View output of data-feeds
+Feature: Configuration is printed to output
 
 
   Scenario: Emtpy configuration causes error
@@ -64,7 +64,7 @@ Feature: View output of data-feeds
 
        """
 
-  Scenario: test_config_with_one_notification_prints_info_containing_notification
+  Scenario: Config printed showing one notification
     Given I have the configuration
        """
        interval: 0

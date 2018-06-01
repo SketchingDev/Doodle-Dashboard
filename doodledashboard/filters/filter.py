@@ -5,7 +5,7 @@ class TextEntityFilter:
     def __init__(self):
         self._successor = None
 
-    def filter(self, messages):
+    def filter(self, text_entity):
         raise NotImplementedError("Implement this method")
 
 

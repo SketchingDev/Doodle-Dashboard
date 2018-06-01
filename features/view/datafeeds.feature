@@ -41,12 +41,10 @@ Feature: View output of data-feeds
        """
        {
            "source-data": [
-               [
-                   {
-                       "source": "Text",
-                       "text": "Test 1"
-                   }
-               ]
+               {
+                   "source": "Text",
+                   "text": "Test 1"
+               }
            ]
        }
 
@@ -67,16 +65,14 @@ Feature: View output of data-feeds
        """
        {
            "source-data": [
-               [
-                   {
-                       "source": "Text",
-                       "text": "Test 1"
-                   },
-                   {
-                       "source": "Text",
-                       "text": "Test 2"
-                   }
-               ]
+               {
+                   "source": "Text",
+                   "text": "Test 1"
+               },
+               {
+                   "source": "Text",
+                   "text": "Test 2"
+               }
            ]
        }
 
@@ -99,22 +95,18 @@ Feature: View output of data-feeds
        """
        {
            "source-data": [
-               [
-                   {
-                       "source": "Text",
-                       "text": "Test 1"
-                   }
-               ],
-               [
-                   {
-                       "source": "Text",
-                       "text": "Test 2"
-                   },
-                   {
-                       "source": "Text",
-                       "text": "Test 3"
-                   }
-               ]
+               {
+                   "source": "Text",
+                   "text": "Test 1"
+               },
+               {
+                   "source": "Text",
+                   "text": "Test 2"
+               },
+               {
+                   "source": "Text",
+                   "text": "Test 3"
+               }
            ]
        }
 

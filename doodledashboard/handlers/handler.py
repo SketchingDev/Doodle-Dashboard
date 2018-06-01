@@ -9,7 +9,7 @@ class MessageHandler:
     Lifecycle:
         1. `initialise` is called when the dashboard is starting up. This is a great time to do intensive tasks
             like downloading images, to make the following phases as quick as possible.
-        2. `update` is called with the messages that the handler can use to decide what data to display
+        2. `update` is called with the message that the handler can use to decide what data to display
         3. `draw` is called when it is time to draw something to the display that was likely derived from the messages
             in the `update` phase
     """
@@ -21,11 +21,10 @@ class MessageHandler:
     def initialise(self):
         pass
 
-    def update(self, messages):
+    def update(self, text_entity):
         """
-        This method is called with messages from the data feeds. It is within
-        here that you scan the messages for relevant data to your handler and
-        prepare what to draw for when the handler's draw method is called.
+        This method is called with a message from the data feeds. It is within
+        here that you decide what your handler will display when the draw method is called.
         """
         raise NotImplementedError("Implement this method")
 

@@ -23,16 +23,16 @@ class TestDashboardRunner(unittest.TestCase):
 
         DashboardRunner(dashboard).cycle()
 
-        notification.handle_entities.assert_called_once_with(mock.ANY, [entity_1, entity_2, entity_3])
+        notification.process.assert_called_once_with([entity_1, entity_2, entity_3])
 
     def test_display_is_passed_to_notification(self, time_sleep):
         display = Mock()
-        data_feed = Mock()
+        notification = Mock()
 
-        dashboard = Dashboard(0, display, [], [data_feed])
+        dashboard = Dashboard(0, display, [], [notification])
         DashboardRunner(dashboard).cycle()
 
-        data_feed.handle_entities.assert_called_once_with(display, mock.ANY)
+        notification.draw.assert_called_once_with(display)
 
     def test_get_get_latest_entities_called_for_all_data_feeds_when_cycle_called(self, time_sleep):
         data_feeds = [self._create_emtpy_data_feed(),

@@ -60,7 +60,7 @@ def view(action, config):
     dashboard_config = DashboardConfigReader(FullConfigCollection({}))
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
-    datafeed_responses = DashboardRunner.collect_all_entities(dashboard.get_data_feeds())
+    datafeed_responses = DashboardRunner(dashboard).poll_datafeeds()
 
     output = {"source-data": datafeed_responses}
     if action == "notifications":
@@ -69,7 +69,8 @@ def view(action, config):
             filtered_responses = notification.filter(datafeed_responses)
 
             display = RecordDisplay()
-            notification.handle_entities(display, datafeed_responses)
+            notification.process(datafeed_responses)
+            notification.draw(display)
 
             notifications_output.append(
                 {

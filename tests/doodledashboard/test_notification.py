@@ -16,7 +16,7 @@ class TestNotification(unittest.TestCase):
         notification = Notification(Mock())
         notification.set_filters(entity_filters)
 
-        notification.handle_entities(Mock(), messages)
+        notification.process(messages)
 
         entity_filters[0].filter.assert_has_calls([call(messages[0]), call(messages[1])])
 
@@ -30,7 +30,7 @@ class TestNotification(unittest.TestCase):
 
         notification = Notification(handler)
         notification.set_filters(entity_filters)
-        notification.handle_entities(Mock(), messages)
+        notification.process(messages)
 
         handler.update.assert_has_calls([call(messages[0]), call(messages[1])])
 
@@ -40,7 +40,7 @@ class TestNotification(unittest.TestCase):
         handler = Mock()
 
         notification = Notification(handler)
-        notification.handle_entities(Mock(), messages)
+        notification.process(messages)
 
         handler.update.assert_has_calls([call(messages[0]), call(messages[1])])
 
@@ -49,7 +49,7 @@ class TestNotification(unittest.TestCase):
         display = Mock()
 
         notification = Notification(handler)
-        notification.handle_entities(display, [])
+        notification.draw(display)
 
         handler.draw.assert_called_with(display)
 

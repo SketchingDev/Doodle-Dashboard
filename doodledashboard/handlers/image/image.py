@@ -117,7 +117,7 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigSection):
     @staticmethod
     def _create_filter(image_config_section):
         pattern_exists = "pattern" in image_config_section
-        contains_exists = "contains" in image_config_section
+        contains_exists = "if-contains" in image_config_section
 
         if not pattern_exists and not contains_exists:
             raise MissingRequiredOptionException("Expected either 'pattern' or 'contains' option to exist")
@@ -128,4 +128,4 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigSection):
         if pattern_exists:
             return MatchesRegexFilter(image_config_section["pattern"])
         else:
-            return ContainsTextFilter(image_config_section["contains"])
+            return ContainsTextFilter(image_config_section["if-contains"])

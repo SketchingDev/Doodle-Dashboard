@@ -5,18 +5,33 @@ from doodledashboard.datafeeds.datafeed import DataFeed, TextEntity, DataFeedCon
 
 
 class RssFeed(DataFeed):
-    _COMMON_RSS_ITEM_FIELDS = ["title", "link", "description", "published", "id"]
+    _COMMON_RSS_ITEM_FIELDS = ["title", "link", "description", "published", "id", "updated"]
+    _SORT_ORDER = {
+        "oldest": False,
+        "newest": True
+    }
 
-    def __init__(self, url):
+    def __init__(self, url, sort_order=None):
         DataFeed.__init__(self)
         self._feed_url = url
+        self._sort_order = sort_order
 
     def get_url(self):
         return self._feed_url
 
+    def get_sort_order(self):
+        return self._sort_order
+
     def get_latest_entities(self):
         feed = feedparser.parse(self._feed_url)
-        return [self._convert_to_message(item) for item in feed.entries]
+
+        if self._sort_order:
+            reverse = RssFeed._SORT_ORDER[self._sort_order]
+            sorted_entries = sorted(feed.entries, key=lambda x: x["updated_parsed"], reverse=reverse)
+        else:
+            sorted_entries = feed.entries
+
+        return [self._convert_to_message(entry) for entry in sorted_entries]
 
     def __str__(self):
         return "RSS feed for %s" % self._feed_url
@@ -42,4 +57,14 @@ class RssFeedSection(DataFeedConfigSection):
         if "url" not in config_section:
             raise MissingRequiredOptionException("Expected 'url' option to exist")
 
-        return RssFeed(config_section["url"])
+        url = config_section["url"]
+        sort_order = None
+        if "sort" in config_section:
+            if config_section["sort"] not in ["newest", "oldest"]:
+                raise MissingRequiredOptionException(
+                    "Sorting value for RSS feed can only be either ascending or descending"
+                )
+
+            sort_order = config_section["sort"]
+
+        return RssFeed(url, sort_order)

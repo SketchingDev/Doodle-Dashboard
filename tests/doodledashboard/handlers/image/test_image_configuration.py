@@ -1,9 +1,7 @@
-import unittest
-
-import pytest
-from pytest_localserver import http
-
 import os
+import pytest
+import unittest
+from pytest_localserver import http
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
 from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader, ImageHandler
@@ -46,7 +44,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             creator.create_item(config)
-        self.assertEqual("\"Expected 'images' list and/or default-image to exist\"", str(exception.value))
+        self.assertEqual("Expected 'images' list and/or default-image to exist", exception.value.value)
 
     def test_exception_thrown_if_config_images_list_missing_image_uri(self):
         config = {
@@ -61,7 +59,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             creator.create_item(config)
-        self.assertEqual("\"Expected \'uri\' option to exist\"", str(exception.value))
+        self.assertEqual("Expected 'uri' option to exist", exception.value.value)
 
     def test_exception_thrown_if_config_images_list_missing_image_pattern_and_contains(self):
         config = {
@@ -76,7 +74,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             creator.create_item(config)
-        self.assertEqual("\"Expected either \'pattern\' or \'contains\' option to exist\"", str(exception.value))
+        self.assertEqual("Expected either 'if-contains' or 'if-matches' option to exist", exception.value.value)
 
     def test_exception_thrown_if_config_images_list_image_contains_pattern_and_contains(self):
         config = {
@@ -84,8 +82,8 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
             "images": [
                 {
                     'uri': 'test',
-                    'pattern': 'test',
-                    'contains': 'test'
+                    'if-matches': 'test',
+                    'if-contains': 'test'
                 }
             ]
         }
@@ -95,7 +93,10 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             creator.create_item(config)
-        self.assertEqual("\"Expected either \'pattern\' or \'contains\' option, but not both\"", str(exception.value))
+        self.assertEqual(
+            "Expected either 'if-contains' or 'if-matches' option, but not both",
+            exception.value.value
+        )
 
     def test_handler_created_with_uri_and_pattern(self):
         self.http_server.serve_content('<IMAGE CONTENT>')
@@ -105,7 +106,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
             "images": [
                 {
                     'uri': '%s/test-filename-1.png' % self.http_server.url,
-                    'pattern': 'test pattern1'
+                    'if-matches': 'test pattern1'
                 }
             ]
         }
@@ -142,7 +143,7 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
             "images": [
                 {
                     'uri': '%s/test-filename-2.png' % self.http_server.url,
-                    'contains': 'test pattern2'
+                    'if-contains': 'test pattern2'
                 }
             ]
         }

@@ -1,6 +1,7 @@
 import logging
+from urllib.error import HTTPError
 
-from doodledashboard.configuration.config import MissingRequiredOptionException
+from doodledashboard.configuration.config import MissingRequiredOptionException, HandlerCreationException
 from doodledashboard.filters.contains_text import ContainsTextFilter
 from doodledashboard.filters.matches_regex import MatchesRegexFilter
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigSection
@@ -98,7 +99,11 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigSection):
             raise MissingRequiredOptionException("Expected 'images' list and/or default-image to exist")
 
         if has_default_image:
-            image_path = self._file_downloader.download(config_section["default-image"])
+            try:
+                image_path = self._file_downloader.download(config_section["default-image"])
+            except HTTPError as err:
+                raise HandlerCreationException("Error '%s' when downloading %s" % (err.msg, err.url))
+
             handler.add_image_filter(image_path)
 
         if has_images:
@@ -109,23 +114,27 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigSection):
                 image_uri = image_config_section["uri"]
                 image_filter = self._create_filter(image_config_section)
 
-                image_path = self._file_downloader.download(image_uri)
+                try:
+                    image_path = self._file_downloader.download(image_uri)
+                except HTTPError as err:
+                    raise HandlerCreationException(err.url)
+
                 handler.add_image_filter(image_path, image_filter)
 
         return handler
 
     @staticmethod
     def _create_filter(image_config_section):
-        pattern_exists = "pattern" in image_config_section
+        pattern_exists = "if-matches" in image_config_section
         contains_exists = "if-contains" in image_config_section
 
         if not pattern_exists and not contains_exists:
-            raise MissingRequiredOptionException("Expected either 'pattern' or 'contains' option to exist")
+            raise MissingRequiredOptionException("Expected either 'if-contains' or 'if-matches' option to exist")
 
         if pattern_exists and contains_exists:
-            raise MissingRequiredOptionException("Expected either 'pattern' or 'contains' option, but not both")
+            raise MissingRequiredOptionException("Expected either 'if-contains' or 'if-matches' option, but not both")
 
         if pattern_exists:
-            return MatchesRegexFilter(image_config_section["pattern"])
+            return MatchesRegexFilter(image_config_section["if-matches"])
         else:
             return ContainsTextFilter(image_config_section["if-contains"])

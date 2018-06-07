@@ -5,6 +5,8 @@
 
 Welcome to Doodle-Dashboard's documentation!
 ============================================
+*Doodle-Dashboard is used to create little dashboards that display useful information from multiple sources, like Tweets from your favourite Twitterers, weather reports for your local area or breaking news.*
+
 
 .. toctree::
    :maxdepth: 2

@@ -25,10 +25,6 @@ class TestMessageContainsTextFilter(unittest.TestCase):
 
         self.assertFalse(filtered_message)
 
-    @staticmethod
-    def create_mock_message_with_text(text):
-        return TextEntity(text)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -35,20 +35,15 @@ class TestDashboardRunner(unittest.TestCase):
         notification.draw.assert_called_once_with(display)
 
     def test_get_get_latest_entities_called_for_all_data_feeds_when_cycle_called(self, time_sleep):
-        data_feeds = [self._create_emtpy_data_feed(),
-                      self._create_emtpy_data_feed()]
+        data_feeds = [Mock(), Mock()]
+        data_feeds[0].get_latest_entities.return_value = []
+        data_feeds[1].get_latest_entities.return_value = []
 
         dashboard = Dashboard(0, Mock(), data_feeds, [Mock()])
         DashboardRunner(dashboard).cycle()
 
         data_feeds[0].get_latest_entities.assert_called()
         data_feeds[1].get_latest_entities.assert_called()
-
-    @staticmethod
-    def _create_emtpy_data_feed():
-        data_feed = Mock()
-        data_feed.get_latest_entities.return_value = []
-        return data_feed
 
 
 if __name__ == "__main__":

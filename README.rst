@@ -3,9 +3,15 @@ Doodle-Dashboard: Simple dashboards for all!
 
 .. image:: https://img.shields.io/pypi/v/doodle-dashboard.svg
     :target: https://pypi.org/project/doodle-dashboard/
+    :alt: Latest version
 
 .. image:: https://travis-ci.org/SketchingDev/Doodle-Dashboard.svg?branch=master
     :target: https://travis-ci.org/SketchingDev/Doodle-Dashboard
+    :alt: Build status
+
+.. image:: https://readthedocs.org/projects/doodle-dashboard/badge/?version=latest
+    :target: https://doodle-dashboard.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 ---------------
 

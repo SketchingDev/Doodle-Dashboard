@@ -18,7 +18,7 @@ Doodle-Dashboard: Simple dashboards for all!
 **Doodle-Dashboard** is used to create little dashboards that display useful information from multiple sources, like
 Tweets from your favourite Twitterers, weather reports for your local area or breaking news.
 
-.. image:: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/docs/images/flow-diagram.png
+.. image:: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/docs/_static/flow-diagram.png
 
 Requirements
 ------------

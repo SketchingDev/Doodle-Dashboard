@@ -2,8 +2,7 @@ import unittest
 
 from doodledashboard.configuration.config import DashboardConfigReader, FilterConfigSection
 from doodledashboard.datafeeds.rss import RssFeedSection, RssFeed
-from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
-from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
+from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator, ConsoleDisplay
 from doodledashboard.filters.filter import TextEntityFilter
 from doodledashboard.handlers.handler import MessageHandlerConfigSection
 
@@ -40,7 +39,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         config_reader.add_display_creators([ConsoleDisplayConfigCreator()])
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
-        self.assertIsInstance(dashboard.get_display(), LoggingDisplayDecorator)
+        self.assertIsInstance(dashboard.get_display(), ConsoleDisplay)
 
     def test_data_source_created_from_yaml(self):
         config_reader = DashboardConfigReader()

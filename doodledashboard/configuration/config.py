@@ -123,15 +123,7 @@ class DashboardConfigReader:
             return DashboardConfigReader._FIVE_SECONDS
 
     def _extract_display(self, config):
-        # TODO: Fix issue with circular dependency that I get when this import is moved to the top
-        # https://stackoverflow.com/questions/9252543/importerror-cannot-import-name-x
-        from doodledashboard.displays.loggingdecorator import LoggingDisplayDecorator
-
-        display = self._display_creator.create(config)
-        if display:
-            return LoggingDisplayDecorator(display)
-        else:
-            return None
+        return self._display_creator.create(config)
 
     def _extract_data_feeds(self, config):
         data_source_elements = []

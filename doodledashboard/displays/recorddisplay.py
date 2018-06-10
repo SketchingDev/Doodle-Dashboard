@@ -1,7 +1,7 @@
-from doodledashboard.displays.display import WriteTextMixin, ClearMixin, DrawImageMixin, ColourFillMixin
+from doodledashboard.displays.display import WriteTextMixin, ClearMixin, DrawImageMixin, ColourFillMixin, Display
 
 
-class RecordDisplay(ClearMixin, WriteTextMixin, DrawImageMixin, ColourFillMixin):
+class RecordDisplay(Display, ClearMixin, WriteTextMixin, DrawImageMixin, ColourFillMixin):
     """
     Records the interaction with the display
     """

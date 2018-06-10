@@ -1,9 +1,9 @@
 import click
 
-from doodledashboard.displays.display import DisplayConfigSection, WriteTextMixin, DrawImageMixin, Display
+from doodledashboard.displays.display import DisplayConfigSection, CanWriteText, CanDrawImage, Display
 
 
-class ConsoleDisplay(Display, WriteTextMixin, DrawImageMixin):
+class ConsoleDisplay(Display, CanWriteText, CanDrawImage):
 
     def clear(self):
         click.clear()
@@ -16,10 +16,6 @@ class ConsoleDisplay(Display, WriteTextMixin, DrawImageMixin):
 
     def _get_size(self):
         return click.get_terminal_size()
-
-    # @property
-    # def get_display_id(self):
-    #     return "console"
 
     def __str__(self):
         return "Console display"

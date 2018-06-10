@@ -1,4 +1,4 @@
-from doodledashboard.displays.display import WriteTextMixin
+from doodledashboard.displays.display import CanWriteText
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigSection
 
 
@@ -17,7 +17,7 @@ class TextHandler(MessageHandler):
 
     @property
     def display_requirements(self):
-        return [WriteTextMixin]
+        return [CanWriteText]
 
     def __str__(self):
         return "Text handler"

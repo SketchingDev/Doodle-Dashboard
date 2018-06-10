@@ -3,19 +3,24 @@ from abc import ABC, abstractmethod
 from doodledashboard.configuration.config import ConfigSection
 
 
-class WriteTextMixin(ABC):
+class CanWriteText(ABC):
+    """Mixin that indicates the display can write text"""
+
     @abstractmethod
     def write_text(self, text):
         pass
 
 
-class DrawImageMixin(ABC):
+class CanDrawImage(ABC):
+    """Mixin that indicates the display can draw an image"""
     @abstractmethod
     def draw_image(self, path):
         pass
 
 
-class ColourFillMixin(ABC):
+class CanColourFill(ABC):
+    """Mixin that indicates the display can be filled with colour"""
+
     @abstractmethod
     def fill_colour(self, colour):
         pass

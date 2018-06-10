@@ -3,6 +3,9 @@ from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfi
 
 class TextHandler(MessageHandler):
 
+    def supports_display(self, display):
+        pass
+
     def __init__(self, key_value_store):
         MessageHandler.__init__(self, key_value_store)
         self._filtered_images = []

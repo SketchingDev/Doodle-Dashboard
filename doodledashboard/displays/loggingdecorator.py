@@ -17,9 +17,9 @@ class LoggingDisplayDecorator(Display):
         self._logger.info("Clear display")
         self._display.clear()
 
-    def write_text(self, text, font_face=None):
+    def write_text(self, text):
         self._logger.info("Write text: '%s'" % text)
-        self._display.write_text(text, font_face)
+        self._display.write_text(text)
 
     def draw_image(self, image_path):
         self._logger.info("Draw image: %s" % image_path)

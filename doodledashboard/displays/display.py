@@ -1,23 +1,38 @@
+from abc import ABC, abstractmethod
+
 from doodledashboard.configuration.config import ConfigSection
 
 
-class Display:
-    # TODO Provide way to say what operations the display supports
-
-    def __init__(self):
+class ClearMixin(ABC):
+    @abstractmethod
+    def clear(self):
         pass
 
-    def clear(self):
-        raise NotImplementedError("Implement this method")
 
-    def write_text(self, text, font_face=None):
-        raise NotImplementedError("Implement this method")
+class WriteTextMixin(ABC):
+    @abstractmethod
+    def write_text(self, text):
+        pass
 
-    def draw_image(self, image_path):
-        raise NotImplementedError("Implement this method")
 
+class DrawImageMixin(ABC):
+    @abstractmethod
+    def draw_image(self, path):
+        pass
+
+
+class ColourFillMixin(ABC):
+    @abstractmethod
     def fill_colour(self, colour):
-        raise NotImplementedError("Implement this method")
+        pass
+
+
+class Display(ABC):
+    pass
+    # @property
+    # @abstractmethod
+    # def get_display_id(self):
+    #     pass
 
 
 class DisplayConfigSection(ConfigSection):

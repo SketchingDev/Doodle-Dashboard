@@ -1,26 +1,29 @@
 import click
 
-from doodledashboard.displays.display import DisplayConfigSection, Display
+from doodledashboard.displays.display import DisplayConfigSection, WriteTextMixin, DrawImageMixin, ClearMixin, \
+    ColourFillMixin, Display
 
 
-class ConsoleDisplay(Display):
-    def __init__(self):
-        Display.__init__(self)
+class ConsoleDisplay(Display, ClearMixin, WriteTextMixin, DrawImageMixin, ColourFillMixin):
+
+    def fill_colour(self, colour):
+        pass
 
     def clear(self):
         click.clear()
 
-    def write_text(self, text, font_face=None):
+    def write_text(self, text):
         click.echo(text)
 
     def draw_image(self, image_path):
         click.echo("One day I'll draw an ASCII version of %s" % image_path)
 
-    def fill_colour(self, colour):
-        click.secho(colour, fg=colour)
-
     def _get_size(self):
         return click.get_terminal_size()
+
+    # @property
+    # def get_display_id(self):
+    #     return "console"
 
     def __str__(self):
         return "Console display"

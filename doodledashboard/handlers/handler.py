@@ -31,6 +31,9 @@ class MessageHandler:
     def draw(self, display):
         raise NotImplementedError("Implement this method")
 
+    def supports_display(self, display):
+        raise NotImplementedError("Implement this method")
+
 
 class MessageHandlerConfigSection(ConfigSection):
     """

@@ -1,8 +1,8 @@
 from papirus import Papirus, PapirusText, PapirusImage
-from doodledashboard.displays.display import Display, DisplayConfigSection
+from doodledashboard.displays.display import DisplayConfigSection, WriteTextMixin, DrawImageMixin, ClearMixin
 
 
-class PapirusDisplay(Display):
+class PapirusDisplay(ClearMixin, DrawImageMixin, WriteTextMixin):
     A_1_44_INCH = (128, 90)
     A_1_9_INCH = (144, 128)
     A_2_0_INCH = (200, 96)
@@ -10,7 +10,6 @@ class PapirusDisplay(Display):
     A_2_7_INCH = (264, 176)
 
     def __init__(self, size):
-        Display.__init__(self)
         self._screen = Papirus()
         self._image = PapirusImage()
         self._text = PapirusText()

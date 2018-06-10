@@ -123,7 +123,15 @@ class DashboardConfigReader:
             return DashboardConfigReader._FIVE_SECONDS
 
     def _extract_display(self, config):
-        return self._display_creator.create(config)
+        from doodledashboard.displays.display import Display
+
+        display = self._display_creator.create(config)
+        if display and not isinstance(display, Display):
+            raise InvalidConfigurationException(
+                "Display loaded does not implement Display base class. Contact the Display's creator"
+            )
+
+        return display
 
     def _extract_data_feeds(self, config):
         data_source_elements = []
@@ -180,8 +188,22 @@ class DashboardConfigReader:
 class ValidateDashboard:
 
     def validate(self, dashboard):
-        self._check_not_empty(dashboard)
         self._check_has_display(dashboard)
+        self._check_handlers_supports_display(dashboard)
+        self._check_not_empty(dashboard)
+
+    @staticmethod
+    def _check_handlers_supports_display(dashboard):
+        display = dashboard.get_display()
+        for notification in dashboard.get_notifications():
+            handler = notification.get_handler()
+            requirements = handler.display_requirements
+
+            for requirement in requirements:
+                if not isinstance(display, requirement):
+                    raise InvalidConfigurationException(
+                        "Display %s does not have required functionality for notification %s" % (display, notification)
+                    )
 
     @staticmethod
     def _check_not_empty(dashboard):

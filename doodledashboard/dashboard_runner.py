@@ -39,6 +39,9 @@ class Notification:
     def draw(self, display):
         self._handler.draw(display)
 
+    def get_handler(self):
+        return self._handler
+
     def filter(self, entities):
         filtered_entities = []
         for e in entities:

@@ -1,13 +1,9 @@
 import click
 
-from doodledashboard.displays.display import DisplayConfigSection, WriteTextMixin, DrawImageMixin, ClearMixin, \
-    ColourFillMixin, Display
+from doodledashboard.displays.display import DisplayConfigSection, WriteTextMixin, DrawImageMixin, Display
 
 
-class ConsoleDisplay(Display, ClearMixin, WriteTextMixin, DrawImageMixin, ColourFillMixin):
-
-    def fill_colour(self, colour):
-        pass
+class ConsoleDisplay(Display, WriteTextMixin, DrawImageMixin):
 
     def clear(self):
         click.clear()

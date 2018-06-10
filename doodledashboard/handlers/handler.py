@@ -1,7 +1,9 @@
+from abc import ABC, abstractmethod
+
 from doodledashboard.configuration.config import ConfigSection
 
 
-class MessageHandler:
+class MessageHandler(ABC):
     """
     Abstract class for a message handler. Handlers are responsible for deciding what to display based on the messages
     they are given.
@@ -21,18 +23,22 @@ class MessageHandler:
     def initialise(self):
         pass
 
+    @abstractmethod
     def update(self, text_entity):
         """
         This method is called with a message from the data feeds. It is within
         here that you decide what your handler will display when the draw method is called.
         """
-        raise NotImplementedError("Implement this method")
+        pass
 
+    @abstractmethod
     def draw(self, display):
-        raise NotImplementedError("Implement this method")
+        pass
 
-    def supports_display(self, display):
-        raise NotImplementedError("Implement this method")
+    @property
+    @abstractmethod
+    def display_requirements(self):
+        pass
 
 
 class MessageHandlerConfigSection(ConfigSection):

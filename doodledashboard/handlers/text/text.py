@@ -1,10 +1,8 @@
+from doodledashboard.displays.display import WriteTextMixin
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigSection
 
 
 class TextHandler(MessageHandler):
-
-    def supports_display(self, display):
-        pass
 
     def __init__(self, key_value_store):
         MessageHandler.__init__(self, key_value_store)
@@ -16,6 +14,10 @@ class TextHandler(MessageHandler):
 
     def draw(self, display):
         display.write_text(self._text)
+
+    @property
+    def display_requirements(self):
+        return [WriteTextMixin]
 
     def __str__(self):
         return "Text handler"

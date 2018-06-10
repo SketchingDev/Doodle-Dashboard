@@ -9,7 +9,8 @@ Feature: Configuration is printed to output
     Then the status code is 1
     And the output is
       """
-      Configuration file is empty
+      Error reading configuration file 'config.yml':
+      'Configuration file is empty'
       Aborted!
 
       """

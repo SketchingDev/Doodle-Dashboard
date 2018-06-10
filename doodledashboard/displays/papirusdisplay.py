@@ -1,8 +1,8 @@
 from papirus import Papirus, PapirusText, PapirusImage
-from doodledashboard.displays.display import DisplayConfigSection, WriteTextMixin, DrawImageMixin, ClearMixin
+from doodledashboard.displays.display import DisplayConfigSection, WriteTextMixin, DrawImageMixin, Display
 
 
-class PapirusDisplay(ClearMixin, DrawImageMixin, WriteTextMixin):
+class PapirusDisplay(Display, DrawImageMixin, WriteTextMixin):
     A_1_44_INCH = (128, 90)
     A_1_9_INCH = (144, 128)
     A_2_0_INCH = (200, 96)

@@ -90,8 +90,8 @@ def try_read_dashboard_config(dashboard_config, config):
         return dashboard_config.read_yaml(config)
     except YAMLError as err:
         click.echo("Error parsing configuration file '%s':\n%s" % (config.name, err), err=True)
-    except InvalidConfigurationException:
-        click.echo("Configuration file is empty", err=True)
+    except InvalidConfigurationException as err:
+        click.echo("Error reading configuration file '%s':\n%s" % (config.name, err), err=True)
 
     raise click.Abort()
 

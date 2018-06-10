@@ -3,12 +3,6 @@ from abc import ABC, abstractmethod
 from doodledashboard.configuration.config import ConfigSection
 
 
-class ClearMixin(ABC):
-    @abstractmethod
-    def clear(self):
-        pass
-
-
 class WriteTextMixin(ABC):
     @abstractmethod
     def write_text(self, text):
@@ -28,11 +22,9 @@ class ColourFillMixin(ABC):
 
 
 class Display(ABC):
-    pass
-    # @property
-    # @abstractmethod
-    # def get_display_id(self):
-    #     pass
+    @abstractmethod
+    def clear(self):
+        pass
 
 
 class DisplayConfigSection(ConfigSection):

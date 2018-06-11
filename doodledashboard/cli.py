@@ -7,7 +7,7 @@ from yaml import YAMLError
 from doodledashboard import __about__
 from doodledashboard.configuration.config import DashboardConfigReader, \
     ValidateDashboard, InvalidConfigurationException
-from doodledashboard.configuration.defaultconfig import FullConfigCollection
+from doodledashboard.configuration.component_loaders import AllInPackageLoader
 from doodledashboard.dashboard_runner import DashboardRunner
 from doodledashboard.datafeeds.datafeed import TextEntityJsonEncoder
 from doodledashboard.displays.recorddisplay import RecordDisplay
@@ -32,7 +32,7 @@ def start(config, once, verbose):
 
     with shelve.open("/tmp/shelve") as state_storage:
 
-        dashboard_config = DashboardConfigReader(FullConfigCollection(state_storage))
+        dashboard_config = DashboardConfigReader(AllInPackageLoader(state_storage))
         dashboard = try_read_dashboard_config(dashboard_config, config)
 
         try:
@@ -57,7 +57,7 @@ def start(config, once, verbose):
 def view(action, config):
     """View what the datafeeds in the CONFIG are returning"""
 
-    dashboard_config = DashboardConfigReader(FullConfigCollection({}))
+    dashboard_config = DashboardConfigReader(AllInPackageLoader({}))
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
     datafeed_responses = DashboardRunner(dashboard).poll_datafeeds()

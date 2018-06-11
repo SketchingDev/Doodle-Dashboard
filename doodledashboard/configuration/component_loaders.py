@@ -11,16 +11,26 @@ from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreato
 from doodledashboard.handlers.text.text import TextHandlerConfigCreator
 
 
-class FullConfigCollection:
+def validate_displays(displays):
+    from doodledashboard.displays.display import Display
+    for display in displays:
+        if not issubclass(display, Display):
+            raise InvalidConfigurationException(
+                "Display loaded does not implement Display base class. Contact the Display's creator"
+            )
+    return displays
+
+
+class AllInPackageLoader:
 
     def __init__(self, state_storage):
         self._state_storage = state_storage
 
     def configure(self, dashboard_config):
-        dashboard_config.add_available_displays(FullConfigCollection._find_displays())
-        dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_feed_creators())
-        dashboard_config.add_handler_creators(FullConfigCollection._get_handler_creators(self._state_storage))
-        dashboard_config.add_filter_creators(FullConfigCollection._get_filter_creators())
+        dashboard_config.add_available_displays(AllInPackageLoader._find_displays())
+        dashboard_config.add_data_feed_creators(AllInPackageLoader._find_data_feed_creators())
+        dashboard_config.add_handler_creators(AllInPackageLoader._find_handler_creators(self._state_storage))
+        dashboard_config.add_filter_creators(AllInPackageLoader._find_filter_creators())
 
     @staticmethod
     def _find_displays():
@@ -31,20 +41,10 @@ class FullConfigCollection:
             from doodledashboard.displays.papirusdisplay import PapirusDisplay
             displays.append(PapirusDisplay)
 
-        return FullConfigCollection._validate_displays(displays)
+        return validate_displays(displays)
 
     @staticmethod
-    def _validate_displays(displays):
-        from doodledashboard.displays.display import Display
-        for display in displays:
-            if not issubclass(display, Display):
-                raise InvalidConfigurationException(
-                    "Display loaded does not implement Display base class. Contact the Display's creator"
-                )
-        return displays
-
-    @staticmethod
-    def _get_data_feed_creators():
+    def _find_data_feed_creators():
         return [
             RssFeedSection(),
             SlackFeedSection(),
@@ -53,33 +53,24 @@ class FullConfigCollection:
         ]
 
     @staticmethod
-    def _get_handler_creators(key_value_store):
+    def _find_handler_creators(key_value_store):
         return [
             ImageMessageHandlerConfigCreator(key_value_store, FileDownloader()),
             TextHandlerConfigCreator(key_value_store)
         ]
 
     @staticmethod
-    def _get_filter_creators():
+    def _find_filter_creators():
         return [
             MatchesRegexFilterSection(),
             ContainsTextFilterSection()
         ]
 
 
-class DatafeedConfigCollection:
+class DatafeedOnlyLoader:
 
     def __init__(self):
         pass
 
     def configure(self, dashboard_config):
-        dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_feed_creators())
-
-    @staticmethod
-    def _get_data_source_creators():
-        return [
-            RssFeedSection(),
-            SlackFeedSection(),
-            DateTimeFeedSection(),
-            TextFeedSection()
-        ]
+        dashboard_config.add_data_feed_creators(AllInPackageLoader._find_data_feed_creators())

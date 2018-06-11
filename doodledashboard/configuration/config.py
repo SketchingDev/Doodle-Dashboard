@@ -77,14 +77,14 @@ class DashboardConfigReader:
     """
     _FIVE_SECONDS = 5
 
-    def __init__(self, config_creators=None):
+    def __init__(self, components_loader=None):
         self._filter_creator = RootConfigSection()
         self._handler_creator = RootConfigSection()
         self._data_feed_creator = RootConfigSection()
         self._available_displays = []
 
-        if config_creators:
-            config_creators.configure(self)
+        if components_loader:
+            components_loader.configure(self)
 
     def add_filter_creators(self, creators):
         self._add_creator_to_chain(self._filter_creator, creators)
@@ -112,8 +112,8 @@ class DashboardConfigReader:
         return Dashboard(
             self._parse_interval(config),
             self._parse_display(config),
-            self._extract_data_feeds(config),
-            self._extract_notifications(config)
+            self._parse_data_feeds(config),
+            self._parse_notifications(config)
         )
 
     def _parse_interval(self, config):
@@ -128,7 +128,7 @@ class DashboardConfigReader:
 
         return None
 
-    def _extract_data_feeds(self, config):
+    def _parse_data_feeds(self, config):
         data_source_elements = []
         # DataSourceConfigSection
         if "data-feeds" in config:
@@ -136,7 +136,7 @@ class DashboardConfigReader:
 
         return self._create_items(self._data_feed_creator, data_source_elements)
 
-    def _extract_notifications(self, config):
+    def _parse_notifications(self, config):
         notifications = []
 
         # NotificationsConfigSection

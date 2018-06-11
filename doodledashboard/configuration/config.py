@@ -191,11 +191,18 @@ class ValidateDashboard:
             handler = notification.get_handler()
             requirements = handler.display_requirements
 
+            missing_requirements = []
             for requirement in requirements:
                 if not isinstance(display, requirement):
-                    raise InvalidConfigurationException(
-                        "Display %s does not have required functionality for notification %s" % (display, notification)
-                    )
+                    missing_requirements.append(requirement)
+
+            if len(missing_requirements) > 0:
+                error_message = "\n".join([" - %s" % r.__name__ for r in missing_requirements])
+
+                raise InvalidConfigurationException(
+                    "Display '%s' is missing the following functionality required by the notification '%s':\n%s"
+                    % (display, notification, error_message)
+                )
 
     @staticmethod
     def _check_not_empty(dashboard):

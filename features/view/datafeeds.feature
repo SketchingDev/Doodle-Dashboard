@@ -9,7 +9,7 @@ Feature: View output of data-feeds
      And the output is
         """
         Error reading configuration file 'config.yml':
-        'Configuration file is empty'
+        Configuration file is empty
         Aborted!
 
         """

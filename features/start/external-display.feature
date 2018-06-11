@@ -34,7 +34,8 @@ Feature: Configuration loads external displays
       And the output is
          """
          Error reading configuration file 'config.yml':
-         'Display test-display does not have required functionality for notification Displays entities using: Text handler'
+         Display 'test-display' is missing the following functionality required by the notification 'Displays entities using: Text handler':
+          - CanWriteText
          Aborted!
 
          """

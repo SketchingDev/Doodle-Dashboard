@@ -10,7 +10,7 @@ Feature: Configuration is printed to output
     And the output is
       """
       Error reading configuration file 'config.yml':
-      'Configuration file is empty'
+      Configuration file is empty
       Aborted!
 
       """
@@ -42,7 +42,7 @@ Feature: Configuration is printed to output
     And the output is
        """
        Error reading configuration file 'config.yml':
-       'No display defined. Check that the ID you provided is valid.'
+       No display defined. Check that the ID you provided is valid.
        Aborted!
 
        """

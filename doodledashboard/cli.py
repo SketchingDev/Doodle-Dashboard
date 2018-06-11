@@ -32,7 +32,7 @@ def start(config, once, verbose):
 
     with shelve.open("/tmp/shelve") as state_storage:
 
-        dashboard_config = DashboardConfigReader(AllInPackageLoader(state_storage))
+        dashboard_config = AllInPackageLoader(state_storage).configure(DashboardConfigReader())
         dashboard = try_read_dashboard_config(dashboard_config, config)
 
         try:
@@ -57,7 +57,7 @@ def start(config, once, verbose):
 def view(action, config):
     """View what the datafeeds in the CONFIG are returning"""
 
-    dashboard_config = DashboardConfigReader(AllInPackageLoader({}))
+    dashboard_config = AllInPackageLoader({}).configure(DashboardConfigReader())
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
     datafeed_responses = DashboardRunner(dashboard).poll_datafeeds()

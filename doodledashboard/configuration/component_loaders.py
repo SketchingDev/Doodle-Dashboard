@@ -32,6 +32,8 @@ class AllInPackageLoader:
         dashboard_config.add_handler_creators(AllInPackageLoader._find_handler_creators(self._state_storage))
         dashboard_config.add_filter_creators(AllInPackageLoader._find_filter_creators())
 
+        return dashboard_config
+
     @staticmethod
     def _find_displays():
         from doodledashboard.displays.consoledisplay import ConsoleDisplay
@@ -65,12 +67,3 @@ class AllInPackageLoader:
             MatchesRegexFilterSection(),
             ContainsTextFilterSection()
         ]
-
-
-class DatafeedOnlyLoader:
-
-    def __init__(self):
-        pass
-
-    def configure(self, dashboard_config):
-        dashboard_config.add_data_feed_creators(AllInPackageLoader._find_data_feed_creators())

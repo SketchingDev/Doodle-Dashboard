@@ -77,14 +77,11 @@ class DashboardConfigReader:
     """
     _FIVE_SECONDS = 5
 
-    def __init__(self, components_loader=None):
+    def __init__(self):
         self._filter_creator = RootConfigSection()
         self._handler_creator = RootConfigSection()
         self._data_feed_creator = RootConfigSection()
         self._available_displays = []
-
-        if components_loader:
-            components_loader.configure(self)
 
     def add_filter_creators(self, creators):
         self._add_creator_to_chain(self._filter_creator, creators)

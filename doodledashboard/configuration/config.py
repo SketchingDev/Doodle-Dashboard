@@ -81,7 +81,7 @@ class DashboardConfigReader:
         self._filter_creator = RootConfigSection()
         self._handler_creator = RootConfigSection()
         self._data_feed_creator = RootConfigSection()
-        self._display_creator = RootConfigSection()
+        self._available_displays = []
 
         if config_creators:
             config_creators.configure(self)
@@ -95,8 +95,8 @@ class DashboardConfigReader:
     def add_data_feed_creators(self, creators):
         self._add_creator_to_chain(self._data_feed_creator, creators)
 
-    def add_display_creators(self, creators):
-        self._add_creator_to_chain(self._display_creator, creators)
+    def add_available_displays(self, displays):
+        self._available_displays += displays
 
     @staticmethod
     def _add_creator_to_chain(chain, creators):
@@ -110,28 +110,23 @@ class DashboardConfigReader:
             raise InvalidConfigurationException("Configuration file is empty")
 
         return Dashboard(
-            self._extract_interval(config),
-            self._extract_display(config),
+            self._parse_interval(config),
+            self._parse_display(config),
             self._extract_data_feeds(config),
             self._extract_notifications(config)
         )
 
-    def _extract_interval(self, config):
-        if "interval" in config:
-            return config["interval"]
-        else:
-            return DashboardConfigReader._FIVE_SECONDS
+    def _parse_interval(self, config):
+        return config["interval"] if "interval" in config else DashboardConfigReader._FIVE_SECONDS
 
-    def _extract_display(self, config):
-        from doodledashboard.displays.display import Display
+    def _parse_display(self, config):
+        display_id = config["display"] if "display" in config else None
 
-        display = self._display_creator.create(config)
-        if display and not isinstance(display, Display):
-            raise InvalidConfigurationException(
-                "Display loaded does not implement Display base class. Contact the Display's creator"
-            )
+        for display in self._available_displays:
+            if display.get_id() == display_id:
+                return display()
 
-        return display
+        return None
 
     def _extract_data_feeds(self, config):
         data_source_elements = []

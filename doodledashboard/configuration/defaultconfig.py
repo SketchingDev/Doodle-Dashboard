@@ -1,10 +1,10 @@
 import pkgutil
 
+from doodledashboard.configuration.config import InvalidConfigurationException
 from doodledashboard.datafeeds.datetime import DateTimeFeedSection
 from doodledashboard.datafeeds.rss import RssFeedSection
 from doodledashboard.datafeeds.slack import SlackFeedSection
 from doodledashboard.datafeeds.text import TextFeedSection
-from doodledashboard.displays.consoledisplay import ConsoleDisplayConfigCreator
 from doodledashboard.filters.contains_text import ContainsTextFilterSection
 from doodledashboard.filters.matches_regex import MatchesRegexFilterSection
 from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader
@@ -17,21 +17,31 @@ class FullConfigCollection:
         self._state_storage = state_storage
 
     def configure(self, dashboard_config):
-        dashboard_config.add_display_creators(FullConfigCollection._get_display_creators())
+        dashboard_config.add_available_displays(FullConfigCollection._find_displays())
         dashboard_config.add_data_feed_creators(FullConfigCollection._get_data_feed_creators())
         dashboard_config.add_handler_creators(FullConfigCollection._get_handler_creators(self._state_storage))
         dashboard_config.add_filter_creators(FullConfigCollection._get_filter_creators())
 
     @staticmethod
-    def _get_display_creators():
-        creators = [ConsoleDisplayConfigCreator()]
+    def _find_displays():
+        from doodledashboard.displays.consoledisplay import ConsoleDisplay
+        displays = [ConsoleDisplay]
 
-        papirus_loader = pkgutil.find_loader("papirus")
-        if papirus_loader:
-            from doodledashboard.displays.papirusdisplay import PapirusDisplayConfigCreator
-            creators.append(PapirusDisplayConfigCreator())
+        if pkgutil.find_loader("papirus"):
+            from doodledashboard.displays.papirusdisplay import PapirusDisplay
+            displays.append(PapirusDisplay)
 
-        return creators
+        return FullConfigCollection._validate_displays(displays)
+
+    @staticmethod
+    def _validate_displays(displays):
+        from doodledashboard.displays.display import Display
+        for display in displays:
+            if not issubclass(display, Display):
+                raise InvalidConfigurationException(
+                    "Display loaded does not implement Display base class. Contact the Display's creator"
+                )
+        return displays
 
     @staticmethod
     def _get_data_feed_creators():

@@ -24,5 +24,9 @@ class RecordDisplay(Display, CanWriteText, CanDrawImage, CanColourFill):
     def get_calls(self):
         return self.calls
 
+    @staticmethod
+    def get_id():
+        return "record"
+
     def __str__(self):
         return "Record display"

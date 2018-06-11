@@ -1,9 +1,13 @@
 import click
 
-from doodledashboard.displays.display import DisplayConfigSection, CanWriteText, CanDrawImage, Display
+from doodledashboard.displays.display import CanWriteText, CanDrawImage, Display
 
 
 class ConsoleDisplay(Display, CanWriteText, CanDrawImage):
+
+    @staticmethod
+    def get_id():
+        return "console"
 
     def clear(self):
         click.clear()
@@ -19,14 +23,3 @@ class ConsoleDisplay(Display, CanWriteText, CanDrawImage):
 
     def __str__(self):
         return "Console display"
-
-
-class ConsoleDisplayConfigCreator(DisplayConfigSection):
-    def __init__(self):
-        DisplayConfigSection.__init__(self)
-
-    def creates_for_id(self, display_id):
-        return display_id == "console"
-
-    def create_item(self, config_section):
-        return ConsoleDisplay()

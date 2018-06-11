@@ -1,4 +1,5 @@
 import pkgutil
+from abc import abstractmethod, ABC
 
 from doodledashboard.configuration.config import InvalidConfigurationException
 from doodledashboard.datafeeds.datetime import DateTimeFeedSection
@@ -11,6 +12,12 @@ from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreato
 from doodledashboard.handlers.text.text import TextHandlerConfigCreator
 
 
+class ComponentsLoader(ABC):
+    @abstractmethod
+    def configure(self, dashboard_config):
+        pass
+
+
 def validate_displays(displays):
     from doodledashboard.displays.display import Display
     for display in displays:
@@ -21,7 +28,14 @@ def validate_displays(displays):
     return displays
 
 
-class AllInPackageLoader:
+class StaticDisplayLoader(ComponentsLoader):
+    displays = []
+
+    def configure(self, dashboard_config):
+        dashboard_config.add_available_displays(StaticDisplayLoader.displays)
+
+
+class AllInPackageLoader(ComponentsLoader):
 
     def __init__(self, state_storage):
         self._state_storage = state_storage
@@ -31,8 +45,6 @@ class AllInPackageLoader:
         dashboard_config.add_data_feed_creators(AllInPackageLoader._find_data_feed_creators())
         dashboard_config.add_handler_creators(AllInPackageLoader._find_handler_creators(self._state_storage))
         dashboard_config.add_filter_creators(AllInPackageLoader._find_filter_creators())
-
-        return dashboard_config
 
     @staticmethod
     def _find_displays():

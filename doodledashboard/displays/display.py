@@ -26,6 +26,7 @@ class CanColourFill(ABC):
 
 
 class Display(ABC):
+    """Base class that every display must implement"""
     @abstractmethod
     def clear(self):
         pass

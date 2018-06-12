@@ -1,4 +1,3 @@
-import pkgutil
 from abc import abstractmethod, ABC
 
 from doodledashboard.configuration.config import InvalidConfigurationException
@@ -49,13 +48,7 @@ class AllInPackageLoader(ComponentsLoader):
     @staticmethod
     def _find_displays():
         from doodledashboard.displays.consoledisplay import ConsoleDisplay
-        displays = [ConsoleDisplay]
-
-        if pkgutil.find_loader("papirus"):
-            from doodledashboard.displays.papirusdisplay import PapirusDisplay
-            displays.append(PapirusDisplay)
-
-        return validate_displays(displays)
+        return validate_displays([ConsoleDisplay])
 
     @staticmethod
     def _find_data_feed_creators():

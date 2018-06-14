@@ -1,10 +1,11 @@
 Feature: Notification prints to output derived from data-feeds
 
   Scenario: Config printed showing one notification
-    Given I have the configuration
+    Given I load test displays
+    And I have the configuration
        """
        interval: 0
-       display: console
+       display: test-display-all-functionality
        data-feeds:
          - source: text
            text: Test 1
@@ -21,13 +22,13 @@ Feature: Notification prints to output derived from data-feeds
     And the output is
        """
        Interval: 0
-       Display loaded: Console display
+       Display loaded: test-display-all-functionality
        2 data sources loaded
         - Text
         - Text
        1 notifications loaded
         - Displays entities using: Text handler
        Dashboard running...
-       Test 3
+       Write text: 'Test 3'
 
        """

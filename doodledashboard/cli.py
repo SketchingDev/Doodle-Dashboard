@@ -59,7 +59,6 @@ def view(action, config):
     """View what the datafeeds in the CONFIG are returning"""
 
     dashboard_config = configure_component_loaders(DashboardConfigReader(), {})
-
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
     datafeed_responses = DashboardRunner(dashboard).poll_datafeeds()

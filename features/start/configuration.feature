@@ -66,10 +66,11 @@ Feature: Configuration is printed to output
        """
 
   Scenario: Config printed showing one notification
-    Given I have the configuration
+    Given I load test displays
+    And I have the configuration
        """
        interval: 0
-       display: console
+       display: test-display-all-functionality
        notifications:
          - title: Dummy Handler
            handler: text-handler
@@ -79,11 +80,11 @@ Feature: Configuration is printed to output
     And the output is
        """
        Interval: 0
-       Display loaded: Console display
+       Display loaded: test-display-all-functionality
        0 data sources loaded
        1 notifications loaded
         - Displays entities using: Text handler
        Dashboard running...
-
+       Write text: ''
 
        """

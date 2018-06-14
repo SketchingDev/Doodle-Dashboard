@@ -1,10 +1,11 @@
 Feature: Display output from feeds
 
   Scenario: One notification writes output to the console
-    Given I have the configuration
+    Given I load test displays
+    And I have the configuration
        """
        interval: 0
-       display: console
+       display: test-display-all-functionality
        data-feeds:
          - source: text
            text:
@@ -24,22 +25,23 @@ Feature: Display output from feeds
     And the output is
        """
        Interval: 0
-       Display loaded: Console display
+       Display loaded: test-display-all-functionality
        2 data sources loaded
         - Text
         - Text
        1 notifications loaded
         - Displays entities using: Text handler
        Dashboard running...
-       The weather for next week is snow
+       Write text: 'The weather for next week is snow'
 
        """
 
     Scenario: Two notifications writes output to the console
-    Given I have the configuration
+    Given I load test displays
+    And I have the configuration
        """
        interval: 0
-       display: console
+       display: test-display-all-functionality
        data-feeds:
          - source: text
            text:
@@ -63,14 +65,14 @@ Feature: Display output from feeds
     And the output is
        """
        Interval: 0
-       Display loaded: Console display
+       Display loaded: test-display-all-functionality
        1 data sources loaded
         - Text
        2 notifications loaded
         - Displays entities using: Text handler
         - Displays entities using: Text handler
        Dashboard running...
-       Bank balance is £1
-       Jenkins build failing
+       Write text: 'Bank balance is £1'
+       Write text: 'Jenkins build failing'
 
        """

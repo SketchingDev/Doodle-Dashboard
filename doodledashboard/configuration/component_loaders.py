@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+from pkg_resources import iter_entry_points
 
 from doodledashboard.configuration.config import InvalidConfigurationException
 from doodledashboard.datafeeds.datetime import DateTimeFeedSection
@@ -18,7 +19,7 @@ class ComponentsLoader(ABC):
 
 
 def validate_displays(displays):
-    from doodledashboard.displays.display import Display
+    from sketchingdev.displays import Display
     for display in displays:
         if not issubclass(display, Display):
             raise InvalidConfigurationException(
@@ -34,21 +35,31 @@ class StaticDisplayLoader(ComponentsLoader):
         dashboard_config.add_available_displays(StaticDisplayLoader.displays)
 
 
-class AllInPackageLoader(ComponentsLoader):
+class ExternalPackageLoader(ComponentsLoader):
+
+    _DISPLAYS_GROUP_NAME = "doodledashboard.customdisplays"
+
+    def configure(self, dashboard_config):
+        dashboard_config.add_available_displays(ExternalPackageLoader._find_displays())
+
+    @staticmethod
+    def _find_displays():
+        displays = []
+        for entry_point in iter_entry_points(ExternalPackageLoader._DISPLAYS_GROUP_NAME):
+            displays.append(entry_point.load())
+
+        return displays
+
+
+class InternalPackageLoader(ComponentsLoader):
 
     def __init__(self, state_storage):
         self._state_storage = state_storage
 
     def configure(self, dashboard_config):
-        dashboard_config.add_available_displays(AllInPackageLoader._find_displays())
-        dashboard_config.add_data_feed_creators(AllInPackageLoader._find_data_feed_creators())
-        dashboard_config.add_handler_creators(AllInPackageLoader._find_handler_creators(self._state_storage))
-        dashboard_config.add_filter_creators(AllInPackageLoader._find_filter_creators())
-
-    @staticmethod
-    def _find_displays():
-        from doodledashboard.displays.consoledisplay import ConsoleDisplay
-        return validate_displays([ConsoleDisplay])
+        dashboard_config.add_data_feed_creators(InternalPackageLoader._find_data_feed_creators())
+        dashboard_config.add_handler_creators(InternalPackageLoader._find_handler_creators(self._state_storage))
+        dashboard_config.add_filter_creators(InternalPackageLoader._find_filter_creators())
 
     @staticmethod
     def _find_data_feed_creators():

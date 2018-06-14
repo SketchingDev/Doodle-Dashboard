@@ -7,7 +7,8 @@ from yaml import YAMLError
 from doodledashboard import __about__
 from doodledashboard.configuration.config import DashboardConfigReader, \
     ValidateDashboard, InvalidConfigurationException
-from doodledashboard.configuration.component_loaders import AllInPackageLoader, StaticDisplayLoader
+from doodledashboard.configuration.component_loaders import InternalPackageLoader, StaticDisplayLoader, \
+    ExternalPackageLoader
 from doodledashboard.dashboard_runner import DashboardRunner
 from doodledashboard.datafeeds.datafeed import TextEntityJsonEncoder
 from doodledashboard.displays.recorddisplay import RecordDisplay
@@ -32,11 +33,7 @@ def start(config, once, verbose):
 
     with shelve.open("/tmp/shelve") as state_storage:
 
-        dashboard_config = DashboardConfigReader()
-
-        AllInPackageLoader(state_storage).configure(dashboard_config)
-        StaticDisplayLoader().configure(dashboard_config)
-
+        dashboard_config = configure_component_loaders(DashboardConfigReader(), state_storage)
         dashboard = try_read_dashboard_config(dashboard_config, config)
 
         try:
@@ -61,10 +58,7 @@ def start(config, once, verbose):
 def view(action, config):
     """View what the datafeeds in the CONFIG are returning"""
 
-    dashboard_config = DashboardConfigReader()
-
-    AllInPackageLoader({}).configure(dashboard_config)
-    StaticDisplayLoader().configure(dashboard_config)
+    dashboard_config = configure_component_loaders(DashboardConfigReader(), {})
 
     dashboard = try_read_dashboard_config(dashboard_config, config)
 
@@ -102,6 +96,14 @@ def try_read_dashboard_config(dashboard_config, config):
         click.echo("Error reading configuration file '%s':\n%s" % (config.name, err.value), err=True)
 
     raise click.Abort()
+
+
+def configure_component_loaders(dashboard_config, state_storage):
+    InternalPackageLoader(state_storage).configure(dashboard_config)
+    ExternalPackageLoader().configure(dashboard_config)
+    StaticDisplayLoader().configure(dashboard_config)
+
+    return dashboard_config
 
 
 def attach_logging(name):

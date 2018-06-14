@@ -1,8 +1,8 @@
 import unittest
+from sketchingdev.custom import ConsoleDisplay
 
 from doodledashboard.configuration.config import DashboardConfigReader, FilterConfigSection
 from doodledashboard.datafeeds.rss import RssFeedSection, RssFeed
-from doodledashboard.displays.consoledisplay import ConsoleDisplay
 from doodledashboard.filters.filter import TextEntityFilter
 from doodledashboard.handlers.handler import MessageHandlerConfigSection
 

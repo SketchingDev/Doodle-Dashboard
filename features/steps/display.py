@@ -1,7 +1,7 @@
 from behave import given
+from sketchingdev.displays import Display
 
 from doodledashboard.configuration.component_loaders import StaticDisplayLoader
-from doodledashboard.displays.display import Display
 
 
 @given("I load an external display")

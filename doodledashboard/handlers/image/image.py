@@ -1,8 +1,8 @@
 import logging
+from sketchingdev.displays import CanDrawImage
 from urllib.error import HTTPError
 
 from doodledashboard.configuration.config import MissingRequiredOptionException, HandlerCreationException
-from doodledashboard.displays.display import CanDrawImage
 from doodledashboard.filters.contains_text import ContainsTextFilter
 from doodledashboard.filters.matches_regex import MatchesRegexFilter
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigSection

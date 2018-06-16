@@ -86,6 +86,7 @@ Feature: Configuration is printed to output
        1 notifications loaded
         - Displays entities using: Text handler
        Dashboard running...
+       Clear display
        Write text: ''
 
        """

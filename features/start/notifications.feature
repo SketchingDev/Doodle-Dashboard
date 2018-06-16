@@ -29,6 +29,7 @@ Feature: Notification prints to output derived from data-feeds
        1 notifications loaded
         - Displays entities using: Text handler
        Dashboard running...
+       Clear display
        Write text: 'Test 3'
 
        """

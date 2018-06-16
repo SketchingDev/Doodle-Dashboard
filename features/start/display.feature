@@ -32,6 +32,7 @@ Feature: Display output from feeds
        1 notifications loaded
         - Displays entities using: Text handler
        Dashboard running...
+       Clear display
        Write text: 'The weather for next week is snow'
 
        """
@@ -72,7 +73,9 @@ Feature: Display output from feeds
         - Displays entities using: Text handler
         - Displays entities using: Text handler
        Dashboard running...
+       Clear display
        Write text: 'Bank balance is £1'
+       Clear display
        Write text: 'Jenkins build failing'
 
        """

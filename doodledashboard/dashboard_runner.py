@@ -70,8 +70,7 @@ class DashboardRunner:
         entities = self.poll_datafeeds()
         self.process_notifications(entities)
 
-        display = self._dashboard.get_display()
-        self.draw_notifications(display)
+        self.draw_notifications()
 
     def poll_datafeeds(self):
         entities = []
@@ -80,10 +79,15 @@ class DashboardRunner:
 
         return entities
 
-    def draw_notifications(self, display):
-        for notification in self._dashboard.get_notifications():
-            notification.draw(self._dashboard.get_display())
-            time.sleep(self._dashboard.get_interval())
+    def draw_notifications(self):
+        notifications = self._dashboard.get_notifications()
+        display = self._dashboard.get_display()
+        interval = self._dashboard.get_interval()
+
+        for notification in notifications:
+            display.clear()
+            notification.draw(display)
+            time.sleep(interval)
 
     def process_notifications(self, entities):
         for notification in self._dashboard.get_notifications():

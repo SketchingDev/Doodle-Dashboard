@@ -1,5 +1,5 @@
 import logging
-from sketchingdev.displays import CanDrawImage
+from doodledashboarddisplay.display import CanDrawImage
 from urllib.error import HTTPError
 
 from doodledashboard.configuration.config import MissingRequiredOptionException, HandlerCreationException

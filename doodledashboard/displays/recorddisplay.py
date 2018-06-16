@@ -1,4 +1,5 @@
-from sketchingdev.displays import Display, CanWriteText, CanDrawImage, CanColourFill
+from doodledashboarddisplay import Display
+from doodledashboarddisplay.display import CanWriteText, CanDrawImage, CanColourFill
 
 
 class RecordDisplay(Display, CanWriteText, CanDrawImage, CanColourFill):

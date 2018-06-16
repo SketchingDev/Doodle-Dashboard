@@ -1,5 +1,5 @@
 import unittest
-from sketchingdev.custom import ConsoleDisplay
+from sketchingdev.console import ConsoleDisplay
 
 from doodledashboard.configuration.config import DashboardConfigReader, FilterConfigSection
 from doodledashboard.datafeeds.rss import RssFeedSection, RssFeed

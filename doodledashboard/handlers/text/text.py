@@ -1,4 +1,4 @@
-from sketchingdev.displays import CanWriteText
+from doodledashboarddisplay.display import CanWriteText
 
 from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigSection
 

@@ -1,4 +1,6 @@
 from abc import abstractmethod, ABC
+from doodledashboarddisplay import Display
+
 from pkg_resources import iter_entry_points
 
 from doodledashboard.configuration.config import InvalidConfigurationException
@@ -19,7 +21,6 @@ class ComponentsLoader(ABC):
 
 
 def validate_displays(displays):
-    from sketchingdev.displays import Display
     for display in displays:
         if not issubclass(display, Display):
             raise InvalidConfigurationException(

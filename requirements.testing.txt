@@ -4,4 +4,4 @@ pytest-localserver==0.4.1
 flake8==3.5.0
 behave==1.2.6
 sure==1.4.11
-doodle-dashboard-console-display==0.0.5
+doodle-dashboard-display-console==0.0.10

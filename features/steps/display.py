@@ -1,6 +1,7 @@
 import click
 from behave import given
-from sketchingdev.displays import Display, CanWriteText, CanDrawImage, CanColourFill
+from doodledashboarddisplay import Display
+from doodledashboarddisplay.display import CanWriteText, CanDrawImage, CanColourFill
 
 from doodledashboard.configuration.component_loaders import StaticDisplayLoader
 

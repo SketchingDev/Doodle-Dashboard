@@ -1,5 +1,5 @@
 import unittest
-from sketchingdev.console import ConsoleDisplay
+from doodledashboarddisplay import Display
 
 from doodledashboard.configuration.config import DashboardConfigReader, FilterConfigSection
 from doodledashboard.datafeeds.rss import RssFeedSection, RssFeed
@@ -10,7 +10,7 @@ from doodledashboard.handlers.handler import MessageHandlerConfigSection
 class TestYamlConfigurationIT(unittest.TestCase):
     _VALID_YAML_CONFIG = """
         interval: 20
-        display: console
+        display: test
 
         data-feeds:
           - source: rss
@@ -29,21 +29,21 @@ class TestYamlConfigurationIT(unittest.TestCase):
 
     def test_interval_read_from_yaml(self):
         config_reader = DashboardConfigReader()
-        config_reader.add_available_displays([ConsoleDisplay])
+        config_reader.add_available_displays([TestDisplay])
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
         self.assertEqual(20, dashboard.get_interval())
 
     def test_display_created_from_yaml(self):
         config_reader = DashboardConfigReader()
-        config_reader.add_available_displays([ConsoleDisplay])
+        config_reader.add_available_displays([TestDisplay])
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
 
-        self.assertIsInstance(dashboard.get_display(), ConsoleDisplay)
+        self.assertIsInstance(dashboard.get_display(), TestDisplay)
 
     def test_data_source_created_from_yaml(self):
         config_reader = DashboardConfigReader()
-        config_reader.add_available_displays([ConsoleDisplay])
+        config_reader.add_available_displays([TestDisplay])
         config_reader.add_data_feed_creators([RssFeedSection()])
 
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
@@ -58,7 +58,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         filter_creator = DummyFilterCreator()
 
         config_reader = DashboardConfigReader()
-        config_reader.add_available_displays([ConsoleDisplay])
+        config_reader.add_available_displays([TestDisplay])
         config_reader.add_handler_creators([DummyHandlerConfigCreator({})])
         config_reader.add_filter_creators([filter_creator])
 
@@ -76,7 +76,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         config_reader = DashboardConfigReader()
 
         handlerCreator = DummyHandlerConfigCreator({})
-        config_reader.add_available_displays([ConsoleDisplay])
+        config_reader.add_available_displays([TestDisplay])
         config_reader.add_handler_creators([handlerCreator])
 
         dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
@@ -123,6 +123,15 @@ class DummyFilterCreator(FilterConfigSection):
 
     def get_configs(self):
         return self._configs_passed_in
+
+
+class TestDisplay(Display):
+    def clear(self):
+        pass
+
+    @staticmethod
+    def get_id():
+        return "test"
 
 
 if __name__ == "__main__":

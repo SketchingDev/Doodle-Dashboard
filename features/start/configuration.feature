@@ -48,17 +48,18 @@ Feature: Configuration is printed to output
        """
 
   Scenario: Config printed showing no data-feeds nor handlers
-    Given I have the configuration
+    Given I load test displays
+    And I have the configuration
        """
        interval: 10
-       display: console
+       display: test-display-all-functionality
        """
     When I call 'start --once config.yml'
     Then the status code is 0
     And the output is
        """
        Interval: 10
-       Display loaded: Console display
+       Display loaded: test-display-all-functionality
        0 data sources loaded
        0 notifications loaded
        Dashboard running...

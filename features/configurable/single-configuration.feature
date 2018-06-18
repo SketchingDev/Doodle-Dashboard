@@ -1,8 +1,8 @@
-Feature: Dashboard is loaded from configuration file
+Feature: Dashboard is loaded from a configuration file
 
   Scenario: Dashboard loaded from configuration with only a display
     Given I load test displays
-    And I have the configuration
+    And I have the configuration called 'config.yml'
        """
        interval: 10
        display: test-display-all-functionality
@@ -21,7 +21,7 @@ Feature: Dashboard is loaded from configuration file
 
   Scenario: Dashboard loaded from configuration with display and notification
     Given I load test displays
-    And I have the configuration
+    And I have the configuration called 'config.yml'
        """
        interval: 0
        display: test-display-all-functionality

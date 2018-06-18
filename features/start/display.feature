@@ -2,7 +2,7 @@ Feature: Display output from feeds
 
   Scenario: One notification writes output to the console
     Given I load test displays
-    And I have the configuration
+    And I have the configuration called 'config.yml'
        """
        interval: 0
        display: test-display-all-functionality
@@ -39,7 +39,7 @@ Feature: Display output from feeds
 
     Scenario: Two notifications writes output to the console
     Given I load test displays
-    And I have the configuration
+    And I have the configuration called 'config.yml'
        """
        interval: 0
        display: test-display-all-functionality

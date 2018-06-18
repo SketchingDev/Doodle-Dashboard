@@ -2,7 +2,7 @@ Feature: User is informed of invalid dashboard configuration
 
 
   Scenario: Emtpy configuration causes error
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
       """
       """
     When I call 'start --once config.yml'
@@ -16,7 +16,7 @@ Feature: User is informed of invalid dashboard configuration
       """
 
   Scenario: Malformed YAML causes error
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
       """
       :
       """
@@ -33,7 +33,7 @@ Feature: User is informed of invalid dashboard configuration
       """
 
   Scenario: Invalid data-feed causes error
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
        """
        data-feeds: testing
        """

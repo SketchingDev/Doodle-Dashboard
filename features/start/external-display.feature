@@ -2,7 +2,7 @@ Feature: Configuration loads external displays
 
     Scenario: Config printed showing display added to static loader
       Given I load test displays
-      And I have the configuration
+      And I have the configuration called 'config.yml'
          """
          interval: 0
          display: test-display-no-functionality
@@ -21,7 +21,7 @@ Feature: Configuration loads external displays
 
     Scenario: Display without functionality required by notification causes error
       Given I load test displays
-      And I have the configuration
+      And I have the configuration called 'config.yml'
          """
          interval: 0
          display: test-display-no-functionality

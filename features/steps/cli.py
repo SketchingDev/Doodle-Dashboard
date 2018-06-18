@@ -4,27 +4,38 @@ from sure import expect
 
 from doodledashboard.cli import view, start
 
+_valid_cli_commands= {
+    "start": start,
+    "view": view
+}
 
-@given("I have the configuration")
-def _i_have_the_configuration_x(context):
-    context.dashboard_config = context.text
+
+@given("I have the configuration called '{config_filename}'")
+def _i_have_the_configuration_x(context, config_filename):
+    if "dashboard_configs" not in context:
+        context.dashboard_configs = {}
+
+    context.dashboard_configs[config_filename] = context.text
 
 
-@when("I call '{command} {arguments} config.yml'")
-def _i_call_x_x_config_yml(context, command, arguments):
-    commands = {"start": start, "view": view}
-    assert command in commands.keys()
+@when("I call '{command} {arguments} {config_files}'")
+def _i_call_x_x_config_yml(context, command, arguments, config_files):
+    assert command in _valid_cli_commands.keys()
+    cli_command = _valid_cli_commands.get(command)
 
-    arguments_split = arguments.split(" ")
-    arguments_split.append("config.yml")
+    config_files = config_files.split(" ")
+    arguments = arguments.split(" ")
+    arguments += config_files
 
     runner = CliRunner()
     with runner.isolated_filesystem():
-        with open("config.yml", "w") as f:
-            f.write(context.dashboard_config)
+        for filename in config_files:
+            if filename in context.dashboard_configs:
+                with open(filename, "w") as f:
+                    f.write(context.dashboard_configs[filename])
 
-        context.runner_result = runner.invoke(commands.get(command), arguments_split, catch_exceptions=False)
 
+        context.runner_result = runner.invoke(cli_command, arguments, catch_exceptions=False)
 
 @then('the output is')
 def _the_output_is_x(context):

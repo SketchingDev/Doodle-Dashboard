@@ -2,7 +2,7 @@ Feature: Notification prints to output derived from data-feeds
 
   Scenario: Config printed showing one notification
     Given I load test displays
-    And I have the configuration
+    And I have the configuration called 'config.yml'
        """
        interval: 0
        display: test-display-all-functionality

@@ -1,7 +1,7 @@
 Feature: View output of data-feeds
 
     Scenario: Emtpy configuration causes error
-     Given I have the configuration
+     Given I have the configuration called 'config.yml'
         """
         """
      When I call 'view notifications config.yml'
@@ -15,7 +15,7 @@ Feature: View output of data-feeds
         """
 
   Scenario: No notifications represented in JSON
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
        """
        notifications:
        """
@@ -31,7 +31,7 @@ Feature: View output of data-feeds
        """
 
   Scenario: Single notification that writes Hello to the display in JSON
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
        """
        data-feeds:
          - source: text

@@ -1,7 +1,7 @@
 Feature: View output of data-feeds
 
     Scenario: Emtpy configuration causes error
-     Given I have the configuration
+     Given I have the configuration called 'config.yml'
         """
         """
      When I call 'view datafeeds config.yml'
@@ -15,7 +15,7 @@ Feature: View output of data-feeds
         """
 
   Scenario: No data-feeds represented in JSON
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
        """
        data-feeds:
        """
@@ -30,7 +30,7 @@ Feature: View output of data-feeds
        """
 
   Scenario: Single data-feed with single output represented in JSON
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
        """
        data-feeds:
          - source: text
@@ -52,7 +52,7 @@ Feature: View output of data-feeds
        """
 
   Scenario: Single data-feed with multiple output represented in JSON
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
        """
        data-feeds:
          - source: text
@@ -80,7 +80,7 @@ Feature: View output of data-feeds
        """
 
     Scenario: Multiple data-feed with one multiple output represented in JSON
-    Given I have the configuration
+    Given I have the configuration called 'config.yml'
        """
        data-feeds:
          - source: text

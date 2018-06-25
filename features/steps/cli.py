@@ -4,7 +4,7 @@ from sure import expect
 
 from doodledashboard.cli import view, start
 
-_valid_cli_commands= {
+_valid_cli_commands = {
     "start": start,
     "view": view
 }
@@ -34,8 +34,8 @@ def _i_call_x_x_config_yml(context, command, arguments, config_files):
                 with open(filename, "w") as f:
                     f.write(context.dashboard_configs[filename])
 
-
         context.runner_result = runner.invoke(cli_command, arguments, catch_exceptions=False)
+
 
 @then('the output is')
 def _the_output_is_x(context):

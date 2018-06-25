@@ -30,14 +30,14 @@ class TestYamlConfigurationIT(unittest.TestCase):
     def test_interval_read_from_yaml(self):
         config_reader = DashboardConfigReader()
         config_reader.add_available_displays([TestDisplay])
-        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        dashboard = config_reader.read_yaml([TestYamlConfigurationIT._VALID_YAML_CONFIG])
 
         self.assertEqual(20, dashboard.get_interval())
 
     def test_display_created_from_yaml(self):
         config_reader = DashboardConfigReader()
         config_reader.add_available_displays([TestDisplay])
-        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        dashboard = config_reader.read_yaml([TestYamlConfigurationIT._VALID_YAML_CONFIG])
 
         self.assertIsInstance(dashboard.get_display(), TestDisplay)
 
@@ -46,7 +46,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         config_reader.add_available_displays([TestDisplay])
         config_reader.add_data_feed_creators([RssFeedSection()])
 
-        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        dashboard = config_reader.read_yaml([TestYamlConfigurationIT._VALID_YAML_CONFIG])
 
         data_feeds = dashboard.get_data_feeds()
         self.assertEqual(1, len(data_feeds))
@@ -62,7 +62,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         config_reader.add_handler_creators([DummyHandlerConfigCreator({})])
         config_reader.add_filter_creators([filter_creator])
 
-        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        dashboard = config_reader.read_yaml([TestYamlConfigurationIT._VALID_YAML_CONFIG])
 
         notifications = dashboard.get_notifications()
         self.assertEqual(1, len(notifications))
@@ -79,7 +79,7 @@ class TestYamlConfigurationIT(unittest.TestCase):
         config_reader.add_available_displays([TestDisplay])
         config_reader.add_handler_creators([handlerCreator])
 
-        dashboard = config_reader.read_yaml(TestYamlConfigurationIT._VALID_YAML_CONFIG)
+        dashboard = config_reader.read_yaml([TestYamlConfigurationIT._VALID_YAML_CONFIG])
 
         notifications = dashboard.get_notifications()
         self.assertEqual(1, len(notifications))

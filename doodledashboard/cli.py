@@ -6,12 +6,13 @@ from yaml import YAMLError
 
 from doodledashboard import __about__
 from doodledashboard.configuration.config import DashboardConfigReader, \
-    ValidateDashboard, InvalidConfigurationException
+    ValidateDashboard, InvalidConfigurationException, ConfigurationMissingDisplay, NotificationDoesNotSupportDisplay
 from doodledashboard.configuration.component_loaders import InternalPackageLoader, StaticDisplayLoader, \
     ExternalPackageLoader
 from doodledashboard.dashboard_runner import DashboardRunner
 from doodledashboard.datafeeds.datafeed import TextEntityJsonEncoder
 from doodledashboard.displays.recorddisplay import RecordDisplay
+from doodledashboard.error_messages import get_error_message
 
 
 @click.help_option("-h", "--help")
@@ -22,10 +23,10 @@ def cli():
 
 
 @cli.command()
-@click.argument("config", type=click.File("rb"))
+@click.argument("configs", type=click.File("rb"), nargs=-1)
 @click.option('--once', is_flag=True, help='Whether to run once, otherwise will loop through notifications')
 @click.option("--verbose", is_flag=True)
-def start(config, once, verbose):
+def start(configs, once, verbose):
     """Start dashboard with CONFIG file"""
 
     if verbose:
@@ -34,12 +35,12 @@ def start(config, once, verbose):
     with shelve.open("/tmp/shelve") as state_storage:
 
         dashboard_config = configure_component_loaders(DashboardConfigReader(), state_storage)
-        dashboard = try_read_dashboard_config(dashboard_config, config)
+        dashboard = read_dashboard_from_config(dashboard_config, configs)
 
         try:
             ValidateDashboard().validate(dashboard)
-        except InvalidConfigurationException as err:
-            click.echo("Error reading configuration file '%s':\n%s" % (config.name, err.value), err=True)
+        except (NotificationDoesNotSupportDisplay, ConfigurationMissingDisplay) as err:
+            click.echo(get_error_message(err, default="Dashboard configuration is invalid"), err=True)
             raise click.Abort()
 
         explain_dashboard(dashboard)
@@ -54,12 +55,12 @@ def start(config, once, verbose):
 
 @cli.command()
 @click.argument("action", type=click.Choice(["datafeeds", "notifications"]))
-@click.argument("config", type=click.File("rb"))
-def view(action, config):
+@click.argument("configs", type=click.File("rb"), nargs=-1)
+def view(action, configs):
     """View what the datafeeds in the CONFIG are returning"""
 
     dashboard_config = configure_component_loaders(DashboardConfigReader(), {})
-    dashboard = try_read_dashboard_config(dashboard_config, config)
+    dashboard = read_dashboard_from_config(dashboard_config, configs)
 
     datafeed_responses = DashboardRunner(dashboard).poll_datafeeds()
 
@@ -86,15 +87,12 @@ def view(action, config):
     click.echo(json.dumps(output, sort_keys=True, indent=4, cls=TextEntityJsonEncoder))
 
 
-def try_read_dashboard_config(dashboard_config, config):
+def read_dashboard_from_config(dashboard_config, config):
     try:
         return dashboard_config.read_yaml(config)
-    except YAMLError as err:
-        click.echo("Error parsing configuration file '%s':\n%s" % (config.name, err), err=True)
-    except InvalidConfigurationException as err:
-        click.echo("Error reading configuration file '%s':\n%s" % (config.name, err.value), err=True)
-
-    raise click.Abort()
+    except (YAMLError, InvalidConfigurationException) as err:
+        click.echo(get_error_message(err, default="Error parsing configuration file"), err=True)
+        raise click.Abort()
 
 
 def configure_component_loaders(dashboard_config, state_storage):

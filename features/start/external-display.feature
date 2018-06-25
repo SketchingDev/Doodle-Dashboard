@@ -33,8 +33,7 @@ Feature: Configuration loads external displays
       Then the status code is 1
       And the output is
          """
-         Error reading configuration file 'config.yml':
-         Display 'test-display-no-functionality' is missing the following functionality required by the notification 'Displays entities using: Text handler':
+         Display 'test-display-no-functionality' is missing the following functionality required by the notification 'Text handler':
           - CanWriteText
          Aborted!
 

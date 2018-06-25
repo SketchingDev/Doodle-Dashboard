@@ -38,7 +38,14 @@ class MessageHandler(ABC):
     @property
     @abstractmethod
     def display_requirements(self):
-        pass
+        return []
+
+    def supports_display(self, display):
+        for requirement in self.display_requirements:
+            if not isinstance(display, requirement):
+                return False
+
+        return True
 
 
 class MessageHandlerConfigSection(ConfigSection):

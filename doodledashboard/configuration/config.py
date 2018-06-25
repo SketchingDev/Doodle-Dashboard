@@ -1,5 +1,5 @@
 import yaml
-
+from yaml import YAMLError
 from doodledashboard.dashboard_runner import Notification, Dashboard
 
 
@@ -100,17 +100,30 @@ class DashboardConfigReader:
         for creator in creators:
             chain.add(creator)
 
-    def read_yaml(self, config_yaml):
-        config = yaml.safe_load(config_yaml)
+    def read_yaml(self, yaml_configs):
+        def merge_two_dicts(x, y):
+            """Given two dicts, merge them into a new dict as a shallow copy."""
+            z = x.copy()
+            z.update(y)
+            return z
 
-        if not config:
-            raise InvalidConfigurationException("Configuration file is empty")
+        combined_config = {}
+        for yaml_config in yaml_configs:
+            try:
+                config = yaml.safe_load(yaml_config)
+                config = config if config else {}
+                combined_config = merge_two_dicts(config, combined_config)
+            except YAMLError as err:
+                raise YamlParsingError(err, yaml_config)
+
+        if not combined_config:
+            raise EmptyConfiguration(yaml_configs)
 
         return Dashboard(
-            self._parse_interval(config),
-            self._parse_display(config),
-            self._parse_data_feeds(config),
-            self._parse_notifications(config)
+            self._parse_interval(combined_config),
+            self._parse_display(combined_config),
+            self._parse_data_feeds(combined_config),
+            self._parse_notifications(combined_config)
         )
 
     def _parse_interval(self, config):
@@ -182,37 +195,26 @@ class ValidateDashboard:
     def validate(self, dashboard):
         self._check_has_display(dashboard)
         self._check_handlers_supports_display(dashboard)
-        self._check_not_empty(dashboard)
+        # self._check_not_empty(dashboard)
 
     @staticmethod
     def _check_handlers_supports_display(dashboard):
         display = dashboard.get_display()
         for notification in dashboard.get_notifications():
+
             handler = notification.get_handler()
-            requirements = handler.display_requirements
+            if not handler.supports_display(display):
+                raise NotificationDoesNotSupportDisplay(display, handler)
 
-            missing_requirements = []
-            for requirement in requirements:
-                if not isinstance(display, requirement):
-                    missing_requirements.append(requirement)
-
-            if len(missing_requirements) > 0:
-                error_message = "\n".join([" - %s" % r.__name__ for r in missing_requirements])
-
-                raise InvalidConfigurationException(
-                    "Display '%s' is missing the following functionality required by the notification '%s':\n%s"
-                    % (display, notification, error_message)
-                )
-
-    @staticmethod
-    def _check_not_empty(dashboard):
-        if not dashboard:
-            raise InvalidConfigurationException("Configuration is empty")
+    # @staticmethod
+    # def _check_not_empty(dashboard):
+    #     if not dashboard:
+    #         raise InvalidConfigurationException("Configuration is empty")
 
     @staticmethod
     def _check_has_display(dashboard):
         if not dashboard.get_display():
-            raise InvalidConfigurationException("No display defined. Check that the ID you provided is valid.")
+            raise ConfigurationMissingDisplay()
 
 
 class InvalidConfigurationException(Exception):
@@ -221,3 +223,35 @@ class InvalidConfigurationException(Exception):
 
     def __str__(self):
         return repr(self.value)
+
+
+class EmptyConfiguration(InvalidConfigurationException):
+    def __init__(self, configuration_files):
+        self.configuration_files = configuration_files
+
+
+class YamlParsingError(InvalidConfigurationException):
+    def __init__(self, parsing_exception, config):
+        self.parsing_exception = parsing_exception
+        self.config = config
+
+
+class ConfigurationMissingDisplay(InvalidConfigurationException):
+    def __init__(self):
+        pass
+
+
+class NotificationDoesNotSupportDisplay(InvalidConfigurationException):
+    def __init__(self, display, handler):
+        self.display = display
+        self.handler = handler
+
+    def get_missing_requirements(self):
+        requirements = self.handler.display_requirements
+
+        missing_requirements = []
+        for requirement in requirements:
+            if not isinstance(self.display, requirement):
+                missing_requirements.append(requirement)
+
+        return missing_requirements

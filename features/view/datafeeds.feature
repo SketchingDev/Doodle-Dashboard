@@ -8,8 +8,7 @@ Feature: View output of data-feeds
      Then the status code is 1
      And the output is
         """
-        Error reading configuration file 'config.yml':
-        Configuration file is empty
+        The configuration file you provided is empty
         Aborted!
 
         """

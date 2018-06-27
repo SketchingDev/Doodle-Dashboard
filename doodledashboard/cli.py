@@ -15,6 +15,16 @@ from doodledashboard.displays.recorddisplay import RecordDisplay
 from doodledashboard.error_messages import get_error_message
 
 
+def attach_logging(ctx, param, value):
+    if value:
+        _logger = logging.getLogger("doodledashboard")
+        _logger.setLevel(logging.DEBUG)
+
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+        _logger.addHandler(ch)
+
+
 @click.help_option("-h", "--help")
 @click.version_option(__about__.__version__, "-v", "--version", message="%(prog)s v%(version)s")
 @click.group()
@@ -25,15 +35,11 @@ def cli():
 @cli.command()
 @click.argument("configs", type=click.File("rb"), nargs=-1)
 @click.option('--once', is_flag=True, help='Whether to run once, otherwise will loop through notifications')
-@click.option("--verbose", is_flag=True)
-def start(configs, once, verbose):
+@click.option("--verbose", is_flag=True, callback=attach_logging, expose_value=False)
+def start(configs, once):
     """Start dashboard with CONFIG file"""
 
-    if verbose:
-        attach_logging("doodledashboard")
-
     with shelve.open("/tmp/shelve") as state_storage:
-
         dashboard_config = configure_component_loaders(DashboardConfigReader(), state_storage)
         dashboard = read_dashboard_from_config(dashboard_config, configs)
 
@@ -101,14 +107,6 @@ def configure_component_loaders(dashboard_config, state_storage):
     StaticDisplayLoader().configure(dashboard_config)
 
     return dashboard_config
-
-
-def attach_logging(name):
-    _logger = logging.getLogger(name)
-    _logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    _logger.addHandler(ch)
 
 
 def explain_dashboard(dashboard):

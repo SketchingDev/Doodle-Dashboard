@@ -1,6 +1,6 @@
 import unittest
 
-from doodledashboard.datafeeds.datetime import DateTimeFeedSection, DateTimeFeed
+from doodledashboard.datafeeds.datetime import DateTimeFeedConfig, DateTimeFeed
 
 
 class TestCliStart(unittest.TestCase):
@@ -9,20 +9,20 @@ class TestCliStart(unittest.TestCase):
         config = {
             "source": "datetime"
         }
-        self.assertTrue(DateTimeFeedSection().can_create(config))
+        self.assertTrue(DateTimeFeedConfig().can_create(config))
 
     def test_section_does_not_create_for_other(self):
         config = {
             "source": "other"
         }
-        self.assertFalse(DateTimeFeedSection().can_create(config))
+        self.assertFalse(DateTimeFeedConfig().can_create(config))
 
     def test_feed_is_created_from_configuration(self):
         config = {
             "source": "datetime"
         }
 
-        data_feed = DateTimeFeedSection().create(config)
+        data_feed = DateTimeFeedConfig().create(config)
 
         self.assertIsInstance(data_feed, DateTimeFeed)
 
@@ -31,8 +31,8 @@ class TestCliStart(unittest.TestCase):
             "source": "datetime"
         }
 
-        data_feed = DateTimeFeedSection().create(config)
-        entities = data_feed.get_latest_entities()
+        data_feed = DateTimeFeedConfig().create(config)
+        entities = data_feed.get_latest_messages()
 
         self.assertEqual(1, len(entities))
         self.assertRegex(entities[0].get_text(), "\d{4}-\d{2}-\d{2} \d{2}:\d{2}", "Text matches date/time pattern")

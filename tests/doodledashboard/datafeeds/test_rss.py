@@ -3,7 +3,7 @@ import unittest
 from pytest_localserver import http
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.datafeeds.rss import RssFeed, RssFeedSection
+from doodledashboard.datafeeds.rss import RssFeed, RssFeedConfig
 
 
 @pytest.mark.usefixtures
@@ -47,13 +47,13 @@ class TestRssFeed(unittest.TestCase):
         config = {
             "source": "rss"
         }
-        self.assertTrue(RssFeedSection().can_create(config))
+        self.assertTrue(RssFeedConfig().can_create(config))
 
     def test_section_does_not_create_for_other(self):
         config = {
             "source": "other"
         }
-        self.assertFalse(RssFeedSection().can_create(config))
+        self.assertFalse(RssFeedConfig().can_create(config))
 
     def test_section_throws_error_when_creating_from_config_with_no_url(self):
         config = {
@@ -61,7 +61,7 @@ class TestRssFeed(unittest.TestCase):
         }
 
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            RssFeedSection().create(config)
+            RssFeedConfig().create(config)
 
         self.assertEqual("Expected 'url' option to exist", err_info.value.value)
 
@@ -71,7 +71,7 @@ class TestRssFeed(unittest.TestCase):
             "url": "https://sketchingdev.co.uk/feed.xml"
         }
 
-        data_feed = RssFeedSection().create(config)
+        data_feed = RssFeedConfig().create(config)
 
         self.assertIsInstance(data_feed, RssFeed)
         self.assertEqual("https://sketchingdev.co.uk/feed.xml", data_feed.get_url())
@@ -85,7 +85,7 @@ class TestRssFeed(unittest.TestCase):
         }
 
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            RssFeedSection().create(config)
+            RssFeedConfig().create(config)
 
         self.assertEqual("Sorting value for RSS feed can only be either ascending or descending", err_info.value.value)
 
@@ -96,7 +96,7 @@ class TestRssFeed(unittest.TestCase):
             "sort": "newest"
         }
 
-        data_feed = RssFeedSection().create(config)
+        data_feed = RssFeedConfig().create(config)
 
         self.assertIsInstance(data_feed, RssFeed)
         self.assertEqual("https://example.co.uk/feed.xml", data_feed.get_url())
@@ -109,7 +109,7 @@ class TestRssFeed(unittest.TestCase):
             "sort": "oldest"
         }
 
-        data_feed = RssFeedSection().create(config)
+        data_feed = RssFeedConfig().create(config)
 
         self.assertIsInstance(data_feed, RssFeed)
         self.assertEqual("https://sketchingdev.co.uk/feed.xml", data_feed.get_url())
@@ -123,13 +123,13 @@ class TestRssFeed(unittest.TestCase):
             "sort": "oldest"
         }
 
-        data_feed = RssFeedSection().create(config)
-        entities = data_feed.get_latest_entities()
+        data_feed = RssFeedConfig().create(config)
+        messages = data_feed.get_latest_messages()
 
-        self.assertEqual(3, len(entities))
-        self.assertEqual("Dummy Item 1\nhttps://item/1\n2018-01-01T00:00:00+00:00", entities[0].get_text())
-        self.assertEqual("Dummy Item 3\nhttps://item/3\n2018-01-02T00:00:00+00:00", entities[1].get_text())
-        self.assertEqual("Dummy Item 2\nhttps://item/2\n2018-01-03T00:00:00+00:00", entities[2].get_text())
+        self.assertEqual(3, len(messages))
+        self.assertEqual("Dummy Item 1\nhttps://item/1\n2018-01-01T00:00:00+00:00", messages[0].get_text())
+        self.assertEqual("Dummy Item 3\nhttps://item/3\n2018-01-02T00:00:00+00:00", messages[1].get_text())
+        self.assertEqual("Dummy Item 2\nhttps://item/2\n2018-01-03T00:00:00+00:00", messages[2].get_text())
 
     def test_rss_ordered_by_date_descending(self):
         self.http_server.serve_content(TestRssFeed._RSS_FEED)
@@ -139,13 +139,13 @@ class TestRssFeed(unittest.TestCase):
             "sort": "newest"
         }
 
-        data_feed = RssFeedSection().create(config)
-        entities = data_feed.get_latest_entities()
+        data_feed = RssFeedConfig().create(config)
+        messages = data_feed.get_latest_messages()
 
-        self.assertEqual(3, len(entities))
-        self.assertEqual("Dummy Item 2\nhttps://item/2\n2018-01-03T00:00:00+00:00", entities[0].get_text())
-        self.assertEqual("Dummy Item 3\nhttps://item/3\n2018-01-02T00:00:00+00:00", entities[1].get_text())
-        self.assertEqual("Dummy Item 1\nhttps://item/1\n2018-01-01T00:00:00+00:00", entities[2].get_text())
+        self.assertEqual(3, len(messages))
+        self.assertEqual("Dummy Item 2\nhttps://item/2\n2018-01-03T00:00:00+00:00", messages[0].get_text())
+        self.assertEqual("Dummy Item 3\nhttps://item/3\n2018-01-02T00:00:00+00:00", messages[1].get_text())
+        self.assertEqual("Dummy Item 1\nhttps://item/1\n2018-01-01T00:00:00+00:00", messages[2].get_text())
 
     def test_rss_uses_natural_order_by_default(self):
         self.http_server.serve_content(TestRssFeed._RSS_FEED)
@@ -154,13 +154,13 @@ class TestRssFeed(unittest.TestCase):
             "url": self.http_server.url
         }
 
-        data_feed = RssFeedSection().create(config)
-        entities = data_feed.get_latest_entities()
+        data_feed = RssFeedConfig().create(config)
+        messages = data_feed.get_latest_messages()
 
-        self.assertEqual(3, len(entities))
-        self.assertEqual("Dummy Item 1\nhttps://item/1\n2018-01-01T00:00:00+00:00", entities[0].get_text())
-        self.assertEqual("Dummy Item 2\nhttps://item/2\n2018-01-03T00:00:00+00:00", entities[1].get_text())
-        self.assertEqual("Dummy Item 3\nhttps://item/3\n2018-01-02T00:00:00+00:00", entities[2].get_text())
+        self.assertEqual(3, len(messages))
+        self.assertEqual("Dummy Item 1\nhttps://item/1\n2018-01-01T00:00:00+00:00", messages[0].get_text())
+        self.assertEqual("Dummy Item 2\nhttps://item/2\n2018-01-03T00:00:00+00:00", messages[1].get_text())
+        self.assertEqual("Dummy Item 3\nhttps://item/3\n2018-01-02T00:00:00+00:00", messages[2].get_text())
 
 
 if __name__ == "__main__":

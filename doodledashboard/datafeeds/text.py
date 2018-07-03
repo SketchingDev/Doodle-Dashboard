@@ -1,5 +1,5 @@
-from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.datafeeds.datafeed import DataFeed, TextEntity, DataFeedConfigSection
+from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
+from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
 class TextFeed(DataFeed):
@@ -10,8 +10,8 @@ class TextFeed(DataFeed):
         else:
             self._text = [text]
 
-    def get_latest_entities(self):
-        return [TextEntity(text, self) for text in self._text]
+    def get_latest_messages(self):
+        return [Message(text, self) for text in self._text]
 
     def get_text(self):
         return self._text
@@ -20,12 +20,11 @@ class TextFeed(DataFeed):
         return "Text"
 
 
-class TextFeedSection(DataFeedConfigSection):
-    def __init__(self):
-        DataFeedConfigSection.__init__(self)
+class TextFeedConfig(ConfigSection):
 
-    def creates_for_id(self, filter_id):
-        return filter_id == "text"
+    @property
+    def id_key_value(self):
+        return "source", "text"
 
     def create_item(self, config_section):
         if "text" not in config_section:

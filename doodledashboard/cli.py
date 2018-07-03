@@ -1,18 +1,16 @@
 import click
 import json
 import logging
-import shelve
-from yaml import YAMLError
 
 from doodledashboard import __about__
-from doodledashboard.configuration.config import DashboardConfigReader, \
-    ValidateDashboard, InvalidConfigurationException, ConfigurationMissingDisplay, NotificationDoesNotSupportDisplay
 from doodledashboard.configuration.component_loaders import InternalPackageLoader, StaticDisplayLoader, \
     ExternalPackageLoader
+from doodledashboard.configuration.config import DashboardConfigReader, \
+    ValidateDashboard, InvalidConfigurationException
 from doodledashboard.dashboard_runner import DashboardRunner
-from doodledashboard.datafeeds.datafeed import TextEntityJsonEncoder
-from doodledashboard.displays.recorddisplay import RecordDisplay
+from doodledashboard.datafeeds.datafeed import MessageJsonEncoder
 from doodledashboard.error_messages import get_error_message
+from doodledashboard.filters.record_filter import RecordFilter
 
 
 def attach_logging(ctx, param, value):
@@ -39,24 +37,23 @@ def cli():
 def start(configs, once):
     """Start dashboard with CONFIG file"""
 
-    with shelve.open("/tmp/shelve") as state_storage:
-        dashboard_config = configure_component_loaders(DashboardConfigReader(), state_storage)
-        dashboard = read_dashboard_from_config(dashboard_config, configs)
+    dashboard_config = configure_component_loaders(DashboardConfigReader())
+    dashboard = read_dashboard_from_config(dashboard_config, configs)
 
-        try:
-            ValidateDashboard().validate(dashboard)
-        except (NotificationDoesNotSupportDisplay, ConfigurationMissingDisplay) as err:
-            click.echo(get_error_message(err, default="Dashboard configuration is invalid"), err=True)
-            raise click.Abort()
+    try:
+        ValidateDashboard().validate(dashboard)
+    except Exception as err:
+        click.echo(get_error_message(err, default="Dashboard configuration is invalid"), err=True)
+        raise click.Abort()
 
-        explain_dashboard(dashboard)
+    explain_dashboard(dashboard)
 
-        click.echo("Dashboard running...")
+    click.echo("Dashboard running...")
 
-        while True:
-            DashboardRunner(dashboard).cycle()
-            if once:
-                break
+    while True:
+        DashboardRunner(dashboard).cycle()
+        if once:
+            break
 
 
 @cli.command()
@@ -65,44 +62,45 @@ def start(configs, once):
 def view(action, configs):
     """View what the datafeeds in the CONFIG are returning"""
 
-    dashboard_config = configure_component_loaders(DashboardConfigReader(), {})
+    dashboard_config = configure_component_loaders(DashboardConfigReader())
     dashboard = read_dashboard_from_config(dashboard_config, configs)
+    messages = DashboardRunner(dashboard).poll_datafeeds()
 
-    datafeed_responses = DashboardRunner(dashboard).poll_datafeeds()
+    output = {"source-data": messages}
 
-    output = {"source-data": datafeed_responses}
     if action == "notifications":
-        notifications_output = []
+        output["notifications"] = []
+
         for notification in dashboard.get_notifications():
-            filtered_responses = notification.filter(datafeed_responses)
+            notification_before = str(notification)
 
-            display = RecordDisplay()
-            notification.process(datafeed_responses)
-            notification.draw(display)
+            updater = notification.get_updater()
+            record_filter = RecordFilter()
+            if updater:
+                updater.add_message_filters([record_filter])
 
-            notifications_output.append(
-                {
-                    "name": str(notification),
-                    "filtered-data": filtered_responses,
-                    "handler-actions": display.get_calls()
-                }
-            )
+            for message in messages:
+                notification.update(message)
 
-        output["notifications"] = notifications_output
+            output["notifications"].append({
+                "filtered-messages": messages if not updater else record_filter.get_messages(),
+                "notification-before": notification_before,
+                "notification-after": str(notification)
+            })
 
-    click.echo(json.dumps(output, sort_keys=True, indent=4, cls=TextEntityJsonEncoder))
+    click.echo(json.dumps(output, sort_keys=True, indent=4, cls=MessageJsonEncoder))
 
 
-def read_dashboard_from_config(dashboard_config, config):
+def read_dashboard_from_config(dashboard_config, configs):
     try:
-        return dashboard_config.read_yaml(config)
-    except (YAMLError, InvalidConfigurationException) as err:
+        return dashboard_config.read_yaml(configs)
+    except InvalidConfigurationException as err:
         click.echo(get_error_message(err, default="Error parsing configuration file"), err=True)
         raise click.Abort()
 
 
-def configure_component_loaders(dashboard_config, state_storage):
-    InternalPackageLoader(state_storage).configure(dashboard_config)
+def configure_component_loaders(dashboard_config):
+    InternalPackageLoader().configure(dashboard_config)
     ExternalPackageLoader().configure(dashboard_config)
     StaticDisplayLoader().configure(dashboard_config)
 

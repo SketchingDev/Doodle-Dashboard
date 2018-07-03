@@ -1,24 +1,23 @@
 import logging
-from doodledashboarddisplay.display import CanDrawImage
+import os
+import tempfile
+import urllib.request
 from urllib.error import HTTPError
+from urllib.parse import urlparse
 
-from doodledashboard.configuration.config import MissingRequiredOptionException, HandlerCreationException
+from doodledashboard.configuration.config import MissingRequiredOptionException, HandlerCreationException, ConfigSection
 from doodledashboard.filters.contains_text import ContainsTextFilter
 from doodledashboard.filters.matches_regex import MatchesRegexFilter
-from doodledashboard.handlers.handler import MessageHandler, MessageHandlerConfigSection
-import urllib.request
-import tempfile
-from urllib.parse import urlparse
-import os
+from doodledashboard.updaters.updater import NotificationUpdater
 
 
-class ImageHandler(MessageHandler):
+class ImageNotificationUpdater(NotificationUpdater):
     """
     * First message that contains text that matches an image's filter
     """
 
-    def __init__(self, key_value_store):
-        MessageHandler.__init__(self, key_value_store)
+    def __init__(self):
+        super().__init__()
         self._filtered_images = []
         self._default_image_path = None
         self._chosen_image_path = None
@@ -29,35 +28,21 @@ class ImageHandler(MessageHandler):
         else:
             self._default_image_path = absolute_path
 
-    def update(self, text_entity):
+    def _update(self, notification, message):
         for image_filter in self._filtered_images:
-            if image_filter["filter"].filter(text_entity):
+            if image_filter["filter"].filter(message):
                 self._chosen_image_path = image_filter["path"]
 
-    def draw(self, display):
         if self._chosen_image_path:
-            image = self._chosen_image_path
+            image_path = self._chosen_image_path
         else:
-            image = self._default_image_path
+            image_path = self._default_image_path
 
-        if image:
-            display.draw_image(image)
+        if image_path:
+            notification.set_image_path(image_path)
 
     def get_filtered_images(self):
         return self._filtered_images
-
-    def get_image(self):
-        if self._chosen_image_path:
-            return self._chosen_image_path
-        else:
-            return self._default_image_path
-
-    @property
-    def display_requirements(self):
-        return [CanDrawImage]
-
-    def __str__(self):
-        return "Image handler with %s images" % len(self._filtered_images)
 
 
 class FileDownloader:
@@ -86,16 +71,18 @@ class FileDownloader:
         return os.path.basename(parsed_url.path)
 
 
-class ImageMessageHandlerConfigCreator(MessageHandlerConfigSection):
-    def __init__(self, key_value_storage, file_downloader):
-        MessageHandlerConfigSection.__init__(self, key_value_storage)
+class ImageNotificationUpdaterConfig(ConfigSection):
+
+    def __init__(self, file_downloader=FileDownloader()):
+        super().__init__()
         self._file_downloader = file_downloader
 
-    def creates_for_id(self, filter_id):
-        return filter_id == "image-handler"
+    @property
+    def id_key_value(self):
+        return "name", "image-depending-on-message-content"
 
-    def create_handler(self, config_section, key_value_store):
-        handler = ImageHandler(key_value_store)
+    def create_item(self, config_section):
+        updater = ImageNotificationUpdater()
 
         has_images = "images" in config_section
         has_default_image = "default-image" in config_section
@@ -109,24 +96,24 @@ class ImageMessageHandlerConfigCreator(MessageHandlerConfigSection):
             except HTTPError as err:
                 raise HandlerCreationException("Error '%s' when downloading %s" % (err.msg, err.url))
 
-            handler.add_image_filter(image_path)
+            updater.add_image_filter(image_path)
 
         if has_images:
             for image_config_section in config_section["images"]:
-                if "uri" not in image_config_section:
-                    raise MissingRequiredOptionException("Expected 'uri' option to exist")
+                if "path" not in image_config_section:
+                    raise MissingRequiredOptionException("Expected 'path' option to exist")
 
-                image_uri = image_config_section["uri"]
+                image_path = image_config_section["path"]
                 image_filter = self._create_filter(image_config_section)
 
                 try:
-                    image_path = self._file_downloader.download(image_uri)
+                    image_path = self._file_downloader.download(image_path)
                 except HTTPError as err:
                     raise HandlerCreationException(err.url)
 
-                handler.add_image_filter(image_path, image_filter)
+                updater.add_image_filter(image_path, image_filter)
 
-        return handler
+        return updater
 
     @staticmethod
     def _create_filter(image_config_section):

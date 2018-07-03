@@ -1,17 +1,28 @@
 import yaml
+from abc import ABC, abstractmethod
 from yaml import YAMLError
-from doodledashboard.dashboard_runner import Notification, Dashboard
+
+from doodledashboard.dashboard_runner import Dashboard
 
 
-class ConfigSection:
+class ConfigSection(ABC):
     def __init__(self):
         self._successor = None
 
-    def can_create(self, config_section):
-        raise NotImplementedError("Implement this method")
+    @property
+    @abstractmethod
+    def id_key_value(self):
+        pass
 
+    def can_create(self, config_section):
+        id_key = self.id_key_value[0]
+        id_value = self.id_key_value[1]
+
+        return id_key in config_section and id_value == config_section[id_key]
+
+    @abstractmethod
     def create_item(self, config_section):
-        raise NotImplementedError("Implement this method")
+        pass
 
     def add(self, successor):
         if not self._successor:
@@ -29,25 +40,15 @@ class ConfigSection:
 
 
 class RootConfigSection(ConfigSection):
+    @property
+    def id_key_value(self):
+        return "", ""
+
     def can_create(self, config_section):
         return False
 
     def create_item(self, config_section):
         pass
-
-
-class FilterConfigSection(ConfigSection):
-    def __init__(self):
-        ConfigSection.__init__(self)
-
-    def creates_for_id(self, filter_id):
-        raise NotImplementedError("Implement this method")
-
-    def can_create(self, config_section):
-        return "type" in config_section and self.creates_for_id(config_section["type"])
-
-    def create_item(self, config_section):
-        raise NotImplementedError("Implement this method")
 
 
 class HandlerCreationException(Exception):
@@ -79,15 +80,19 @@ class DashboardConfigReader:
 
     def __init__(self):
         self._filter_creator = RootConfigSection()
-        self._handler_creator = RootConfigSection()
         self._data_feed_creator = RootConfigSection()
+        self._notification_creators = RootConfigSection()
+        self._notification_updater_creators = RootConfigSection()
         self._available_displays = []
 
     def add_filter_creators(self, creators):
         self._add_creator_to_chain(self._filter_creator, creators)
 
-    def add_handler_creators(self, creators):
-        self._add_creator_to_chain(self._handler_creator, creators)
+    def add_notification_creators(self, creators):
+        self._add_creator_to_chain(self._notification_creators, creators)
+
+    def add_notification_updater_creators(self, creators):
+        self._add_creator_to_chain(self._notification_updater_creators, creators)
 
     def add_data_feed_creators(self, creators):
         self._add_creator_to_chain(self._data_feed_creator, creators)
@@ -140,7 +145,6 @@ class DashboardConfigReader:
 
     def _parse_data_feeds(self, config):
         data_source_elements = []
-        # DataSourceConfigSection
         if "data-feeds" in config:
             data_source_elements = config["data-feeds"]
 
@@ -149,35 +153,49 @@ class DashboardConfigReader:
     def _parse_notifications(self, config):
         notifications = []
 
-        # NotificationsConfigSection
         if "notifications" in config:
             for notification_element in config["notifications"] or []:
+                notification = self._parse_notification(notification_element)
+                if not notification:
+                    pass  # TODO Handle notification not being created from notification configuration
 
-                handler = self._handler_creator.create(notification_element)
-                if handler:
-                    notification = Notification(handler)
-
-                    entity_filters = self._extract_entity_filters_from_notification(notification_element)
-                    if entity_filters:
-                        notification.set_filters(entity_filters)
-
+                if notification:
                     notifications.append(notification)
 
         return notifications
 
-    def _extract_entity_filters_from_notification(self, notification_element):
-        entity_filters = []
+    def _parse_notification(self, notification_section):
+        notification = self._notification_creators.create(notification_section)
 
-        # FilterChainConfigSection
-        if "filter-chain" in notification_element:
-            filter_chain_elements = notification_element["filter-chain"]
+        if notification and "update-with" in notification_section:
+            updater = self._parse_updater(notification_section["update-with"])
+            if not updater:
+                    # TODO Handle the updater not being created as the notification won't behave as expected
+                    # * Throw exception (could be a typo) * Output warning and don't load the notification (allows for
+                    # graceful degradation of configs for future updates)
+                    pass
+            notification.set_updater(updater)
 
-            for filter_element in filter_chain_elements:
-                entity_filter = self._filter_creator.create(filter_element)
-                if entity_filter:
-                    entity_filters.append(entity_filter)
+        return notification
 
-        return entity_filters
+    def _parse_updater(self, updater_section):
+        updater = self._notification_updater_creators.create(updater_section)
+
+        if updater and "filter-messages" in updater_section:
+            message_filters = self._parse_message_filters(updater_section["filter-messages"])
+            updater.add_message_filters(message_filters)
+
+        return updater
+
+    def _parse_message_filters(self, message_filters_section):
+        message_filters = []
+
+        for section in message_filters_section:
+            message_filter = self._filter_creator.create(section)
+            if message_filter:
+                message_filters.append(message_filter)
+
+        return message_filters
 
     @staticmethod
     def _create_items(creator_chain, config_elements):
@@ -194,22 +212,15 @@ class ValidateDashboard:
 
     def validate(self, dashboard):
         self._check_has_display(dashboard)
-        self._check_handlers_supports_display(dashboard)
-        # self._check_not_empty(dashboard)
+        self._check_display_supports_notification(dashboard)
 
     @staticmethod
-    def _check_handlers_supports_display(dashboard):
+    def _check_display_supports_notification(dashboard):
         display = dashboard.get_display()
+
         for notification in dashboard.get_notifications():
-
-            handler = notification.get_handler()
-            if not handler.supports_display(display):
-                raise NotificationDoesNotSupportDisplay(display, handler)
-
-    # @staticmethod
-    # def _check_not_empty(dashboard):
-    #     if not dashboard:
-    #         raise InvalidConfigurationException("Configuration is empty")
+            if notification.__class__ not in display.get_supported_notifications():
+                raise DisplayDoesNotSupportNotification(display, notification)
 
     @staticmethod
     def _check_has_display(dashboard):
@@ -241,17 +252,7 @@ class ConfigurationMissingDisplay(InvalidConfigurationException):
         pass
 
 
-class NotificationDoesNotSupportDisplay(InvalidConfigurationException):
-    def __init__(self, display, handler):
+class DisplayDoesNotSupportNotification(InvalidConfigurationException):
+    def __init__(self, display, notification):
         self.display = display
-        self.handler = handler
-
-    def get_missing_requirements(self):
-        requirements = self.handler.display_requirements
-
-        missing_requirements = []
-        for requirement in requirements:
-            if not isinstance(self.display, requirement):
-                missing_requirements.append(requirement)
-
-        return missing_requirements
+        self.notification = notification

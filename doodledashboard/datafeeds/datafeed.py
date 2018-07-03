@@ -1,9 +1,8 @@
 import json
+from abc import ABC, abstractmethod
 
-from doodledashboard.configuration.config import ConfigSection
 
-
-class TextEntity:
+class Message:
 
     """
     Represents a single textual entity from a data feed.
@@ -25,9 +24,9 @@ class TextEntity:
         return self._text
 
 
-class TextEntityJsonEncoder(json.JSONEncoder):
+class MessageJsonEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, TextEntity):
+        if isinstance(obj, Message):
             return {
                 "text": obj.get_text(),
                 "source": str(obj.get_source_name())
@@ -36,23 +35,8 @@ class TextEntityJsonEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class DataFeed:
-    def __init__(self):
+class DataFeed(ABC):
+
+    @abstractmethod
+    def get_latest_messages(self):
         pass
-
-    def get_latest_entities(self):
-        raise NotImplementedError("Implement this method")
-
-
-class DataFeedConfigSection(ConfigSection):
-    def __init__(self):
-        ConfigSection.__init__(self)
-
-    def creates_for_id(self, filter_id):
-        raise NotImplementedError("Implement this method")
-
-    def can_create(self, config_section):
-        return "source" in config_section and self.creates_for_id(config_section["source"])
-
-    def create_item(self, config_section):
-        raise NotImplementedError("Implement this method")

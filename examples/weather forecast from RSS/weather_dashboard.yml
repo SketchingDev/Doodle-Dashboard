@@ -8,13 +8,13 @@ data-feeds:
 notifications:
   - title: Display weather
     handler: image-handler
-    default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/handlers/weather/rain.bmp
+    default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/updaters/weather/rain.bmp
     images:
-      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/handlers/weather/rain.bmp
+      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/updaters/weather/rain.bmp
         if-contains: rain
-      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/handlers/weather/storm.bmp
+      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/updaters/weather/storm.bmp
         if-contains: storm
-      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/handlers/weather/sun.bmp
+      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/updaters/weather/sun.bmp
         if-contains: sun
     filter-chain:
       - description: Keep messages with forecast

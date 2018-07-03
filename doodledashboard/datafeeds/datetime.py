@@ -1,26 +1,26 @@
 from datetime import datetime
 
-from doodledashboard.datafeeds.datafeed import DataFeed, TextEntity, DataFeedConfigSection
+from doodledashboard.configuration.config import ConfigSection
+from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
 class DateTimeFeed(DataFeed):
     def __init__(self):
         DataFeed.__init__(self)
 
-    def get_latest_entities(self):
+    def get_latest_messages(self):
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
-        return [TextEntity(date_time, self)]
+        return [Message(date_time, self)]
 
     def __str__(self):
         return "Date/Time (e.g. 2002-12-25 00:00)"
 
 
-class DateTimeFeedSection(DataFeedConfigSection):
-    def __init__(self):
-        DataFeedConfigSection.__init__(self)
+class DateTimeFeedConfig(ConfigSection):
 
-    def creates_for_id(self, filter_id):
-        return filter_id == "datetime"
+    @property
+    def id_key_value(self):
+        return "source", "datetime"
 
     def create_item(self, config_section):
         return DateTimeFeed()

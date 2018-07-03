@@ -1,17 +1,18 @@
 from abc import abstractmethod, ABC
-from doodledashboarddisplay import Display
-
 from pkg_resources import iter_entry_points
 
 from doodledashboard.configuration.config import InvalidConfigurationException
-from doodledashboard.datafeeds.datetime import DateTimeFeedSection
-from doodledashboard.datafeeds.rss import RssFeedSection
-from doodledashboard.datafeeds.slack import SlackFeedSection
-from doodledashboard.datafeeds.text import TextFeedSection
-from doodledashboard.filters.contains_text import ContainsTextFilterSection
-from doodledashboard.filters.matches_regex import MatchesRegexFilterSection
-from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader
-from doodledashboard.handlers.text.text import TextHandlerConfigCreator
+from doodledashboard.datafeeds.datetime import DateTimeFeedConfig
+from doodledashboard.datafeeds.rss import RssFeedConfig
+from doodledashboard.datafeeds.slack import SlackFeedConfig
+from doodledashboard.datafeeds.text import TextFeedConfig
+from doodledashboard.display import Display
+from doodledashboard.filters.contains_text import ContainsTextFilterConfig
+from doodledashboard.filters.matches_regex import MatchesRegexFilterConfig
+from doodledashboard.notifications import TextNotificationConfig, ImageNotificationConfig, \
+    ImageWithTextNotificationConfig, ColourNotificationConfig
+from doodledashboard.updaters.image.image import ImageNotificationUpdaterConfig
+from doodledashboard.updaters.text.text import TextNotificationUpdaterConfig
 
 
 class ComponentsLoader(ABC):
@@ -54,33 +55,40 @@ class ExternalPackageLoader(ComponentsLoader):
 
 class InternalPackageLoader(ComponentsLoader):
 
-    def __init__(self, state_storage):
-        self._state_storage = state_storage
-
     def configure(self, dashboard_config):
         dashboard_config.add_data_feed_creators(InternalPackageLoader._find_data_feed_creators())
-        dashboard_config.add_handler_creators(InternalPackageLoader._find_handler_creators(self._state_storage))
+        dashboard_config.add_notification_creators(InternalPackageLoader._find_notification_creators())
+        dashboard_config.add_notification_updater_creators(InternalPackageLoader._find_notification_updater_creators())
         dashboard_config.add_filter_creators(InternalPackageLoader._find_filter_creators())
 
     @staticmethod
     def _find_data_feed_creators():
         return [
-            RssFeedSection(),
-            SlackFeedSection(),
-            DateTimeFeedSection(),
-            TextFeedSection()
+            RssFeedConfig(),
+            SlackFeedConfig(),
+            DateTimeFeedConfig(),
+            TextFeedConfig()
         ]
 
     @staticmethod
-    def _find_handler_creators(key_value_store):
+    def _find_notification_creators():
         return [
-            ImageMessageHandlerConfigCreator(key_value_store, FileDownloader()),
-            TextHandlerConfigCreator(key_value_store)
+            TextNotificationConfig(),
+            ImageNotificationConfig(),
+            ImageWithTextNotificationConfig(),
+            ColourNotificationConfig()
+        ]
+
+    @staticmethod
+    def _find_notification_updater_creators():
+        return [
+            TextNotificationUpdaterConfig(),
+            ImageNotificationUpdaterConfig()
         ]
 
     @staticmethod
     def _find_filter_creators():
         return [
-            MatchesRegexFilterSection(),
-            ContainsTextFilterSection()
+            MatchesRegexFilterConfig(),
+            ContainsTextFilterConfig()
         ]

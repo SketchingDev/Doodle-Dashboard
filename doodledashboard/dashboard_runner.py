@@ -23,41 +23,6 @@ class Dashboard:
         return self._notifications
 
 
-class Notification:
-    def __init__(self, handler):
-        self._handler = handler
-        self._entity_filters = []
-        self._logger = logging.getLogger("doodledashboard")
-
-    def set_filters(self, entity_filters):
-        self._entity_filters = entity_filters
-
-    def process(self, text_entities):
-        for entity in self.filter(text_entities):
-            self._handler.update(entity)
-
-    def draw(self, display):
-        self._handler.draw(display)
-
-    def get_handler(self):
-        return self._handler
-
-    def filter(self, entities):
-        filtered_entities = []
-        for e in entities:
-            keep = True
-            for f in self._entity_filters:
-                if keep:
-                    keep = f.filter(e)
-            if keep:
-                filtered_entities.append(e)
-
-        return filtered_entities
-
-    def __str__(self):
-        return "Displays entities using: %s" % str(self._handler)
-
-
 class DashboardRunner:
     def __init__(self, dashboard):
         self._logger = logging.getLogger("doodledashboard.Dashboard")
@@ -67,17 +32,17 @@ class DashboardRunner:
         """
         Cycles through notifications with latest results from data feeds, pausing after each notification.
         """
-        entities = self.poll_datafeeds()
-        self.process_notifications(entities)
+        messages = self.poll_datafeeds()
+        self.process_notifications(messages)
 
         self.draw_notifications()
 
     def poll_datafeeds(self):
-        entities = []
+        messages = []
         for feed in self._dashboard.get_data_feeds():
-            entities += feed.get_latest_entities()
+            messages += feed.get_latest_messages()
 
-        return entities
+        return messages
 
     def draw_notifications(self):
         notifications = self._dashboard.get_notifications()
@@ -85,10 +50,10 @@ class DashboardRunner:
         interval = self._dashboard.get_interval()
 
         for notification in notifications:
-            display.clear()
-            notification.draw(display)
+            display.draw(notification)
             time.sleep(interval)
 
-    def process_notifications(self, entities):
+    def process_notifications(self, messages):
         for notification in self._dashboard.get_notifications():
-            notification.process(entities)
+            for message in messages:
+                notification.update(message)

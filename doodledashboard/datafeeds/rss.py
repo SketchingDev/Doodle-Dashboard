@@ -1,7 +1,7 @@
 import feedparser
 
-from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.datafeeds.datafeed import DataFeed, TextEntity, DataFeedConfigSection
+from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
+from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
 class RssFeed(DataFeed):
@@ -22,7 +22,7 @@ class RssFeed(DataFeed):
     def get_sort_order(self):
         return self._sort_order
 
-    def get_latest_entities(self):
+    def get_latest_messages(self):
         feed = feedparser.parse(self._feed_url)
 
         if self._sort_order:
@@ -43,15 +43,14 @@ class RssFeed(DataFeed):
             if field in feed_item:
                 feed_fields.append(feed_item[field])
 
-        return TextEntity("\n".join(feed_fields), self)
+        return Message("\n".join(feed_fields), self)
 
 
-class RssFeedSection(DataFeedConfigSection):
-    def __init__(self):
-        DataFeedConfigSection.__init__(self)
+class RssFeedConfig(ConfigSection):
 
-    def creates_for_id(self, filter_id):
-        return filter_id == "rss"
+    @property
+    def id_key_value(self):
+        return "source", "rss"
 
     def create_item(self, config_section):
         if "url" not in config_section:

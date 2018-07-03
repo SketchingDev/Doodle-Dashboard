@@ -1,10 +1,10 @@
-from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.filters.filter import TextEntityFilter, FilterConfigSection
+from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
+from doodledashboard.filters.filter import MessageFilter
 
 
-class ContainsTextFilter(TextEntityFilter):
+class ContainsTextFilter(MessageFilter):
     def __init__(self, text):
-        TextEntityFilter.__init__(self)
+        MessageFilter.__init__(self)
         self._text = text
 
     def filter(self, text_entity):
@@ -19,12 +19,11 @@ class ContainsTextFilter(TextEntityFilter):
         return self._text
 
 
-class ContainsTextFilterSection(FilterConfigSection):
-    def __init__(self):
-        FilterConfigSection.__init__(self)
+class ContainsTextFilterConfig(ConfigSection):
 
-    def creates_for_id(self, filter_id):
-        return filter_id == "message-contains-text"
+    @property
+    def id_key_value(self):
+        return "type", "message-contains-text"
 
     def create_item(self, config_section):
         if "text" not in config_section:

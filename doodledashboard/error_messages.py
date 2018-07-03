@@ -1,7 +1,7 @@
 from _yaml import ParserError
 
 from doodledashboard.configuration.config import EmptyConfiguration, YamlParsingError, ConfigurationMissingDisplay, \
-    NotificationDoesNotSupportDisplay
+    DisplayDoesNotSupportNotification
 
 
 def get_error_message(error, default=None):
@@ -30,18 +30,21 @@ def config_missing_display(err):
     return "No display defined. Check that the ID you provided is valid."
 
 
-def notification_does_not_support_display(err: NotificationDoesNotSupportDisplay):
-    missing_requirements = err.get_missing_requirements()
+def display_does_not_support_notification(err: DisplayDoesNotSupportNotification):
+    supported_notifications = err.display.get_supported_notifications()
+    if len(supported_notifications) > 0:
+        notification_list = "\n".join([" - %s" % n.__name__ for n in supported_notifications])
 
-    error_message = "\n".join([" - %s" % r.__name__ for r in missing_requirements])
+        return "Display '%s' does not support the notification '%s'. " \
+               "The notifications this display does support are:\n%s" % \
+               (err.display, err.notification, notification_list)
 
-    return "Display '%s' is missing the following functionality required by the notification '%s':\n%s" % (
-        err.display, err.handler, error_message)
+    return "Display '%s' does not support any notifications, which is very odd..." % err.display
 
 
 error_messages = {
     EmptyConfiguration: empty_configuration,
     YamlParsingError: error_parsing_yaml,
     ConfigurationMissingDisplay: config_missing_display,
-    NotificationDoesNotSupportDisplay: notification_does_not_support_display
+    DisplayDoesNotSupportNotification: display_does_not_support_notification
 }

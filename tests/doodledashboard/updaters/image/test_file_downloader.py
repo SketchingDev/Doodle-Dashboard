@@ -5,7 +5,7 @@ import uuid
 import pytest
 from pytest_localserver import http
 
-from doodledashboard.handlers.image.image import FileDownloader
+from doodledashboard.updaters.image.image import FileDownloader
 
 
 @pytest.mark.usefixtures

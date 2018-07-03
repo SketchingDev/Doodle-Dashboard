@@ -4,11 +4,13 @@ import unittest
 from pytest_localserver import http
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.handlers.image.image import ImageMessageHandlerConfigCreator, FileDownloader, ImageHandler
+from doodledashboard.notifications import ImageNotification
+from doodledashboard.updaters.image.image import FileDownloader, ImageNotificationUpdater, \
+    ImageNotificationUpdaterConfig
 
 
 @pytest.mark.usefixtures
-class TestImageMessageHandlerConfigCreator(unittest.TestCase):
+class TestImageNotificationUpdaterConfig(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -23,53 +25,53 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
     def test_can_create_returns_false_for_empty_config(self):
         config = {}
 
-        creator = ImageMessageHandlerConfigCreator({}, None)
+        creator = ImageNotificationUpdaterConfig(None)
         self.assertFalse(creator.can_create(config))
 
     def test_can_create_returns_false_for_incorrect_handler(self):
         config = {
-            'handler': ''
+            "name": "wrong-id"
         }
 
-        creator = ImageMessageHandlerConfigCreator({}, None)
+        creator = ImageNotificationUpdaterConfig(None)
         self.assertFalse(creator.can_create(config))
 
     def test_exception_thrown_if_config_missing_images_list_and_default_image(self):
         config = {
-            "handler": "image-handler"
+            "name": "image-depending-on-message-content"
         }
 
-        creator = ImageMessageHandlerConfigCreator({}, None)
+        creator = ImageNotificationUpdaterConfig(None)
         self.assertTrue(creator.can_create(config))
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             creator.create_item(config)
         self.assertEqual("Expected 'images' list and/or default-image to exist", exception.value.value)
 
-    def test_exception_thrown_if_config_images_list_missing_image_uri(self):
+    def test_exception_thrown_if_config_images_list_missing_image_path(self):
         config = {
-            "handler": "image-handler",
+            "name": "image-depending-on-message-content",
             "images": [
                 {}
             ]
         }
 
-        creator = ImageMessageHandlerConfigCreator({}, None)
+        creator = ImageNotificationUpdaterConfig(None)
         self.assertTrue(creator.can_create(config))
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             creator.create_item(config)
-        self.assertEqual("Expected 'uri' option to exist", exception.value.value)
+        self.assertEqual("Expected 'path' option to exist", exception.value.value)
 
     def test_exception_thrown_if_config_images_list_missing_image_pattern_and_contains(self):
         config = {
-            "handler": "image-handler",
+            "name": "image-depending-on-message-content",
             "images": [
-                {'uri': 'test'}
+                {"path": "test"}
             ]
         }
 
-        creator = ImageMessageHandlerConfigCreator({}, None)
+        creator = ImageNotificationUpdaterConfig(None)
         self.assertTrue(creator.can_create(config))
 
         with pytest.raises(MissingRequiredOptionException) as exception:
@@ -78,17 +80,17 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
 
     def test_exception_thrown_if_config_images_list_image_contains_pattern_and_contains(self):
         config = {
-            "handler": "image-handler",
+            "name": "image-depending-on-message-content",
             "images": [
                 {
-                    'uri': 'test',
-                    'if-matches': 'test',
-                    'if-contains': 'test'
+                    "path": "test",
+                    "if-matches": "test",
+                    "if-contains": "test"
                 }
             ]
         }
 
-        creator = ImageMessageHandlerConfigCreator({}, None)
+        creator = ImageNotificationUpdaterConfig(None)
         self.assertTrue(creator.can_create(config))
 
         with pytest.raises(MissingRequiredOptionException) as exception:
@@ -98,28 +100,28 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
             exception.value.value
         )
 
-    def test_handler_created_with_uri_and_pattern(self):
-        self.http_server.serve_content('<IMAGE CONTENT>')
+    def test_handler_created_with_path_and_pattern(self):
+        self.http_server.serve_content("<IMAGE CONTENT>")
 
         config = {
-            "handler": "image-handler",
+            "name": "image-depending-on-message-content",
             "images": [
                 {
-                    'uri': '%s/test-filename-1.png' % self.http_server.url,
-                    'if-matches': 'test pattern1'
+                    "path": "%s/test-filename-1.png" % self.http_server.url,
+                    "if-matches": "test pattern1"
                 }
             ]
         }
 
         downloader = FileDownloader()
-        creator = ImageMessageHandlerConfigCreator({}, downloader)
+        creator = ImageNotificationUpdaterConfig(downloader)
         self.assertTrue(creator.can_create(config))
 
         try:
-            handler = creator.create_item(config)
-            self.assertIsInstance(handler, ImageHandler)
+            updater = creator.create_item(config)
+            self.assertIsInstance(updater, ImageNotificationUpdater)
 
-            image_filters = handler.get_filtered_images()
+            image_filters = updater.get_filtered_images()
             self.assertEqual(1, len(image_filters))
 
             image_and_filter = image_filters[0]
@@ -128,28 +130,28 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
             self.assertEqual(1, len(downloaded_files))
             download_path = downloaded_files[0]
 
-            self.assertEqual(download_path, image_and_filter['path'],
-                             'Image path in handler matches path to downloaded file')
-            self.assertEqual('test pattern1', str(image_and_filter['filter'].get_pattern()),
+            self.assertEqual(download_path, image_and_filter["path"],
+                             "Image path in handler matches path to downloaded file")
+            self.assertEqual("test pattern1", str(image_and_filter["filter"].get_pattern()),
                              "Image filter's pattern matches configuration")
         finally:
-            self.cleanup_downloaded_files(downloader, 'test-filename-1.png')
+            self.cleanup_downloaded_files(downloader, "test-filename-1.png")
 
-    def test_handler_created_with_uri_and_contains(self):
+    def test_handler_created_with_path_and_contains(self):
         self.http_server.serve_content('<IMAGE CONTENT>')
 
         config = {
-            "handler": "image-handler",
+            "name": "image-depending-on-message-content",
             "images": [
                 {
-                    'uri': '%s/test-filename-2.png' % self.http_server.url,
-                    'if-contains': 'test pattern2'
+                    "path": "%s/test-filename-2.png" % self.http_server.url,
+                    "if-contains": "test pattern2"
                 }
             ]
         }
 
         downloader = FileDownloader()
-        creator = ImageMessageHandlerConfigCreator({}, downloader)
+        creator = ImageNotificationUpdaterConfig(downloader)
         self.assertTrue(creator.can_create(config))
 
         try:
@@ -163,36 +165,41 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
             self.assertEqual(1, len(downloaded_files))
             download_path = downloaded_files[0]
 
-            self.assertEqual(download_path, image_and_filter['path'],
-                             'Image path in handler matches path to downloaded file')
-            self.assertEqual('test pattern2', str(image_and_filter['filter'].get_text()),
+            self.assertEqual(download_path, image_and_filter["path"],
+                             "Image path in handler matches path to downloaded file")
+            self.assertEqual("test pattern2", str(image_and_filter["filter"].get_text()),
                              "Image filter's 'contains' matches configuration")
         finally:
-            self.cleanup_downloaded_files(downloader, 'test-filename-2.png')
+            self.cleanup_downloaded_files(downloader, "test-filename-2.png")
 
     def test_handler_created_with_default_image(self):
-        self.http_server.serve_content('<IMAGE CONTENT>')
+        self.http_server.serve_content("<IMAGE CONTENT>")
 
         config = {
-            'handler': 'image-handler',
-            'default-image': '%s/default-image.png' % self.http_server.url
+            "name": "image-depending-on-message-content",
+            "default-image": "%s/default-image.png" % self.http_server.url
         }
 
         downloader = FileDownloader()
-        creator = ImageMessageHandlerConfigCreator({}, downloader)
+        creator = ImageNotificationUpdaterConfig(downloader)
         self.assertTrue(creator.can_create(config))
 
         try:
-            handler = creator.create_item(config)
-            image = handler.get_image()
+            updater = creator.create_item(config)
+            notification = ImageNotification()
+            updater.update(notification, None)
 
             downloaded_files = downloader.get_downloaded_files()
             self.assertEqual(1, len(downloaded_files))
             download_path = downloaded_files[0]
 
-            self.assertEqual(download_path, image, 'Image path in handler matches path to downloaded file')
+            self.assertEqual(
+                download_path,
+                notification.get_image_path(),
+                "Image path in handler matches path to downloaded file"
+            )
         finally:
-            self.cleanup_downloaded_files(downloader, 'default-image.png')
+            self.cleanup_downloaded_files(downloader, "default-image.png")
 
     @staticmethod
     def cleanup_downloaded_files(downloader, filename):
@@ -201,5 +208,5 @@ class TestImageMessageHandlerConfigCreator(unittest.TestCase):
                 os.remove(downloaded_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

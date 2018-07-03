@@ -1,27 +1,26 @@
 import re
 
-from doodledashboard.configuration.config import MissingRequiredOptionException
-from doodledashboard.filters.filter import TextEntityFilter, FilterConfigSection
+from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
+from doodledashboard.filters.filter import MessageFilter
 
 
-class MatchesRegexFilter(TextEntityFilter):
+class MatchesRegexFilter(MessageFilter):
     def __init__(self, regex):
-        TextEntityFilter.__init__(self)
+        MessageFilter.__init__(self)
         self._regex = re.compile(regex, re.IGNORECASE)
 
     def filter(self, text_entity):
-        return self._regex.search(text_entity.get_text())
+        return True if self._regex.search(text_entity.get_text()) else False
 
     def get_pattern(self):
         return self._regex.pattern
 
 
-class MatchesRegexFilterSection(FilterConfigSection):
-    def __init__(self):
-        FilterConfigSection.__init__(self)
+class MatchesRegexFilterConfig(ConfigSection):
 
-    def creates_for_id(self, filter_id):
-        return filter_id == "message-matches-regex"
+    @property
+    def id_key_value(self):
+        return "type", "message-matches-regex"
 
     def create_item(self, config_section):
         if "pattern" not in config_section:

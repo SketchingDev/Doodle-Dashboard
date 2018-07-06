@@ -5,6 +5,7 @@ from doodledashboard.filters.filter import MessageFilter
 
 
 class MatchesRegexFilter(MessageFilter):
+
     def __init__(self, regex):
         MessageFilter.__init__(self)
         self._regex = re.compile(regex, re.IGNORECASE)
@@ -14,6 +15,10 @@ class MatchesRegexFilter(MessageFilter):
 
     def get_pattern(self):
         return self._regex.pattern
+
+    @staticmethod
+    def get_config_factory():
+        return MatchesRegexFilterConfig()
 
 
 class MatchesRegexFilterConfig(ConfigSection):

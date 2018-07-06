@@ -19,6 +19,10 @@ class TextFeed(DataFeed):
     def __str__(self):
         return "Text"
 
+    @staticmethod
+    def get_config_factory():
+        return TextFeedConfig()
+
 
 class TextFeedConfig(ConfigSection):
 

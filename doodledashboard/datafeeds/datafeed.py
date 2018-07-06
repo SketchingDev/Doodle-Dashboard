@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 
 class Message:
-
     """
     Represents a single textual entity from a data feed.
     """
@@ -39,4 +38,9 @@ class DataFeed(ABC):
 
     @abstractmethod
     def get_latest_messages(self):
-        pass
+        return []
+
+    @staticmethod
+    @abstractmethod
+    def get_config_factory():
+        return None

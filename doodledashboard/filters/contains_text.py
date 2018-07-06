@@ -18,6 +18,10 @@ class ContainsTextFilter(MessageFilter):
     def get_text(self):
         return self._text
 
+    @staticmethod
+    def get_config_factory():
+        return ContainsTextFilterConfig()
+
 
 class ContainsTextFilterConfig(ConfigSection):
 

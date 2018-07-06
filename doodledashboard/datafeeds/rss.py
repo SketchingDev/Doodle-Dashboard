@@ -45,6 +45,10 @@ class RssFeed(DataFeed):
 
         return Message("\n".join(feed_fields), self)
 
+    @staticmethod
+    def get_config_factory():
+        return RssFeedConfig()
+
 
 class RssFeedConfig(ConfigSection):
 

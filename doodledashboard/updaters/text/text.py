@@ -8,6 +8,10 @@ class TextNotificationUpdater(NotificationUpdater):
     def _update(self, notification, message):
         notification.set_text(message.get_text())
 
+    @staticmethod
+    def get_config_factory():
+        return TextNotificationUpdaterConfig()
+
 
 class TextNotificationUpdaterConfig(ConfigSection):
 

@@ -44,6 +44,10 @@ class ImageNotificationUpdater(NotificationUpdater):
     def get_filtered_images(self):
         return self._filtered_images
 
+    @staticmethod
+    def get_config_factory():
+        return ImageNotificationUpdaterConfig()
+
 
 class FileDownloader:
 

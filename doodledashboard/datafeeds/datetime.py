@@ -15,6 +15,10 @@ class DateTimeFeed(DataFeed):
     def __str__(self):
         return "Date/Time (e.g. 2002-12-25 00:00)"
 
+    @staticmethod
+    def get_config_factory():
+        return DateTimeFeedConfig()
+
 
 class DateTimeFeedConfig(ConfigSection):
 

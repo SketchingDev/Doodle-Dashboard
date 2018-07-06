@@ -2,17 +2,17 @@ from abc import abstractmethod, ABC
 from pkg_resources import iter_entry_points
 
 from doodledashboard.configuration.config import InvalidConfigurationException
-from doodledashboard.datafeeds.datetime import DateTimeFeedConfig
-from doodledashboard.datafeeds.rss import RssFeedConfig
-from doodledashboard.datafeeds.slack import SlackFeedConfig
-from doodledashboard.datafeeds.text import TextFeedConfig
+from doodledashboard.datafeeds.datetime import DateTimeFeed
+from doodledashboard.datafeeds.rss import RssFeed
+from doodledashboard.datafeeds.slack import SlackFeed
+from doodledashboard.datafeeds.text import TextFeed
 from doodledashboard.display import Display
-from doodledashboard.filters.contains_text import ContainsTextFilterConfig
-from doodledashboard.filters.matches_regex import MatchesRegexFilterConfig
-from doodledashboard.notifications import TextNotificationConfig, ImageNotificationConfig, \
-    ImageWithTextNotificationConfig, ColourNotificationConfig
-from doodledashboard.updaters.image.image import ImageNotificationUpdaterConfig
-from doodledashboard.updaters.text.text import TextNotificationUpdaterConfig
+from doodledashboard.filters.contains_text import ContainsTextFilter
+from doodledashboard.filters.matches_regex import MatchesRegexFilter
+from doodledashboard.notifications import TextNotification, ImageNotification, \
+    ImageWithTextNotification, ColourNotification
+from doodledashboard.updaters.image.image import ImageNotificationUpdater
+from doodledashboard.updaters.text.text import TextNotificationUpdater
 
 
 class ComponentsLoader(ABC):
@@ -30,6 +30,7 @@ def validate_displays(displays):
     return displays
 
 
+# TODO Can be removed
 class StaticDisplayLoader(ComponentsLoader):
     displays = []
 
@@ -53,42 +54,53 @@ class ExternalPackageLoader(ComponentsLoader):
         return displays
 
 
+def extract_creators(find_func):
+    def wrapper():
+        return [thing.get_config_factory() for thing in find_func()]
+
+    return wrapper
+
+
 class InternalPackageLoader(ComponentsLoader):
 
     def configure(self, dashboard_config):
-        dashboard_config.add_data_feed_creators(InternalPackageLoader._find_data_feed_creators())
-        dashboard_config.add_notification_creators(InternalPackageLoader._find_notification_creators())
-        dashboard_config.add_notification_updater_creators(InternalPackageLoader._find_notification_updater_creators())
-        dashboard_config.add_filter_creators(InternalPackageLoader._find_filter_creators())
+        dashboard_config.add_data_feed_creators(InternalPackageLoader._find_data_feeds())
+        dashboard_config.add_notification_creators(InternalPackageLoader._find_notifications())
+        dashboard_config.add_notification_updater_creators(InternalPackageLoader._find_notification_updaters())
+        dashboard_config.add_filter_creators(InternalPackageLoader._find_filters())
 
     @staticmethod
-    def _find_data_feed_creators():
+    @extract_creators
+    def _find_data_feeds():
         return [
-            RssFeedConfig(),
-            SlackFeedConfig(),
-            DateTimeFeedConfig(),
-            TextFeedConfig()
+            RssFeed,
+            SlackFeed,
+            DateTimeFeed,
+            TextFeed
         ]
 
     @staticmethod
-    def _find_notification_creators():
+    @extract_creators
+    def _find_notifications():
         return [
-            TextNotificationConfig(),
-            ImageNotificationConfig(),
-            ImageWithTextNotificationConfig(),
-            ColourNotificationConfig()
+            TextNotification,
+            ImageNotification,
+            ImageWithTextNotification,
+            ColourNotification
         ]
 
     @staticmethod
-    def _find_notification_updater_creators():
+    @extract_creators
+    def _find_notification_updaters():
         return [
-            TextNotificationUpdaterConfig(),
-            ImageNotificationUpdaterConfig()
+            TextNotificationUpdater,
+            ImageNotificationUpdater
         ]
 
     @staticmethod
-    def _find_filter_creators():
+    @extract_creators
+    def _find_filters():
         return [
-            MatchesRegexFilterConfig(),
-            ContainsTextFilterConfig()
+            MatchesRegexFilter,
+            ContainsTextFilter
         ]

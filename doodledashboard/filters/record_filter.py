@@ -12,3 +12,7 @@ class RecordFilter(MessageFilter):
 
     def get_messages(self):
         return self._messages
+
+    @staticmethod
+    def get_config_factory():
+        return None

@@ -23,3 +23,8 @@ class NotificationUpdater(ABC):
                 return False
 
         return True
+
+    @staticmethod
+    @abstractmethod
+    def get_config_factory():
+        return None

@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from doodledashboard.configuration.config import ConfigSection
 
@@ -24,8 +24,14 @@ class Notification(ABC):
         if self._updater:
             self._updater.update(self, message)
 
+    @staticmethod
+    @abstractmethod
+    def get_config_factory():
+        return None
+
 
 class TextNotification(Notification):
+
     def __init__(self):
         super().__init__()
         self._image_path = None
@@ -39,6 +45,10 @@ class TextNotification(Notification):
 
     def __str__(self):
         return "Text notification (title=%s, text=%s)" % (self.get_title(), self.get_text())
+
+    @staticmethod
+    def get_config_factory():
+        return TextNotificationConfig()
 
 
 class TextNotificationConfig(ConfigSection):
@@ -69,6 +79,10 @@ class ImageNotification(Notification):
 
     def __str__(self):
         return "Image notification (title=%s, image=%s)" % (self.get_title(), self.get_image_path())
+
+    @staticmethod
+    def get_config_factory():
+        return ImageNotificationConfig()
 
 
 class ImageNotificationConfig(ConfigSection):
@@ -111,6 +125,10 @@ class ImageWithTextNotification(Notification):
         return "Image with text notification (title=%s, image=%s, text=%s)" % \
                (self.get_title(), self.get_image_path(), self.get_text())
 
+    @staticmethod
+    def get_config_factory():
+        return ImageWithTextNotificationConfig()
+
 
 class ImageWithTextNotificationConfig(ConfigSection):
 
@@ -147,6 +165,10 @@ class ColourNotification(Notification):
 
     def __str__(self):
         return "Colour notification (title=%s, colour=%s)" % (self.get_title(), self.get_colour())
+
+    @staticmethod
+    def get_config_factory():
+        return ColourNotificationConfig()
 
 
 class ColourNotificationConfig(ConfigSection):

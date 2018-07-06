@@ -101,6 +101,10 @@ class SlackFeed(DataFeed):
     def _filter_events_by_channel(channel, events):
         return [e for e in events if "channel" in e and e["channel"] == channel["id"]]
 
+    @staticmethod
+    def get_config_factory():
+        return SlackFeedConfig()
+
 
 class SlackFeedConfig(ConfigSection):
 

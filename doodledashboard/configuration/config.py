@@ -1,3 +1,5 @@
+from functools import reduce
+
 import yaml
 from abc import ABC, abstractmethod
 from yaml import YAMLError
@@ -68,14 +70,6 @@ class MissingRequiredOptionException(HandlerCreationException):
 
 
 class DashboardConfigReader:
-    """
-    Validation
-    ---
-    There are two types of validation:
-    1. The definition of a filter, handler or display. When a ConfigCreator creates a section it will validate
-       the parameters being passed into that section i.e. passing an invalid regex into the regex filter.
-    2. Validation of the entire configuration i.e. is a display missing
-    """
     _FIVE_SECONDS = 5
 
     def __init__(self):
@@ -106,42 +100,55 @@ class DashboardConfigReader:
             chain.add(creator)
 
     def read_yaml(self, yaml_configs):
-        def merge_two_dicts(x, y):
-            """Given two dicts, merge them into a new dict as a shallow copy."""
-            z = x.copy()
-            z.update(y)
-            return z
-
-        combined_config = {}
+        configs = []
         for yaml_config in yaml_configs:
             try:
                 config = yaml.safe_load(yaml_config)
-                config = config if config else {}
-                combined_config = merge_two_dicts(config, combined_config)
+                if config:
+                    configs.append(config)
             except YAMLError as err:
                 raise YamlParsingError(err, yaml_config)
 
-        if not combined_config:
-            raise EmptyConfiguration(yaml_configs)
+        dashboards = []
+        for config in configs:
+            dashboards.append(Dashboard(
+                self._parse_interval(config),
+                self._parse_display(config),
+                self._parse_data_feeds(config),
+                self._parse_notifications(config)
+            ))
 
-        return Dashboard(
-            self._parse_interval(combined_config),
-            self._parse_display(combined_config),
-            self._parse_data_feeds(combined_config),
-            self._parse_notifications(combined_config)
-        )
+        if dashboards:
+            return reduce(DashboardConfigReader.merge, dashboards)
+        else:
+            return Dashboard()
+
+    @staticmethod
+    def merge(accum_value: Dashboard, x: Dashboard):
+        if x.get_interval() is not None:
+            accum_value.set_interval(x.get_interval())
+
+        if x.get_display():
+            accum_value.set_display(x.get_display())
+
+        accum_value.add_data_feeds(x.get_data_feeds())
+        accum_value.add_notifications(x.get_notifications())
+
+        return accum_value
 
     def _parse_interval(self, config):
-        return config["interval"] if "interval" in config else DashboardConfigReader._FIVE_SECONDS
+        return config["interval"] if "interval" in config else None
 
     def _parse_display(self, config):
         display_id = config["display"] if "display" in config else None
+        if display_id is None:
+            return None
 
         for display in self._available_displays:
             if display.get_id() == display_id:
                 return display()
 
-        return None
+        raise DisplayNotFound(display_id)
 
     def _parse_data_feeds(self, config):
         data_source_elements = []
@@ -170,10 +177,10 @@ class DashboardConfigReader:
         if notification and "update-with" in notification_section:
             updater = self._parse_updater(notification_section["update-with"])
             if not updater:
-                    # TODO Handle the updater not being created as the notification won't behave as expected
-                    # * Throw exception (could be a typo) * Output warning and don't load the notification (allows for
-                    # graceful degradation of configs for future updates)
-                    pass
+                # TODO Handle the updater not being created as the notification won't behave as expected
+                # * Throw exception (could be a typo) * Output warning and don't load the notification (allows for
+                # graceful degradation of configs for future updates)
+                pass
             notification.set_updater(updater)
 
         return notification
@@ -211,7 +218,6 @@ class DashboardConfigReader:
 class ValidateDashboard:
 
     def validate(self, dashboard):
-        self._check_has_display(dashboard)
         self._check_display_supports_notification(dashboard)
 
     @staticmethod
@@ -221,11 +227,6 @@ class ValidateDashboard:
         for notification in dashboard.get_notifications():
             if notification.__class__ not in display.get_supported_notifications():
                 raise DisplayDoesNotSupportNotification(display, notification)
-
-    @staticmethod
-    def _check_has_display(dashboard):
-        if not dashboard.get_display():
-            raise ConfigurationMissingDisplay()
 
 
 class InvalidConfigurationException(Exception):
@@ -247,9 +248,9 @@ class YamlParsingError(InvalidConfigurationException):
         self.config = config
 
 
-class ConfigurationMissingDisplay(InvalidConfigurationException):
-    def __init__(self):
-        pass
+class DisplayNotFound(InvalidConfigurationException):
+    def __init__(self, display_id):
+        self.display_id = display_id
 
 
 class DisplayDoesNotSupportNotification(InvalidConfigurationException):

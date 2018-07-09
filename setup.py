@@ -26,7 +26,8 @@ setup(
         "slackclient",
         "feedparser",
         "pyyaml",
-        "click"
+        "click",
+        "doodle-dashboard-display-console>=0.0.13"
     ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],

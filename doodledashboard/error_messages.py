@@ -1,6 +1,6 @@
 from _yaml import ParserError
 
-from doodledashboard.configuration.config import EmptyConfiguration, YamlParsingError, ConfigurationMissingDisplay, \
+from doodledashboard.configuration.config import EmptyConfiguration, YamlParsingError, DisplayNotFound, \
     DisplayDoesNotSupportNotification
 
 
@@ -26,8 +26,9 @@ def error_parsing_yaml(err: YamlParsingError):
     return "Error parsing configuration file %s due to:\n%s" % (err.config, err.parsing_exception)
 
 
-def config_missing_display(err):
-    return "No display defined. Check that the ID you provided is valid."
+def display_not_found(err):
+    return "Cannot find the display '%s'. Have you run `pip install` for the display you're trying to use?" \
+           % err.display_id
 
 
 def display_does_not_support_notification(err: DisplayDoesNotSupportNotification):
@@ -45,6 +46,6 @@ def display_does_not_support_notification(err: DisplayDoesNotSupportNotification
 error_messages = {
     EmptyConfiguration: empty_configuration,
     YamlParsingError: error_parsing_yaml,
-    ConfigurationMissingDisplay: config_missing_display,
+    DisplayNotFound: display_not_found,
     DisplayDoesNotSupportNotification: display_does_not_support_notification
 }

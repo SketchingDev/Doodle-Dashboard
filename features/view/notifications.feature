@@ -1,15 +1,17 @@
 Feature: View output of data-feeds
 
-    Scenario: Emtpy configuration causes error
+    Scenario: No notifications displayed if configuration is empty
      Given I have the configuration called 'config.yml'
        """
        """
      When I call 'view notifications config.yml'
-     Then the status code is 1
+     Then the status code is 0
      And the output is
        """
-       The configuration file you provided is empty
-       Aborted!
+       {
+           "notifications": [],
+           "source-data": []
+       }
 
        """
 

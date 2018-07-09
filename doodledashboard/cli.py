@@ -38,7 +38,14 @@ def start(configs, once):
     """Start dashboard with CONFIG file"""
 
     dashboard_config = configure_component_loaders(DashboardConfigReader())
-    dashboard = read_dashboard_from_config(dashboard_config, configs)
+    default_configuration = [
+        """
+        interval: 15
+        display: console
+        """
+    ]
+    default_configuration += configs
+    dashboard = read_dashboard_from_config(dashboard_config, default_configuration)
 
     try:
         ValidateDashboard().validate(dashboard)

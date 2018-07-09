@@ -1,14 +1,15 @@
 Feature: User is informed of invalid dashboard configuration
 
-  Scenario: Emtpy configuration causes error
+  Scenario: Unknown display causes error
     Given I have the configuration called 'config.yml'
       """
+      display: none
       """
     When I call 'start --once config.yml'
     Then the status code is 1
     And the output is
       """
-      The configuration file you provided is empty
+      Cannot find the display 'none'. Have you run `pip install` for the display you're trying to use?
       Aborted!
 
       """
@@ -28,17 +29,3 @@ Feature: User is informed of invalid dashboard configuration
       Aborted!
 
       """
-
-  Scenario: Invalid data-feed causes error
-    Given I have the configuration called 'config.yml'
-       """
-       data-feeds: testing
-       """
-    When I call 'start --once config.yml'
-    Then the status code is 1
-    And the output is
-       """
-       No display defined. Check that the ID you provided is valid.
-       Aborted!
-
-       """

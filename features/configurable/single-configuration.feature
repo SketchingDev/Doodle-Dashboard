@@ -1,5 +1,23 @@
 Feature: Dashboard is loaded from a configuration file
 
+  Scenario: Dashboard loaded with default interval if none provided
+    Given I load test displays
+    And I have the configuration called 'config.yml'
+      """
+      display: test-display-all-functionality
+      """
+    When I call 'start --once config.yml'
+    Then the status code is 0
+    And the output is
+      """
+      Interval: 15
+      Display loaded: test-display-all-functionality
+      0 data sources loaded
+      0 notifications loaded
+      Dashboard running...
+
+      """
+
   Scenario: Dashboard loaded from configuration with only a display
     Given I load test displays
     And I have the configuration called 'config.yml'

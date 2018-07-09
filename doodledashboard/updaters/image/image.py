@@ -3,7 +3,7 @@ import os
 import tempfile
 import urllib.request
 from urllib.error import HTTPError
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode, quote_plus
 
 from doodledashboard.configuration.config import MissingRequiredOptionException, HandlerCreationException, ConfigSection
 from doodledashboard.filters.contains_text import ContainsTextFilter
@@ -95,11 +95,7 @@ class ImageNotificationUpdaterConfig(ConfigSection):
             raise MissingRequiredOptionException("Expected 'images' list and/or default-image to exist")
 
         if has_default_image:
-            try:
-                image_path = self._file_downloader.download(config_section["default-image"])
-            except HTTPError as err:
-                raise HandlerCreationException("Error '%s' when downloading %s" % (err.msg, err.url))
-
+            image_path = self.download(config_section["default-image"])
             updater.add_image_filter(image_path)
 
         if has_images:
@@ -107,17 +103,18 @@ class ImageNotificationUpdaterConfig(ConfigSection):
                 if "path" not in image_config_section:
                     raise MissingRequiredOptionException("Expected 'path' option to exist")
 
-                image_path = image_config_section["path"]
                 image_filter = self._create_filter(image_config_section)
-
-                try:
-                    image_path = self._file_downloader.download(image_path)
-                except HTTPError as err:
-                    raise HandlerCreationException(err.url)
+                image_path = self.download(image_config_section["path"])
 
                 updater.add_image_filter(image_path, image_filter)
 
         return updater
+
+    def download(self, url):
+        try:
+            return self._file_downloader.download(url)
+        except HTTPError as err:
+            raise HandlerCreationException("Error '%s' when downloading %s" % (err.msg, err.url))
 
     @staticmethod
     def _create_filter(image_config_section):

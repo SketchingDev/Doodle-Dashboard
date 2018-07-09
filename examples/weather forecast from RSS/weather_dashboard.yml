@@ -7,16 +7,18 @@ data-feeds:
 
 notifications:
   - title: Display weather
-    handler: image-handler
-    default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/updaters/weather/rain.bmp
-    images:
-      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/updaters/weather/rain.bmp
-        if-contains: rain
-      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/updaters/weather/storm.bmp
-        if-contains: storm
-      - uri: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/dcc35b329b138a4cf88816b52f937d2f431d2399/doodledashboard/updaters/weather/sun.bmp
-        if-contains: sun
-    filter-chain:
-      - description: Keep messages with forecast
-        type: message-matches-regex
-        pattern: (rain|storm|sun)
+    type: image
+    update-with:
+      name: image-depending-on-message-content
+      default-image: "https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/development/examples/weather%20forecast%20from%20RSS/images/rain.bmp"
+      images:
+        - path: "https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/development/examples/weather%20forecast%20from%20RSS/images/rain.bmp"
+          if-contains: rain
+        - path: "https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/development/examples/weather%20forecast%20from%20RSS/images/storm.bmp"
+          if-contains: storm
+        - path: "https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/development/examples/weather%20forecast%20from%20RSS/images/sun.bmp"
+          if-contains: sun
+      filter-messages:
+        - description: Keep messages with forecast
+          type: message-matches-regex
+          pattern: (rain|storm|sun)

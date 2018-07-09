@@ -70,7 +70,6 @@ class MissingRequiredOptionException(HandlerCreationException):
 
 
 class DashboardConfigReader:
-    _FIVE_SECONDS = 5
 
     def __init__(self):
         self._filter_creator = RootConfigSection()
@@ -118,10 +117,7 @@ class DashboardConfigReader:
                 self._parse_notifications(config)
             ))
 
-        if dashboards:
-            return reduce(DashboardConfigReader.merge, dashboards)
-        else:
-            return Dashboard()
+        return reduce(DashboardConfigReader.merge, dashboards, Dashboard())
 
     @staticmethod
     def merge(accum_value: Dashboard, x: Dashboard):

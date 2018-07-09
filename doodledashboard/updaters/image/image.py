@@ -3,7 +3,7 @@ import os
 import tempfile
 import urllib.request
 from urllib.error import HTTPError
-from urllib.parse import urlparse, urlencode, quote_plus
+from urllib.parse import urlparse
 
 from doodledashboard.configuration.config import MissingRequiredOptionException, HandlerCreationException, ConfigSection
 from doodledashboard.filters.contains_text import ContainsTextFilter

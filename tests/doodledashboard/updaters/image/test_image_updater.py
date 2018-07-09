@@ -1,9 +1,9 @@
 import unittest
-from doodledashboard.notifications import TextNotification, ImageNotification
 
 from doodledashboard.datafeeds.datafeed import Message
 from doodledashboard.filters.contains_text import ContainsTextFilter
 from doodledashboard.filters.matches_regex import MatchesRegexFilter
+from doodledashboard.notifications import ImageNotification
 from doodledashboard.updaters.image.image import ImageNotificationUpdater
 
 

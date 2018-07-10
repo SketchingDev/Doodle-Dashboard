@@ -163,7 +163,6 @@ class DashboardConfigReader:
                 if notification:
                     yield notification
 
-
     def _parse_notification(self, notification_section):
         notification = self._notification_creators.create(notification_section)
 

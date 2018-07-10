@@ -47,11 +47,8 @@ class ExternalPackageLoader(ComponentsLoader):
 
     @staticmethod
     def _find_displays():
-        displays = []
         for entry_point in iter_entry_points(ExternalPackageLoader._DISPLAYS_GROUP_NAME):
-            displays.append(entry_point.load())
-
-        return displays
+            yield entry_point.load()
 
 
 def extract_creators(find_func):

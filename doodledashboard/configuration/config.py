@@ -154,8 +154,6 @@ class DashboardConfigReader:
         return self._create_items(self._data_feed_creator, data_source_elements)
 
     def _parse_notifications(self, config):
-        notifications = []
-
         if "notifications" in config:
             for notification_element in config["notifications"] or []:
                 notification = self._parse_notification(notification_element)
@@ -163,9 +161,8 @@ class DashboardConfigReader:
                     pass  # TODO Handle notification not being created from notification configuration
 
                 if notification:
-                    notifications.append(notification)
+                    yield notification
 
-        return notifications
 
     def _parse_notification(self, notification_section):
         notification = self._notification_creators.create(notification_section)
@@ -191,24 +188,17 @@ class DashboardConfigReader:
         return updater
 
     def _parse_message_filters(self, message_filters_section):
-        message_filters = []
-
         for section in message_filters_section:
             message_filter = self._filter_creator.create(section)
             if message_filter:
-                message_filters.append(message_filter)
-
-        return message_filters
+                yield message_filter
 
     @staticmethod
     def _create_items(creator_chain, config_elements):
-        creation = []
         for element in config_elements or []:
             repository = creator_chain.create(element)
             if repository:
-                creation.append(repository)
-
-        return creation
+                yield repository
 
 
 class ValidateDashboard:

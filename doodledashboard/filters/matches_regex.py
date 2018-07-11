@@ -27,7 +27,7 @@ class MatchesRegexFilterConfig(ConfigSection):
     def id_key_value(self):
         return "type", "message-matches-regex"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         if "pattern" not in config_section:
             raise MissingRequiredOptionException("Expected 'pattern' option to exist")
 

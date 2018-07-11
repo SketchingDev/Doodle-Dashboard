@@ -57,7 +57,7 @@ class TextNotificationConfig(ConfigSection):
     def id_key_value(self):
         return "type", "text"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         notification = TextNotification()
 
         if "title" in config_section:
@@ -91,7 +91,7 @@ class ImageNotificationConfig(ConfigSection):
     def id_key_value(self):
         return "type", "image"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         notification = ImageNotification()
 
         if "title" in config_section:
@@ -136,7 +136,7 @@ class ImageWithTextNotificationConfig(ConfigSection):
     def id_key_value(self):
         return "type", "image-with-text"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         notification = ImageWithTextNotification()
 
         if "title" in config_section:
@@ -177,7 +177,7 @@ class ColourNotificationConfig(ConfigSection):
     def id_key_value(self):
         return "type", "colour"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         notification = ColourNotification()
 
         if "title" in config_section:

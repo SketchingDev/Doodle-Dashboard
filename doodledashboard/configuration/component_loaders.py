@@ -16,9 +16,48 @@ from doodledashboard.updaters.text.text import TextNotificationUpdater
 
 
 class ComponentsLoader(ABC):
+
+    def populate(self, container):
+        def extract(components):
+            return [component.get_config_factory() for component in components]
+
+        container.add_display_creators(
+            extract(self._find_displays())
+        )
+        container.add_data_feed_creators(
+            extract(self._find_data_feeds())
+        )
+        container.add_notification_creators(
+            extract(self._find_notifications())
+        )
+        container.add_notification_updater_creators(
+            extract(self._find_notification_updaters())
+        )
+        container.add_filter_creators(
+            extract(self._find_filters())
+        )
+
+    # TODO These don't need to be abstract, look into being able to override one or two
+
     @abstractmethod
-    def configure(self, dashboard_config):
-        pass
+    def _find_displays(self):
+        return []
+
+    @abstractmethod
+    def _find_data_feeds(self):
+        return []
+
+    @abstractmethod
+    def _find_notifications(self):
+        return []
+
+    @abstractmethod
+    def _find_notification_updaters(self):
+        return []
+
+    @abstractmethod
+    def _find_filters(self):
+        return []
 
 
 def validate_displays(displays):
@@ -30,45 +69,92 @@ def validate_displays(displays):
     return displays
 
 
-# TODO Can be removed
 class StaticDisplayLoader(ComponentsLoader):
     displays = []
 
-    def configure(self, dashboard_config):
-        dashboard_config.add_available_displays(StaticDisplayLoader.displays)
+    def _find_displays(self):
+        return StaticDisplayLoader.displays
+
+    def _find_data_feeds(self):
+        return []
+
+    def _find_notifications(self):
+        return []
+
+    def _find_notification_updaters(self):
+        return []
+
+    def _find_filters(self):
+        return []
 
 
 class ExternalPackageLoader(ComponentsLoader):
 
     _DISPLAYS_GROUP_NAME = "doodledashboard.customdisplays"
 
-    def configure(self, dashboard_config):
-        dashboard_config.add_available_displays(ExternalPackageLoader._find_displays())
-
-    @staticmethod
-    def _find_displays():
+    def _find_displays(self):
         for entry_point in iter_entry_points(ExternalPackageLoader._DISPLAYS_GROUP_NAME):
             yield entry_point.load()
 
+    def _find_data_feeds(self):
+        return []
 
-def extract_creators(find_func):
-    def wrapper():
-        return [thing.get_config_factory() for thing in find_func()]
+    def _find_notifications(self):
+        return []
 
-    return wrapper
+    def _find_notification_updaters(self):
+        return []
+
+    def _find_filters(self):
+        return []
+
+
+class CreatorsContainer:
+
+    def __init__(self):
+        self._filter_creators = []
+        self._notification_creators = []
+        self._notification_updater_creators = []
+        self._data_feed_creators = []
+        self._display_creators = []
+
+    def add_filter_creators(self, creators):
+        self._filter_creators += creators
+
+    def add_notification_creators(self, creators):
+        self._notification_creators += creators
+
+    def add_notification_updater_creators(self, creators):
+        self._notification_updater_creators += creators
+
+    def add_data_feed_creators(self, creators):
+        self._data_feed_creators += creators
+
+    def add_display_creators(self, creators):
+        self._display_creators += creators
+
+    def get_filter_creators(self):
+        return self._filter_creators
+
+    def get_notification_creators(self):
+        return self._notification_creators
+
+    def get_notification_updater_creators(self):
+        return self._notification_updater_creators
+
+    def get_data_feed_creators(self):
+        return self._data_feed_creators
+
+    def get_display_creators(self):
+        return self._display_creators
 
 
 class InternalPackageLoader(ComponentsLoader):
 
-    def configure(self, dashboard_config):
-        dashboard_config.add_data_feed_creators(InternalPackageLoader._find_data_feeds())
-        dashboard_config.add_notification_creators(InternalPackageLoader._find_notifications())
-        dashboard_config.add_notification_updater_creators(InternalPackageLoader._find_notification_updaters())
-        dashboard_config.add_filter_creators(InternalPackageLoader._find_filters())
+    def _find_displays(self):
+        return []
 
-    @staticmethod
-    @extract_creators
-    def _find_data_feeds():
+    def _find_data_feeds(self):
         return [
             RssFeed,
             SlackFeed,
@@ -76,9 +162,7 @@ class InternalPackageLoader(ComponentsLoader):
             TextFeed
         ]
 
-    @staticmethod
-    @extract_creators
-    def _find_notifications():
+    def _find_notifications(self):
         return [
             TextNotification,
             ImageNotification,
@@ -86,17 +170,13 @@ class InternalPackageLoader(ComponentsLoader):
             ColourNotification
         ]
 
-    @staticmethod
-    @extract_creators
-    def _find_notification_updaters():
+    def _find_notification_updaters(self):
         return [
             TextNotificationUpdater,
             ImageNotificationUpdater
         ]
 
-    @staticmethod
-    @extract_creators
-    def _find_filters():
+    def _find_filters(self):
         return [
             MatchesRegexFilter,
             ContainsTextFilter

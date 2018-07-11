@@ -26,5 +26,5 @@ class DateTimeFeedConfig(ConfigSection):
     def id_key_value(self):
         return "source", "datetime"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         return DateTimeFeed()

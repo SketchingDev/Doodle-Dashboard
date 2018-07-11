@@ -3,8 +3,8 @@ import json
 import logging
 
 from doodledashboard import __about__
-from doodledashboard.configuration.component_loaders import InternalPackageLoader, StaticDisplayLoader, \
-    ExternalPackageLoader
+from doodledashboard.configuration.component_loaders import InternalPackageLoader, \
+    ExternalPackageLoader, CreatorsContainer, StaticDisplayLoader
 from doodledashboard.configuration.config import DashboardConfigReader, \
     ValidateDashboard, InvalidConfigurationException
 from doodledashboard.dashboard_runner import DashboardRunner
@@ -37,7 +37,8 @@ def cli():
 def start(configs, once):
     """Start dashboard with CONFIG file"""
 
-    dashboard_config = configure_component_loaders(DashboardConfigReader())
+    dashboard_config = DashboardConfigReader(collect_component_creators())
+
     default_configuration = [
         """
         interval: 15
@@ -69,7 +70,8 @@ def start(configs, once):
 def view(action, configs):
     """View what the datafeeds in the CONFIG are returning"""
 
-    dashboard_config = configure_component_loaders(DashboardConfigReader())
+    dashboard_config = DashboardConfigReader(collect_component_creators())
+
     dashboard = read_dashboard_from_config(dashboard_config, configs)
     messages = DashboardRunner(dashboard).poll_datafeeds()
 
@@ -98,6 +100,29 @@ def view(action, configs):
     click.echo(json.dumps(output, sort_keys=True, indent=4, cls=MessageJsonEncoder))
 
 
+@cli.command()
+@click.argument("action", type=click.Choice(["displays", "datafeeds", "notifications", "all"]), default="all")
+def list(action):
+    """View what the datafeeds in the CONFIG are returning"""
+    creator_container = collect_component_creators()
+    if action == "datafeeds" or action == "all":
+        datafeed_ids = {c.id_key_value[1] for c in creator_container.get_data_feed_creators()}
+
+        click.echo("Available data-feeds:")
+        for datafeed_id in sorted(datafeed_ids):
+            click.echo(" - %s" % datafeed_id)
+
+    if action == "all":
+        click.echo("")
+
+    if action == "displays" or action == "all":
+        display_ids = {c.id_key_value[1] for c in creator_container.get_display_creators()}
+
+        click.echo("Available displays:")
+        for display_id in sorted(display_ids):
+            click.echo(" - %s" % display_id)
+
+
 def read_dashboard_from_config(dashboard_config, configs):
     try:
         return dashboard_config.read_yaml(configs)
@@ -106,12 +131,13 @@ def read_dashboard_from_config(dashboard_config, configs):
         raise click.Abort()
 
 
-def configure_component_loaders(dashboard_config):
-    InternalPackageLoader().configure(dashboard_config)
-    ExternalPackageLoader().configure(dashboard_config)
-    StaticDisplayLoader().configure(dashboard_config)
+def collect_component_creators():
+    container = CreatorsContainer()
+    InternalPackageLoader().populate(container)
+    ExternalPackageLoader().populate(container)
+    StaticDisplayLoader().populate(container)
 
-    return dashboard_config
+    return container
 
 
 def explain_dashboard(dashboard):

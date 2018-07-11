@@ -9,10 +9,10 @@ class Display(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_id():
-        return ""
+    def get_supported_notifications():
+        return []
 
     @staticmethod
     @abstractmethod
-    def get_supported_notifications():
-        return []
+    def get_config_factory():
+        return None

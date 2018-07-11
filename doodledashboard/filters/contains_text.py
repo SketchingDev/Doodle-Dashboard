@@ -29,7 +29,7 @@ class ContainsTextFilterConfig(ConfigSection):
     def id_key_value(self):
         return "type", "message-contains-text"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         if "text" not in config_section:
             raise MissingRequiredOptionException("Expected 'text' option to exist")
 

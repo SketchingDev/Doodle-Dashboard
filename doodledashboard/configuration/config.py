@@ -23,7 +23,7 @@ class ConfigSection(ABC):
         return id_key in config_section and id_value == config_section[id_key]
 
     @abstractmethod
-    def create_item(self, config_section):
+    def create(self, config_section):
         pass
 
     def add(self, successor):
@@ -31,26 +31,6 @@ class ConfigSection(ABC):
             self._successor = successor
         else:
             self._successor.add(successor)
-
-    def create(self, config_section):
-        if self.can_create(config_section):
-            return self.create_item(config_section)
-        elif self._successor:
-            return self._successor.create(config_section)
-        else:
-            return None
-
-
-class RootConfigSection(ConfigSection):
-    @property
-    def id_key_value(self):
-        return "", ""
-
-    def can_create(self, config_section):
-        return False
-
-    def create_item(self, config_section):
-        pass
 
 
 class HandlerCreationException(Exception):
@@ -71,32 +51,16 @@ class MissingRequiredOptionException(HandlerCreationException):
 
 class DashboardConfigReader:
 
-    def __init__(self):
-        self._filter_creator = RootConfigSection()
-        self._data_feed_creator = RootConfigSection()
-        self._notification_creators = RootConfigSection()
-        self._notification_updater_creators = RootConfigSection()
-        self._available_displays = []
-
-    def add_filter_creators(self, creators):
-        self._add_creator_to_chain(self._filter_creator, creators)
-
-    def add_notification_creators(self, creators):
-        self._add_creator_to_chain(self._notification_creators, creators)
-
-    def add_notification_updater_creators(self, creators):
-        self._add_creator_to_chain(self._notification_updater_creators, creators)
-
-    def add_data_feed_creators(self, creators):
-        self._add_creator_to_chain(self._data_feed_creator, creators)
-
-    def add_available_displays(self, displays):
-        self._available_displays += displays
+    def __init__(self, creator_container):
+        self._creator_container = creator_container
 
     @staticmethod
-    def _add_creator_to_chain(chain, creators):
+    def try_create(section, creators):
         for creator in creators:
-            chain.add(creator)
+            if creator.can_create(section):
+                return creator.create(section)
+
+        return None
 
     def read_yaml(self, yaml_configs):
         configs = []
@@ -136,22 +100,19 @@ class DashboardConfigReader:
         return config["interval"] if "interval" in config else None
 
     def _parse_display(self, config):
-        display_id = config["display"] if "display" in config else None
-        if display_id is None:
-            return None
+        display = self.try_create(config, self._creator_container.get_display_creators())
 
-        for display in self._available_displays:
-            if display.get_id() == display_id:
-                return display()
+        if not display and "display" in config:
+            raise DisplayNotFound(config["display"])
 
-        raise DisplayNotFound(display_id)
+        return display
 
     def _parse_data_feeds(self, config):
-        data_source_elements = []
         if "data-feeds" in config:
-            data_source_elements = config["data-feeds"]
-
-        return self._create_items(self._data_feed_creator, data_source_elements)
+            for element in config["data-feeds"] or []:
+                data_feed = self.try_create(element, self._creator_container.get_data_feed_creators())
+                if data_feed:
+                    yield data_feed
 
     def _parse_notifications(self, config):
         if "notifications" in config:
@@ -164,7 +125,7 @@ class DashboardConfigReader:
                     yield notification
 
     def _parse_notification(self, notification_section):
-        notification = self._notification_creators.create(notification_section)
+        notification = self.try_create(notification_section, self._creator_container.get_notification_creators())
 
         if notification and "update-with" in notification_section:
             updater = self._parse_updater(notification_section["update-with"])
@@ -178,7 +139,7 @@ class DashboardConfigReader:
         return notification
 
     def _parse_updater(self, updater_section):
-        updater = self._notification_updater_creators.create(updater_section)
+        updater = self.try_create(updater_section, self._creator_container.get_notification_updater_creators())
 
         if updater and "filter-messages" in updater_section:
             message_filters = self._parse_message_filters(updater_section["filter-messages"])
@@ -188,16 +149,9 @@ class DashboardConfigReader:
 
     def _parse_message_filters(self, message_filters_section):
         for section in message_filters_section:
-            message_filter = self._filter_creator.create(section)
+            message_filter = self.try_create(section, self._creator_container.get_filter_creators())
             if message_filter:
                 yield message_filter
-
-    @staticmethod
-    def _create_items(creator_chain, config_elements):
-        for element in config_elements or []:
-            repository = creator_chain.create(element)
-            if repository:
-                yield repository
 
 
 class ValidateDashboard:

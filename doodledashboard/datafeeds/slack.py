@@ -112,7 +112,7 @@ class SlackFeedConfig(ConfigSection):
     def id_key_value(self):
         return "source", "slack"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         if "token" not in config_section:
             raise MissingRequiredOptionException("Expected 'token' option to exist")
 

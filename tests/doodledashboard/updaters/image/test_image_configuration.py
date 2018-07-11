@@ -45,7 +45,7 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
         self.assertTrue(creator.can_create(config))
 
         with pytest.raises(MissingRequiredOptionException) as exception:
-            creator.create_item(config)
+            creator.create(config)
         self.assertEqual("Expected 'images' list and/or default-image to exist", exception.value.value)
 
     def test_exception_thrown_if_config_images_list_missing_image_path(self):
@@ -60,7 +60,7 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
         self.assertTrue(creator.can_create(config))
 
         with pytest.raises(MissingRequiredOptionException) as exception:
-            creator.create_item(config)
+            creator.create(config)
         self.assertEqual("Expected 'path' option to exist", exception.value.value)
 
     def test_exception_thrown_if_config_images_list_missing_image_pattern_and_contains(self):
@@ -75,7 +75,7 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
         self.assertTrue(creator.can_create(config))
 
         with pytest.raises(MissingRequiredOptionException) as exception:
-            creator.create_item(config)
+            creator.create(config)
         self.assertEqual("Expected either 'if-contains' or 'if-matches' option to exist", exception.value.value)
 
     def test_exception_thrown_if_config_images_list_image_contains_pattern_and_contains(self):
@@ -94,7 +94,7 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
         self.assertTrue(creator.can_create(config))
 
         with pytest.raises(MissingRequiredOptionException) as exception:
-            creator.create_item(config)
+            creator.create(config)
         self.assertEqual(
             "Expected either 'if-contains' or 'if-matches' option, but not both",
             exception.value.value
@@ -118,7 +118,7 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
         self.assertTrue(creator.can_create(config))
 
         try:
-            updater = creator.create_item(config)
+            updater = creator.create(config)
             self.assertIsInstance(updater, ImageNotificationUpdater)
 
             image_filters = updater.get_filtered_images()
@@ -155,7 +155,7 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
         self.assertTrue(creator.can_create(config))
 
         try:
-            handler = creator.create_item(config)
+            handler = creator.create(config)
             image_filters = handler.get_filtered_images()
 
             self.assertEqual(1, len(image_filters))
@@ -185,7 +185,7 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
         self.assertTrue(creator.can_create(config))
 
         try:
-            updater = creator.create_item(config)
+            updater = creator.create(config)
             notification = ImageNotification()
             updater.update(notification, None)
 

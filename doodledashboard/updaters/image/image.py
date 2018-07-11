@@ -85,7 +85,7 @@ class ImageNotificationUpdaterConfig(ConfigSection):
     def id_key_value(self):
         return "name", "image-depending-on-message-content"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         updater = ImageNotificationUpdater()
 
         has_images = "images" in config_section

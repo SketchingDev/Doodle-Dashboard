@@ -2,27 +2,36 @@ from behave import given, when, then
 from click.testing import CliRunner
 from sure import expect
 
-from doodledashboard.cli import view, start
-
-_valid_cli_commands = {
-    "start": start,
-    "view": view
-}
+from doodledashboard.cli import view, start, list
 
 
 @given("I have the configuration called '{config_filename}'")
-def _i_have_the_configuration_x(context, config_filename):
+def _given_i_have_the_configuration_x(context, config_filename):
     if "dashboard_configs" not in context:
         context.dashboard_configs = {}
 
     context.dashboard_configs[config_filename] = context.text
 
 
-@when("I call '{command} {arguments} {config_files}'")
-def _i_call_x_x_config_yml(context, command, arguments, config_files):
-    assert command in _valid_cli_commands.keys()
-    cli_command = _valid_cli_commands.get(command)
+@when("I call 'list {arguments}'")
+def _when_i_call_list_x(context, arguments):
+    arguments = arguments.split(" ")
 
+    runner = CliRunner()
+    context.runner_result = runner.invoke(list, arguments, catch_exceptions=False)
+
+
+@when("I call 'start {arguments} {configs}'")
+def _when_i_call_start_x_x(context, arguments, configs):
+    _i_call_x_x_config_yml(context, start, arguments, configs)
+
+
+@when("I call 'view {arguments} {configs}'")
+def _when_i_call_view_x_x(context, arguments, configs):
+    _i_call_x_x_config_yml(context, view, arguments, configs)
+
+
+def _i_call_x_x_config_yml(context, cli_command, arguments, config_files):
     config_files = config_files.split(" ")
     arguments = arguments.split(" ")
     arguments += config_files

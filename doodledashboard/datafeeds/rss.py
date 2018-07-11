@@ -56,7 +56,7 @@ class RssFeedConfig(ConfigSection):
     def id_key_value(self):
         return "source", "rss"
 
-    def create_item(self, config_section):
+    def create(self, config_section):
         if "url" not in config_section:
             raise MissingRequiredOptionException("Expected 'url' option to exist")
 

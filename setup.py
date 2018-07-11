@@ -27,7 +27,7 @@ setup(
         "feedparser",
         "pyyaml",
         "click",
-        "doodle-dashboard-display-console>=0.0.13"
+        "doodle-dashboard-display-console>=0.0.14"
     ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],

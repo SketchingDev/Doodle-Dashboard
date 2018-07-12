@@ -3,8 +3,8 @@ import json
 import logging
 
 from doodledashboard import __about__
-from doodledashboard.configuration.component_loaders import InternalPackageLoader, \
-    ExternalPackageLoader, CreatorsContainer, StaticDisplayLoader
+from doodledashboard.configuration.component_loaders import ExternalPackageLoader, CreatorsContainer, \
+    StaticDisplayLoader
 from doodledashboard.configuration.config import DashboardConfigReader, \
     ValidateDashboard, InvalidConfigurationException
 from doodledashboard.dashboard_runner import DashboardRunner
@@ -101,7 +101,9 @@ def view(action, configs):
 
 
 @cli.command()
-@click.argument("action", type=click.Choice(["displays", "datafeeds", "notifications", "all"]), default="all")
+@click.argument("action",
+                type=click.Choice(["displays", "datafeeds", "notifications", "filters", "all"]),
+                default="all")
 def list(action):
     """View what the datafeeds in the CONFIG are returning"""
     creator_container = collect_component_creators()
@@ -122,6 +124,16 @@ def list(action):
         for display_id in sorted(display_ids):
             click.echo(" - %s" % display_id)
 
+    if action == "all":
+        click.echo("")
+
+    if action == "filters" or action == "all":
+        filter_ids = {c.id_key_value[1] for c in creator_container.get_filter_creators()}
+
+        click.echo("Available filters:")
+        for filter_id in sorted(filter_ids):
+            click.echo(" - %s" % filter_id)
+
 
 def read_dashboard_from_config(dashboard_config, configs):
     try:
@@ -133,7 +145,6 @@ def read_dashboard_from_config(dashboard_config, configs):
 
 def collect_component_creators():
     container = CreatorsContainer()
-    InternalPackageLoader().populate(container)
     ExternalPackageLoader().populate(container)
     StaticDisplayLoader().populate(container)
 

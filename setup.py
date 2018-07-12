@@ -34,6 +34,26 @@ setup(
     entry_points={
         "console_scripts": [
             "doodledashboard=doodledashboard.cli:cli"
+        ],
+        "doodledashboard.custom.filters": [
+            "contains-text=doodledashboard.filters.contains_text:ContainsTextFilter",
+            "matches-regex=doodledashboard.filters.matches_regex:MatchesRegexFilter"
+        ],
+        "doodledashboard.custom.datafeeds": [
+            "datetime=doodledashboard.datafeeds.datetime:DateTimeFeed",
+            "rss=doodledashboard.datafeeds.rss:RssFeed",
+            "slack=doodledashboard.datafeeds.slack:SlackFeed",
+            "text=doodledashboard.datafeeds.text:TextFeed"
+        ],
+        "doodledashboard.custom.notifications": [
+            "text=doodledashboard.notifications:TextNotification",
+            "image=doodledashboard.notifications:ImageNotification",
+            "image-with-text=doodledashboard.notifications:ImageWithTextNotification",
+            "colour=doodledashboard.notifications:ColourNotification"
+        ],
+        "doodledashboard.custom.notification.updaters": [
+            "image=doodledashboard.updaters.image.image:ImageNotificationUpdater",
+            "text=doodledashboard.updaters.text.text:TextNotificationUpdater"
         ]
     },
     classifiers=[

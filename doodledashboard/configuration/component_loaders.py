@@ -2,17 +2,7 @@ from abc import abstractmethod, ABC
 from pkg_resources import iter_entry_points
 
 from doodledashboard.configuration.config import InvalidConfigurationException
-from doodledashboard.datafeeds.datetime import DateTimeFeed
-from doodledashboard.datafeeds.rss import RssFeed
-from doodledashboard.datafeeds.slack import SlackFeed
-from doodledashboard.datafeeds.text import TextFeed
 from doodledashboard.display import Display
-from doodledashboard.filters.contains_text import ContainsTextFilter
-from doodledashboard.filters.matches_regex import MatchesRegexFilter
-from doodledashboard.notifications import TextNotification, ImageNotification, \
-    ImageWithTextNotification, ColourNotification
-from doodledashboard.updaters.image.image import ImageNotificationUpdater
-from doodledashboard.updaters.text.text import TextNotificationUpdater
 
 
 class ComponentsLoader(ABC):
@@ -91,22 +81,30 @@ class StaticDisplayLoader(ComponentsLoader):
 class ExternalPackageLoader(ComponentsLoader):
 
     _DISPLAYS_GROUP_NAME = "doodledashboard.customdisplays"
+    _FILTERS_GROUP_NAME = "doodledashboard.custom.filters"
+    _DATA_FEED_GROUP_NAME = "doodledashboard.custom.datafeeds"
+    _NOTIFICATIONS_GROUP_NAME = "doodledashboard.custom.notifications"
+    _NOTIFICATION_UPDATERS_GROUP_NAME = "doodledashboard.custom.notification.updaters"
 
-    def _find_displays(self):
-        for entry_point in iter_entry_points(ExternalPackageLoader._DISPLAYS_GROUP_NAME):
+    @staticmethod
+    def _find_entry_points_by_group(group_name):
+        for entry_point in iter_entry_points(group_name):
             yield entry_point.load()
 
+    def _find_displays(self):
+        return self._find_entry_points_by_group(ExternalPackageLoader._DISPLAYS_GROUP_NAME)
+
     def _find_data_feeds(self):
-        return []
+        return self._find_entry_points_by_group(ExternalPackageLoader._DATA_FEED_GROUP_NAME)
 
     def _find_notifications(self):
-        return []
+        return self._find_entry_points_by_group(ExternalPackageLoader._NOTIFICATIONS_GROUP_NAME)
 
     def _find_notification_updaters(self):
-        return []
+        return self._find_entry_points_by_group(ExternalPackageLoader._NOTIFICATION_UPDATERS_GROUP_NAME)
 
     def _find_filters(self):
-        return []
+        return self._find_entry_points_by_group(ExternalPackageLoader._FILTERS_GROUP_NAME)
 
 
 class CreatorsContainer:
@@ -147,37 +145,3 @@ class CreatorsContainer:
 
     def get_display_creators(self):
         return self._display_creators
-
-
-class InternalPackageLoader(ComponentsLoader):
-
-    def _find_displays(self):
-        return []
-
-    def _find_data_feeds(self):
-        return [
-            RssFeed,
-            SlackFeed,
-            DateTimeFeed,
-            TextFeed
-        ]
-
-    def _find_notifications(self):
-        return [
-            TextNotification,
-            ImageNotification,
-            ImageWithTextNotification,
-            ColourNotification
-        ]
-
-    def _find_notification_updaters(self):
-        return [
-            TextNotificationUpdater,
-            ImageNotificationUpdater
-        ]
-
-    def _find_filters(self):
-        return [
-            MatchesRegexFilter,
-            ContainsTextFilter
-        ]

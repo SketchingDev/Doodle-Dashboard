@@ -26,6 +26,18 @@ Feature: List components
 
      """
 
+  Scenario: List command lists all loaded filters
+   Given I load test displays
+   When I call 'list filters'
+   Then the status code is 0
+   And the output is
+     """
+     Available filters:
+      - message-contains-text
+      - message-matches-regex
+
+     """
+
   Scenario: List command lists all loaded components
    Given I load test displays
    When I call 'list all'
@@ -43,6 +55,10 @@ Feature: List components
       - test-display-all-functionality
       - test-display-no-functionality
 
+     Available filters:
+      - message-contains-text
+      - message-matches-regex
+
      """
 
   Scenario: List command shows help is incorrect option
@@ -53,6 +69,6 @@ Feature: List components
      """
      Usage: list [OPTIONS] [ACTION]
 
-     Error: Invalid value for "action": invalid choice: test. (choose from displays, datafeeds, notifications, all)
+     Error: Invalid value for "action": invalid choice: test. (choose from displays, datafeeds, notifications, filters, all)
 
      """

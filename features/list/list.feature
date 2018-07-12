@@ -5,7 +5,7 @@ Feature: List components
    Then the status code is 0
    And the output is
      """
-     Available data-feeds:
+     Available datafeeds:
       - datetime
       - rss
       - slack
@@ -38,13 +38,27 @@ Feature: List components
 
      """
 
+  Scenario: List command lists all loaded notifications
+   Given I load test displays
+   When I call 'list notifications'
+   Then the status code is 0
+   And the output is
+     """
+     Available notifications:
+      - colour
+      - image
+      - image-with-text
+      - text
+
+     """
+
   Scenario: List command lists all loaded components
    Given I load test displays
    When I call 'list all'
    Then the status code is 0
    And the output is
      """
-     Available data-feeds:
+     Available datafeeds:
       - datetime
       - rss
       - slack
@@ -58,6 +72,12 @@ Feature: List components
      Available filters:
       - message-contains-text
       - message-matches-regex
+
+     Available notifications:
+      - colour
+      - image
+      - image-with-text
+      - text
 
      """
 

@@ -110,7 +110,7 @@ def list(action):
     if action == "datafeeds" or action == "all":
         datafeed_ids = {c.id_key_value[1] for c in creator_container.get_data_feed_creators()}
 
-        click.echo("Available data-feeds:")
+        click.echo("Available datafeeds:")
         for datafeed_id in sorted(datafeed_ids):
             click.echo(" - %s" % datafeed_id)
 
@@ -133,6 +133,16 @@ def list(action):
         click.echo("Available filters:")
         for filter_id in sorted(filter_ids):
             click.echo(" - %s" % filter_id)
+
+    if action == "all":
+        click.echo("")
+
+    if action == "notifications" or action == "all":
+        notification_ids = {c.id_key_value[1] for c in creator_container.get_notification_creators()}
+
+        click.echo("Available notifications:")
+        for notification_id in sorted(notification_ids):
+            click.echo(" - %s" % notification_id)
 
 
 def read_dashboard_from_config(dashboard_config, configs):

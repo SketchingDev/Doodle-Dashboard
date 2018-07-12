@@ -1,4 +1,4 @@
-from abc import abstractmethod, ABC
+from abc import ABC
 from pkg_resources import iter_entry_points
 
 from doodledashboard.configuration.config import InvalidConfigurationException
@@ -27,25 +27,18 @@ class ComponentsLoader(ABC):
             extract(self._find_filters())
         )
 
-    # TODO These don't need to be abstract, look into being able to override one or two
-
-    @abstractmethod
     def _find_displays(self):
         return []
 
-    @abstractmethod
     def _find_data_feeds(self):
         return []
 
-    @abstractmethod
     def _find_notifications(self):
         return []
 
-    @abstractmethod
     def _find_notification_updaters(self):
         return []
 
-    @abstractmethod
     def _find_filters(self):
         return []
 
@@ -64,18 +57,6 @@ class StaticDisplayLoader(ComponentsLoader):
 
     def _find_displays(self):
         return StaticDisplayLoader.displays
-
-    def _find_data_feeds(self):
-        return []
-
-    def _find_notifications(self):
-        return []
-
-    def _find_notification_updaters(self):
-        return []
-
-    def _find_filters(self):
-        return []
 
 
 class ExternalPackageLoader(ComponentsLoader):

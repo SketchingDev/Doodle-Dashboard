@@ -61,7 +61,7 @@ class StaticDisplayLoader(ComponentsLoader):
 
 class ExternalPackageLoader(ComponentsLoader):
 
-    _DISPLAYS_GROUP_NAME = "doodledashboard.customdisplays"
+    _DISPLAYS_GROUP_NAME = "doodledashboard.custom.displays"
     _FILTERS_GROUP_NAME = "doodledashboard.custom.filters"
     _DATA_FEED_GROUP_NAME = "doodledashboard.custom.datafeeds"
     _NOTIFICATIONS_GROUP_NAME = "doodledashboard.custom.notifications"

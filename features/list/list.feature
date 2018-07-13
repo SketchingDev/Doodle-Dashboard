@@ -52,6 +52,18 @@ Feature: List components
 
      """
 
+  Scenario: List command lists all loaded updaters
+   Given I load test displays
+   When I call 'list updaters'
+   Then the status code is 0
+   And the output is
+     """
+     Available updaters:
+      - image-depending-on-message-content
+      - text-from-message
+
+     """
+
   Scenario: List command lists all loaded components
    Given I load test displays
    When I call 'list all'
@@ -79,6 +91,11 @@ Feature: List components
       - image-with-text
       - text
 
+     Available updaters:
+      - image-depending-on-message-content
+      - text-from-message
+
+
      """
 
   Scenario: List command shows help is incorrect option
@@ -87,8 +104,8 @@ Feature: List components
    Then the status code is 2
    And the output is
      """
-     Usage: list [OPTIONS] [ACTION]
+     Usage: list [OPTIONS] [COMPONENT_TYPE]
 
-     Error: Invalid value for "action": invalid choice: test. (choose from displays, datafeeds, notifications, filters, all)
+     Error: Invalid value for "component_type": invalid choice: test. (choose from displays, datafeeds, filters, notifications, updaters, all)
 
      """

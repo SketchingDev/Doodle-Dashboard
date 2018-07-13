@@ -101,48 +101,32 @@ def view(action, configs):
 
 
 @cli.command()
-@click.argument("action",
-                type=click.Choice(["displays", "datafeeds", "notifications", "filters", "all"]),
+@click.argument("component_type",
+                type=click.Choice(["displays", "datafeeds", "filters", "notifications", "updaters", "all"]),
                 default="all")
-def list(action):
-    """View what the datafeeds in the CONFIG are returning"""
+def list(component_type):
+
     creator_container = collect_component_creators()
-    if action == "datafeeds" or action == "all":
-        datafeed_ids = {c.id_key_value[1] for c in creator_container.get_data_feed_creators()}
+    component_types = sorted({
+        "displays": lambda: creator_container.get_display_creators(),
+        "datafeeds": lambda: creator_container.get_data_feed_creators(),
+        "filters": lambda: creator_container.get_filter_creators(),
+        "notifications": lambda: creator_container.get_notification_creators(),
+        "updaters": lambda: creator_container.get_notification_updater_creators()
+    }.items(), key=lambda t: t[0])
 
-        click.echo("Available datafeeds:")
-        for datafeed_id in sorted(datafeed_ids):
-            click.echo(" - %s" % datafeed_id)
+    def print_ids(creators):
+        ids = {c.id_key_value[1] for c in creators}
+        for i in sorted(ids):
+            click.echo(" - %s" % i)
 
-    if action == "all":
-        click.echo("")
+    for k, v in component_types:
+        if component_type == k or component_type == "all":
+            click.echo("Available %s:" % k)
+            print_ids(v())
 
-    if action == "displays" or action == "all":
-        display_ids = {c.id_key_value[1] for c in creator_container.get_display_creators()}
-
-        click.echo("Available displays:")
-        for display_id in sorted(display_ids):
-            click.echo(" - %s" % display_id)
-
-    if action == "all":
-        click.echo("")
-
-    if action == "filters" or action == "all":
-        filter_ids = {c.id_key_value[1] for c in creator_container.get_filter_creators()}
-
-        click.echo("Available filters:")
-        for filter_id in sorted(filter_ids):
-            click.echo(" - %s" % filter_id)
-
-    if action == "all":
-        click.echo("")
-
-    if action == "notifications" or action == "all":
-        notification_ids = {c.id_key_value[1] for c in creator_container.get_notification_creators()}
-
-        click.echo("Available notifications:")
-        for notification_id in sorted(notification_ids):
-            click.echo(" - %s" % notification_id)
+        if component_type == "all":
+            click.echo("")
 
 
 def read_dashboard_from_config(dashboard_config, configs):

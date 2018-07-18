@@ -1,4 +1,4 @@
-from behave import given, when, then
+from behave import given, when, then, Then
 from click.testing import CliRunner
 from sure import expect
 
@@ -11,6 +11,17 @@ def _given_i_have_the_configuration_x(context, config_filename):
         context.dashboard_local_configs = {}
 
     context.dashboard_local_configs[config_filename] = context.text
+
+
+@given("I have the remote configuration")
+def _given_i_have_the_remote_configuration_x(context):
+    context.file_host.host_file(context.text)
+
+
+@Then("I stop all servers")
+def _i_stop_all_servers(context):
+    for server in context.dashboard_remote_config_servers:
+        server.stop()
 
 
 @when("I call 'list {arguments}'")
@@ -31,15 +42,19 @@ def _when_i_call_view_x_x(context, arguments, configs):
     _i_call_x_x_config_yml(context, view, arguments, configs)
 
 
-def _i_call_x_x_config_yml(context, cli_command, arguments, config_files):
-    config_files = config_files.split(" ")
+def _i_call_x_x_config_yml(context, cli_command, arguments, configs):
+    if "file_host" in context:
+        urls = " ".join(context.file_host.get_all_urls())
+        configs = configs.replace("%REMOTE_URLS%", urls)
+
+    configs = configs.split(" ")
     arguments = arguments.split(" ")
-    arguments += config_files
+    arguments += configs
 
     runner = CliRunner()
     with runner.isolated_filesystem():
-        for filename in config_files:
-            if "dashboard_local_configs" in context and filename in context.dashboard_local_configs :
+        for filename in configs:
+            if "dashboard_local_configs" in context and filename in context.dashboard_local_configs:
                 with open(filename, "w") as f:
                     f.write(context.dashboard_local_configs[filename])
 

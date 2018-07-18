@@ -1,6 +1,7 @@
 import click
 import json
 import logging
+import re
 
 from doodledashboard import __about__
 from doodledashboard.configuration.component_loaders import ExternalPackageLoader, CreatorsContainer, \
@@ -30,23 +31,45 @@ def cli():
     pass
 
 
+def is_remote_file(file_path):
+    regex = re.compile("^(http|https)://", re.IGNORECASE)
+    return True if regex.search(file_path) else False
+
+
+def read_remote_file(file_path):
+    import urllib.request
+    with urllib.request.urlopen(file_path) as response:
+        return response.read()
+
+
+def read_file(config_file):
+    if is_remote_file(config_file):
+        return read_remote_file(config_file)
+    else:
+        return open(config_file, 'r')
+
+
 @cli.command()
-@click.argument("configs", type=click.File("rb"), nargs=-1)
-@click.option('--once', is_flag=True, help='Whether to run once, otherwise will loop through notifications')
+@click.argument("dashboards", type=click.Path(), nargs=-1)
+@click.option('--once', is_flag=True, help='Loop through notifications once, otherwise will loop indefinitely')
 @click.option("--verbose", is_flag=True, callback=attach_logging, expose_value=False)
-def start(configs, once):
-    """Start dashboard with CONFIG file"""
+def start(dashboards, once):
+    """Display a dashboard from the dashboard file(s) provided in the DASHBOARDS
+       Paths and/or URLs for dashboards (URLs must start with http or https)
+    """
 
-    dashboard_config = DashboardConfigReader(collect_component_creators())
-
-    default_configuration = [
-        """
+    default_configuration = """
         interval: 15
         display: console
         """
-    ]
-    default_configuration += configs
-    dashboard = read_dashboard_from_config(dashboard_config, default_configuration)
+
+    read_configs = [default_configuration]
+    for dashboard_file in dashboards:
+        read_configs.append(read_file(dashboard_file))
+
+    dashboard_config = DashboardConfigReader(collect_component_creators())
+
+    dashboard = read_dashboard_from_config(dashboard_config, read_configs)
 
     try:
         ValidateDashboard().validate(dashboard)
@@ -66,13 +89,15 @@ def start(configs, once):
 
 @cli.command()
 @click.argument("action", type=click.Choice(["datafeeds", "notifications"]))
-@click.argument("configs", type=click.File("rb"), nargs=-1)
-def view(action, configs):
-    """View what the datafeeds in the CONFIG are returning"""
+@click.argument("dashboards", type=click.Path(), nargs=-1)
+def view(action, dashboards):
+    """View what the datafeeds in the DASHBOARDS are returning"""
 
     dashboard_config = DashboardConfigReader(collect_component_creators())
 
-    dashboard = read_dashboard_from_config(dashboard_config, configs)
+    read_configs = [read_file(f) for f in dashboards]
+    dashboard = read_dashboard_from_config(dashboard_config, read_configs)
+
     messages = DashboardRunner(dashboard).poll_datafeeds()
 
     output = {"source-data": messages}

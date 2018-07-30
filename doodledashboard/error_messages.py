@@ -1,5 +1,3 @@
-from _yaml import ParserError
-
 from doodledashboard.configuration.config import EmptyConfiguration, YamlParsingError, DisplayNotFound, \
     DisplayDoesNotSupportNotification
 
@@ -19,8 +17,8 @@ def empty_configuration(err):
         return "The configuration file you provided is empty"
 
 
-def error_parsing_yaml(err: YamlParsingError):
-    if isinstance(err.parsing_exception, ParserError):
+def error_parsing_yaml(err):
+    if hasattr(err, "parsing_exception"):
         return "Error %s" % err.parsing_exception
 
     return "Error parsing configuration file %s due to:\n%s" % (err.config, err.parsing_exception)

@@ -51,12 +51,19 @@ class ImageNotificationUpdater(NotificationUpdater):
 
 class FileDownloader:
 
+    _FILENAME_CHAR_WHITELIST = "abcdefghijklmnopqrstuvwxyz0123456789-_"
+
     def __init__(self):
         self._downloaded_files = []
         self._logger = logging.getLogger("doodledashboard")
 
     def download(self, url):
-        fd, path = tempfile.mkstemp("-doodledashboard-%s" % self._extract_filename(url))
+        filename_from_url = self._extract_filename(url)
+        filename = "-doodledashboard-%s" % filename_from_url
+        filename = filename.lower()
+        filename = self._sanitise_filename(filename)
+
+        fd, path = tempfile.mkstemp(filename)
 
         logging.info("Downloading %s to %s", [url, path])
         with urllib.request.urlopen(url) as response, os.fdopen(fd, "wb") as out_file:
@@ -68,6 +75,13 @@ class FileDownloader:
 
     def get_downloaded_files(self):
         return self._downloaded_files
+
+    def _sanitise_filename(self, unsafe_value):
+        safe = ""
+        for unsafe_char in unsafe_value:
+            if unsafe_char in self._FILENAME_CHAR_WHITELIST:
+                safe += unsafe_char
+        return safe
 
     @staticmethod
     def _extract_filename(url):
@@ -95,7 +109,9 @@ class ImageNotificationUpdaterConfig(ConfigSection):
             raise MissingRequiredOptionException("Expected 'images' list and/or default-image to exist")
 
         if has_default_image:
-            image_path = self.download(config_section["default-image"])
+            image_url = self._encode_url(config_section["default-image"])
+
+            image_path = self.download(image_url)
             updater.add_image_filter(image_path)
 
         if has_images:
@@ -103,8 +119,10 @@ class ImageNotificationUpdaterConfig(ConfigSection):
                 if "path" not in image_config_section:
                     raise MissingRequiredOptionException("Expected 'path' option to exist")
 
+                image_url = self._encode_url(image_config_section["path"])
+
                 image_filter = self._create_filter(image_config_section)
-                image_path = self.download(image_config_section["path"])
+                image_path = self.download(image_url)
 
                 updater.add_image_filter(image_path, image_filter)
 
@@ -115,6 +133,17 @@ class ImageNotificationUpdaterConfig(ConfigSection):
             return self._file_downloader.download(url)
         except HTTPError as err:
             raise HandlerCreationException("Error '%s' when downloading %s" % (err.msg, err.url))
+
+    @staticmethod
+    def _encode_url(full_url):
+        """
+        Encode invalid characters in URL to provide, such as spaces.
+
+        This implements code from the following URLs
+        https://bugs.python.org/issue14826
+        https://hg.python.org/cpython/rev/ebd37273e0fe
+        """
+        return urllib.parse.quote(full_url, safe="%/:=&?~#+!$,;'@()*[]|")
 
     @staticmethod
     def _create_filter(image_config_section):

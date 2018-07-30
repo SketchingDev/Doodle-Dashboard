@@ -1,6 +1,7 @@
 import os
 import pytest
 import unittest
+import uuid
 from pytest_localserver import http
 
 from doodledashboard.configuration.config import MissingRequiredOptionException
@@ -200,6 +201,31 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
             )
         finally:
             self.cleanup_downloaded_files(downloader, "default-image.png")
+
+    def test_handler_created_with_default_image_path_encoded(self):
+        file_contents = str(uuid.uuid4())
+
+        self.http_server.serve_content(file_contents)
+
+        config = {
+            "name": "image-depending-on-message-content",
+            "default-image": "%s/default image.png" % self.http_server.url
+        }
+
+        downloader = FileDownloader()
+        creator = ImageNotificationUpdaterConfig(downloader)
+
+        try:
+            updater = creator.create(config)
+            notification = ImageNotification()
+            updater.update(notification, None)
+
+            self.assertIsNotNone(notification.get_image_path())
+            with open(notification.get_image_path(), 'r') as f:
+                self.assertEquals(file_contents, f.read())
+
+        finally:
+            self.cleanup_downloaded_files(downloader, "default20image.png")
 
     @staticmethod
     def cleanup_downloaded_files(downloader, filename):

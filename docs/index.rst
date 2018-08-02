@@ -14,6 +14,7 @@ Twitterers, weather reports for your local area or breaking news.**
 
    installation.rst
    getting_started.rst
+   tips_developing_displays.rst
 
 
 Introduction

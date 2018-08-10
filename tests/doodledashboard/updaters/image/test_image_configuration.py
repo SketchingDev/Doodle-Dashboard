@@ -216,9 +216,11 @@ class TestImageNotificationUpdaterConfig(unittest.TestCase):
         creator = ImageNotificationUpdaterConfig(downloader)
 
         try:
-            updater = creator.create(config)
             notification = ImageNotification()
-            updater.update(notification, None)
+
+            updater = creator.create(config)
+            notification.set_updater(updater)
+            notification.update(None)
 
             self.assertIsNotNone(notification.get_image_path())
             with open(notification.get_image_path(), 'r') as f:

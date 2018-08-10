@@ -56,6 +56,11 @@ class DashboardRunner:
 
         return messages
 
+    def process_notifications(self, messages):
+        for notification in self._dashboard.get_notifications():
+            for message in messages:
+                notification.update(message)
+
     def draw_notifications(self):
         notifications = self._dashboard.get_notifications()
         display = self._dashboard.get_display()
@@ -65,7 +70,4 @@ class DashboardRunner:
             display.draw(notification)
             time.sleep(interval)
 
-    def process_notifications(self, messages):
-        for notification in self._dashboard.get_notifications():
-            for message in messages:
-                notification.update(message)
+

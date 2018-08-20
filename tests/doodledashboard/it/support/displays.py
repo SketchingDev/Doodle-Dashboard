@@ -1,20 +1,8 @@
 import click
-from behave import given
 
-from doodledashboard.configuration.component_loaders import StaticDisplayLoader
 from doodledashboard.configuration.config import ConfigSection
 from doodledashboard.display import Display
 from doodledashboard.notifications import TextNotification
-
-
-@given("I load test displays")
-def _i_have_the_configuration_x(context):
-    StaticDisplayLoader.displays.extend(
-        [
-            DisplayWithNoNotificationSupport,
-            DisplayWithNotificationSupport
-        ]
-    )
 
 
 class DisplayWithNoNotificationSupport(Display):

@@ -1,5 +1,6 @@
-from doodledashboard.configuration.config import EmptyConfiguration, YamlParsingError, DisplayNotFound, \
-    DisplayDoesNotSupportNotification
+from doodledashboard.configuration.config import EmptyConfiguration, DisplayNotFound, \
+    DisplayDoesNotSupportNotification, ConfigYamlParsingError
+from doodledashboard.secrets_store import SecretsYamlParsingError
 
 
 def get_error_message(error, default=None):
@@ -21,7 +22,7 @@ def error_parsing_yaml(err):
     if hasattr(err, "parsing_exception"):
         return "Error %s" % err.parsing_exception
 
-    return "Error parsing configuration file %s due to:\n%s" % (err.config, err.parsing_exception)
+    return "Error parsing file %s due to:\n%s" % (err.config, err.parsing_exception)
 
 
 def display_not_found(err):
@@ -43,7 +44,8 @@ def display_does_not_support_notification(err: DisplayDoesNotSupportNotification
 
 error_messages = {
     EmptyConfiguration: empty_configuration,
-    YamlParsingError: error_parsing_yaml,
+    ConfigYamlParsingError: error_parsing_yaml,
+    SecretsYamlParsingError: error_parsing_yaml,
     DisplayNotFound: display_not_found,
     DisplayDoesNotSupportNotification: display_does_not_support_notification
 }

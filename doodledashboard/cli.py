@@ -1,17 +1,21 @@
-import click
 import json
 import logging
+import os
 import re
+
+import click
+from yaml import YAMLError
 
 from doodledashboard import __about__
 from doodledashboard.configuration.component_loaders import ExternalPackageLoader, CreatorsContainer, \
-    StaticDisplayLoader
+    StaticComponentLoader
 from doodledashboard.configuration.config import DashboardConfigReader, \
     ValidateDashboard, InvalidConfigurationException
 from doodledashboard.dashboard_runner import DashboardRunner
 from doodledashboard.datafeeds.datafeed import MessageJsonEncoder
 from doodledashboard.error_messages import get_error_message
 from doodledashboard.filters.record_filter import RecordFilter
+from doodledashboard.secrets_store import read_secrets, InvalidSecretsException
 
 
 def attach_logging(ctx, param, value):
@@ -46,17 +50,32 @@ def read_file(config_file):
     if is_remote_file(config_file):
         return read_remote_file(config_file)
     else:
-        return open(config_file, 'r')
+        with open(config_file, 'r') as f:
+            return f.read()
 
 
 @cli.command()
 @click.argument("dashboards", type=click.Path(), nargs=-1)
 @click.option('--once', is_flag=True, help='Loop through notifications once, otherwise will loop indefinitely')
+@click.option("--secrets", type=click.Path(exists=True))
 @click.option("--verbose", is_flag=True, callback=attach_logging, expose_value=False)
-def start(dashboards, once):
+def start(dashboards, once, secrets):
     """Display a dashboard from the dashboard file(s) provided in the DASHBOARDS
-       Paths and/or URLs for dashboards (URLs must start with http or https)
+       Paths and/or URLs for dashboards (URLs must secrets with http or https)
     """
+
+    if secrets is None:
+        secrets = os.path.join(os.path.expanduser("~"), "/.doodledashboard/secrets")
+
+    loaded_secrets = {}
+    try:
+        loaded_secrets = read_secrets(secrets)
+    except FileNotFoundError:
+        logger = logging.getLogger("doodledashboard")
+        logger.info("Secrets file not found: %s" % secrets)
+    except InvalidSecretsException as err:
+        click.echo(get_error_message(err, default="Secrets file is invalid"), err=True)
+        raise click.Abort()
 
     default_configuration = """
         interval: 15
@@ -67,13 +86,12 @@ def start(dashboards, once):
     for dashboard_file in dashboards:
         read_configs.append(read_file(dashboard_file))
 
-    dashboard_config = DashboardConfigReader(collect_component_creators())
-
-    dashboard = read_dashboard_from_config(dashboard_config, read_configs)
+    dashboard_config = DashboardConfigReader(collect_component_creators(), loaded_secrets)
 
     try:
+        dashboard = read_dashboard_from_config(dashboard_config, read_configs)
         ValidateDashboard().validate(dashboard)
-    except Exception as err:
+    except YAMLError as err:
         click.echo(get_error_message(err, default="Dashboard configuration is invalid"), err=True)
         raise click.Abort()
 
@@ -90,10 +108,25 @@ def start(dashboards, once):
 @cli.command()
 @click.argument("action", type=click.Choice(["datafeeds", "notifications"]))
 @click.argument("dashboards", type=click.Path(), nargs=-1)
-def view(action, dashboards):
+@click.option("--secrets", type=click.Path(exists=True))
+@click.option("--verbose", is_flag=True, callback=attach_logging, expose_value=False)
+def view(action, dashboards, secrets):
     """View what the datafeeds in the DASHBOARDS are returning"""
 
-    dashboard_config = DashboardConfigReader(collect_component_creators())
+    if secrets is None:
+        secrets = os.path.join(os.path.expanduser("~"), "/.doodledashboard/secrets")
+
+    loaded_secrets = {}
+    try:
+        loaded_secrets = read_secrets(secrets)
+    except FileNotFoundError:
+        logger = logging.getLogger("doodledashboard")
+        logger.info("Secrets file not found: %s" % secrets)
+    except InvalidSecretsException as err:
+        click.echo(get_error_message(err, default="Secrets file is invalid"), err=True)
+        raise click.Abort()
+
+    dashboard_config = DashboardConfigReader(collect_component_creators(), loaded_secrets)
 
     read_configs = [read_file(f) for f in dashboards]
     dashboard = read_dashboard_from_config(dashboard_config, read_configs)
@@ -130,15 +163,14 @@ def view(action, dashboards):
                 type=click.Choice(["displays", "datafeeds", "filters", "notifications", "updaters", "all"]),
                 default="all")
 def list(component_type):
-
     creator_container = collect_component_creators()
     component_types = sorted({
-        "displays": lambda: creator_container.get_display_creators(),
-        "datafeeds": lambda: creator_container.get_data_feed_creators(),
-        "filters": lambda: creator_container.get_filter_creators(),
-        "notifications": lambda: creator_container.get_notification_creators(),
-        "updaters": lambda: creator_container.get_notification_updater_creators()
-    }.items(), key=lambda t: t[0])
+                                 "displays": lambda: creator_container.get_display_creators(),
+                                 "datafeeds": lambda: creator_container.get_data_feed_creators(),
+                                 "filters": lambda: creator_container.get_filter_creators(),
+                                 "notifications": lambda: creator_container.get_notification_creators(),
+                                 "updaters": lambda: creator_container.get_notification_updater_creators()
+                             }.items(), key=lambda t: t[0])
 
     def print_ids(creators):
         ids = {c.id_key_value[1] for c in creators}
@@ -160,12 +192,14 @@ def read_dashboard_from_config(dashboard_config, configs):
     except InvalidConfigurationException as err:
         click.echo(get_error_message(err, default="Error parsing configuration file"), err=True)
         raise click.Abort()
+    except Exception:
+        raise
 
 
 def collect_component_creators():
     container = CreatorsContainer()
     ExternalPackageLoader().populate(container)
-    StaticDisplayLoader().populate(container)
+    StaticComponentLoader().populate(container)
 
     return container
 

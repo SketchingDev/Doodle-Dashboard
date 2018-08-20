@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class Message:
     """
-    Represents a single textual entity from a data feed.
+    Represents a single_config textual entity from a data feed.
     """
 
     def __init__(self, text, source=None):
@@ -36,6 +36,9 @@ class MessageJsonEncoder(json.JSONEncoder):
 
 class DataFeed(ABC):
 
+    def __init__(self):
+        self._secret_store = None
+
     @abstractmethod
     def get_latest_messages(self):
         return []
@@ -44,3 +47,9 @@ class DataFeed(ABC):
     @abstractmethod
     def get_config_factory():
         return None
+
+    def set_secret_store(self, secret_store):
+        self._secret_store = secret_store
+
+    def get_secret_store(self):
+        return self._secret_store

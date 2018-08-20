@@ -51,8 +51,9 @@ class MissingRequiredOptionException(HandlerCreationException):
 
 class DashboardConfigReader:
 
-    def __init__(self, creator_container):
+    def __init__(self, creator_container, secrets):
         self._creator_container = creator_container
+        self._secret_store = secrets
 
     @staticmethod
     def try_create(section, creators):
@@ -70,7 +71,7 @@ class DashboardConfigReader:
                 if config:
                     configs.append(config)
             except YAMLError as err:
-                raise YamlParsingError(err, yaml_config)
+                raise ConfigYamlParsingError(err, yaml_config)
 
         dashboards = []
         for config in configs:
@@ -112,6 +113,7 @@ class DashboardConfigReader:
             for element in config["data-feeds"] or []:
                 data_feed = self.try_create(element, self._creator_container.get_data_feed_creators())
                 if data_feed:
+                    data_feed.set_secret_store(self._secret_store)
                     yield data_feed
 
     def _parse_notifications(self, config):
@@ -181,7 +183,7 @@ class EmptyConfiguration(InvalidConfigurationException):
         self.configuration_files = configuration_files
 
 
-class YamlParsingError(InvalidConfigurationException):
+class ConfigYamlParsingError(InvalidConfigurationException):
     def __init__(self, parsing_exception, config):
         self.parsing_exception = parsing_exception
         self.config = config

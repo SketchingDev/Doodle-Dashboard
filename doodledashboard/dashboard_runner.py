@@ -69,5 +69,3 @@ class DashboardRunner:
         for notification in notifications:
             display.draw(notification)
             time.sleep(interval)
-
-

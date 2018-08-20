@@ -125,7 +125,7 @@ latex_elements = {
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
+# (source secrets file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Doodle-Dashboard.tex', 'Doodle-Dashboard Documentation',
@@ -136,7 +136,7 @@ latex_documents = [
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
+# (source secrets file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'doodle-dashboard', 'Doodle-Dashboard Documentation',
      [author], 1)
@@ -146,7 +146,7 @@ man_pages = [
 # -- Options for Texinfo output ----------------------------------------------
 
 # Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
+# (source secrets file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'Doodle-Dashboard', 'Doodle-Dashboard Documentation',

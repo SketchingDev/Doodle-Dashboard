@@ -52,11 +52,27 @@ def validate_displays(displays):
     return displays
 
 
-class StaticDisplayLoader(ComponentsLoader):
+class StaticComponentLoader(ComponentsLoader):
     displays = []
+    datafeeds = []
+    notifications = []
+    filters = []
+    notification_updaters = []
 
     def _find_displays(self):
-        return StaticDisplayLoader.displays
+        return self.displays
+
+    def _find_data_feeds(self):
+        return self.datafeeds
+
+    def _find_notifications(self):
+        return self.notifications
+
+    def _find_filters(self):
+        return self.filters
+
+    def _find_notification_updaters(self):
+        return self.notification_updaters
 
 
 class ExternalPackageLoader(ComponentsLoader):

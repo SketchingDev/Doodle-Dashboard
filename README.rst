@@ -11,7 +11,12 @@ Doodle-Dashboard: Simple dashboards for all!
 
 .. image:: https://readthedocs.org/projects/doodle-dashboard/badge/?version=latest
     :target: https://doodle-dashboard.readthedocs.io/en/latest/?badge=latest
-    :alt: Documentation Status
+    :alt: Documentation status
+
+.. image:: https://coveralls.io/repos/github/SketchingDev/Doodle-Dashboard/badge.svg?branch=master
+    :target: https://coveralls.io/github/SketchingDev/Doodle-Dashboard?branch=master
+    :alt: Test coverage
+
 
 ---------------
 

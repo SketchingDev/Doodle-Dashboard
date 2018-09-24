@@ -3,7 +3,7 @@ from click.testing import CliRunner
 
 from doodledashboard.cli import start
 from doodledashboard.configuration.component_loaders import StaticComponentLoader
-from tests.doodledashboard.it.features.secrets.dummy_data_feeds import SecretLeaker
+from tests.doodledashboard.it.features.secrets.secret_leaker import SecretLeaker
 from tests.doodledashboard.it.support.cli_test_case import CliTestCase
 from tests.doodledashboard.it.support.displays import DisplayWithNotificationSupport
 
@@ -40,6 +40,28 @@ class TestSecretsForStartCommand(CliTestCase):
             result.output
         )
         self.assertEqual(0, result.exit_code)
+
+    def test_friendly_error_message_output_if_data_feed_throws_secret_not_found(self):
+        secrets = ""
+        config_for_notification_that_prints_password = """
+                data-feeds:
+                  - source: leak-secrets
+                    secret-id: twitter-api
+                """
+
+        StaticComponentLoader.datafeeds.append(SecretLeaker)
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            self.save_file("config.yml", config_for_notification_that_prints_password)
+            self.save_file("secrets.yml", secrets)
+            result = self.call_cli(runner, start, "--once config.yml --secrets secrets.yml")
+
+        self.assertIn(
+            "The secret 'twitter-api' is missing from your secrets file according to the data feed SecretLeaker",
+            result.output
+        )
+        self.assertEqual(1, result.exit_code)
 
     def test_secrets_not_found_info_shown_for_default_secrets_not_existing_when_verbose(self):
         runner = CliRunner()

@@ -1,9 +1,8 @@
+import click
 import json
 import logging
 import os
 import re
-
-import click
 from yaml import YAMLError
 
 from doodledashboard import __about__
@@ -15,7 +14,7 @@ from doodledashboard.dashboard_runner import DashboardRunner
 from doodledashboard.datafeeds.datafeed import MessageJsonEncoder
 from doodledashboard.error_messages import get_error_message
 from doodledashboard.filters.record_filter import RecordFilter
-from doodledashboard.secrets_store import read_secrets, InvalidSecretsException
+from doodledashboard.secrets_store import InvalidSecretsException, try_read_secrets_file, SecretNotFound
 
 
 def attach_logging(ctx, param, value):
@@ -67,12 +66,8 @@ def start(dashboards, once, secrets):
     if secrets is None:
         secrets = os.path.join(os.path.expanduser("~"), "/.doodledashboard/secrets")
 
-    loaded_secrets = {}
     try:
-        loaded_secrets = read_secrets(secrets)
-    except FileNotFoundError:
-        logger = logging.getLogger("doodledashboard")
-        logger.info("Secrets file not found: %s" % secrets)
+        loaded_secrets = try_read_secrets_file(secrets)
     except InvalidSecretsException as err:
         click.echo(get_error_message(err, default="Secrets file is invalid"), err=True)
         raise click.Abort()
@@ -100,7 +95,12 @@ def start(dashboards, once, secrets):
     click.echo("Dashboard running...")
 
     while True:
-        DashboardRunner(dashboard).cycle()
+        try:
+            DashboardRunner(dashboard).cycle()
+        except SecretNotFound as err:
+            click.echo(get_error_message(err, default="Datafeed didn't have required secret"), err=True)
+            raise click.Abort()
+
         if once:
             break
 
@@ -116,12 +116,8 @@ def view(action, dashboards, secrets):
     if secrets is None:
         secrets = os.path.join(os.path.expanduser("~"), "/.doodledashboard/secrets")
 
-    loaded_secrets = {}
     try:
-        loaded_secrets = read_secrets(secrets)
-    except FileNotFoundError:
-        logger = logging.getLogger("doodledashboard")
-        logger.info("Secrets file not found: %s" % secrets)
+        loaded_secrets = try_read_secrets_file(secrets)
     except InvalidSecretsException as err:
         click.echo(get_error_message(err, default="Secrets file is invalid"), err=True)
         raise click.Abort()
@@ -131,7 +127,11 @@ def view(action, dashboards, secrets):
     read_configs = [read_file(f) for f in dashboards]
     dashboard = read_dashboard_from_config(dashboard_config, read_configs)
 
-    messages = DashboardRunner(dashboard).poll_datafeeds()
+    try:
+        messages = DashboardRunner(dashboard).poll_datafeeds()
+    except SecretNotFound as err:
+        click.echo(get_error_message(err, default="Datafeed didn't have required secret"), err=True)
+        raise click.Abort()
 
     output = {"source-data": messages}
 

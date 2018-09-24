@@ -4,18 +4,27 @@ from slackclient import SlackClient
 
 from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
+from doodledashboard.secrets_store import SecretNotFound
 
 
 class SlackFeed(DataFeed):
+    _SECRET_ID = "slack-token"
     _channel = None
 
-    def __init__(self, client, channel_name):
+    def __init__(self, channel_name, client=None):
         DataFeed.__init__(self)
         self._client = client
         self._channel_name = channel_name
-        self._logger = logging.getLogger("doodledashboard.SlackRepository")
+        self._logger = logging.getLogger("doodledashboard.SlackFeed")
         self._connected = False
         self._connected_previously = False
+
+    def _create_client(self):
+        secrets = self.get_secret_store()
+        if self._SECRET_ID in secrets:
+            return SlackClient(self._SECRET_ID)
+        else:
+            raise SecretNotFound(self, self._SECRET_ID)
 
     def get_latest_messages(self):
         if not self._connected:
@@ -119,6 +128,5 @@ class SlackFeedConfig(ConfigSection):
         if "channel" not in config_section:
             raise MissingRequiredOptionException("Expected 'channel' option to exist")
 
-        slack_client = SlackClient(config_section["token"])
         channel = config_section["channel"]
-        return SlackFeed(slack_client, channel)
+        return SlackFeed(channel)

@@ -11,8 +11,8 @@ from tests.doodledashboard.it.support.cli_test_case import CliTestCase
 
 class DummyFilter(MessageFilter):
 
-    def filter(self, text_entity):
-        return text_entity
+    def filter(self, message):
+        return message
 
     @staticmethod
     def get_config_factory():

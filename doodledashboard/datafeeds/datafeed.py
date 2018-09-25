@@ -41,12 +41,18 @@ class DataFeed(ABC):
 
     @abstractmethod
     def get_latest_messages(self):
-        return []
+        """
+        Called by the dashboard when it is ready to process new messages.
+        :return: An array of the latest messages from the datafeed
+        """
 
     @staticmethod
     @abstractmethod
     def get_config_factory():
-        return None
+        """
+        :return: The factory class used to create the datafeed from the
+        configuration.
+        """
 
     def set_secret_store(self, secret_store):
         self._secret_store = secret_store

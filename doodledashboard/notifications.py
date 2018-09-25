@@ -27,7 +27,9 @@ class Notification(ABC):
     @staticmethod
     @abstractmethod
     def get_config_factory():
-        return None
+        """
+        :return: The factory class used to create the notification from the configuration.
+        """
 
 
 class TextNotification(Notification):

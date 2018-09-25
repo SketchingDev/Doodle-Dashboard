@@ -14,7 +14,10 @@ class ConfigSection(ABC):
     @property
     @abstractmethod
     def id_key_value(self):
-        pass
+        """
+        :return: A truple of the expected key and value used to determine
+        whether the section in the configuration relates to the derived type.
+        """
 
     def can_create(self, config_section):
         id_key = self.id_key_value[0]
@@ -24,7 +27,12 @@ class ConfigSection(ABC):
 
     @abstractmethod
     def create(self, config_section):
-        pass
+        """
+        :param config_section: Section of the configuration for the entity being
+        created by the derived type. The section passed to this method is determined
+        by the presence of the key/value returned by `id_key_value()`.
+        :return: An instance of the type this config section represents.
+        """
 
     def add(self, successor):
         if not self._successor:

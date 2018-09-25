@@ -10,8 +10,8 @@ class MatchesRegexFilter(MessageFilter):
         MessageFilter.__init__(self)
         self._regex = re.compile(regex, re.IGNORECASE)
 
-    def filter(self, text_entity):
-        return True if self._regex.search(text_entity.get_text()) else False
+    def filter(self, message):
+        return True if self._regex.search(message.get_text()) else False
 
     def get_pattern(self):
         return self._regex.pattern

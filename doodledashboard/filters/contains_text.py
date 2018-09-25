@@ -7,8 +7,8 @@ class ContainsTextFilter(MessageFilter):
         MessageFilter.__init__(self)
         self._text = text
 
-    def filter(self, text_entity):
-        return self._text in text_entity.get_text()
+    def filter(self, message):
+        return self._text in message.get_text()
 
     def remove_text(self, text_entity):
         return text_entity.get_text() \

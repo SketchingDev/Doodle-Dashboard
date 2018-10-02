@@ -12,7 +12,11 @@ class NotificationUpdater(ABC):
 
     @abstractmethod
     def _update(self, notification, message):
-        pass
+        """
+        Called to allow the notification updater to update the notification with data from the message.
+        :param notification: Notification to be updated
+        :param message: Message used for updating the notification
+        """
 
     def add_message_filters(self, filters):
         self._message_filters.extend(filters)
@@ -27,4 +31,6 @@ class NotificationUpdater(ABC):
     @staticmethod
     @abstractmethod
     def get_config_factory():
-        return None
+        """
+        :return: The factory class used to create the notification updater from the configuration.
+        """

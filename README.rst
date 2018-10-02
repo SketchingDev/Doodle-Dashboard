@@ -27,7 +27,7 @@ Doodle-Dashboard: Simple dashboards for all!
 **Doodle-Dashboard** is used to create little dashboards that display useful information from multiple sources, like
 Tweets from your favourite Twitterers, weather reports for your local area or breaking news.
 
-.. image:: docs/images/raspberry-pi-weather.jpeg
+.. image:: docs/images/raspberry-pi-weather.png
 
 Requirements
 ------------

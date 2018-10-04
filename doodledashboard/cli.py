@@ -111,7 +111,7 @@ def start(dashboards, once, secrets):
 @click.option("--secrets", type=click.Path(exists=True))
 @click.option("--verbose", is_flag=True, callback=attach_logging, expose_value=False)
 def view(action, dashboards, secrets):
-    """View what the datafeeds in the DASHBOARDS are returning"""
+    """View the output of the datafeeds and/or notifications used in your DASHBOARDS"""
 
     if secrets is None:
         secrets = os.path.join(os.path.expanduser("~"), "/.doodledashboard/secrets")
@@ -163,6 +163,7 @@ def view(action, dashboards, secrets):
                 type=click.Choice(["displays", "datafeeds", "filters", "notifications", "updaters", "all"]),
                 default="all")
 def list(component_type):
+    """List components that are available on your machine"""
     creator_container = collect_component_creators()
     component_types = sorted({
                                  "displays": lambda: creator_container.get_display_creators(),

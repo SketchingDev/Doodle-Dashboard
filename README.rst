@@ -24,15 +24,17 @@ Doodle-Dashboard: Simple dashboards for all!
 
 ---------------
 
-**Doodle-Dashboard** is used to create little dashboards that display useful information from multiple sources, like
-Tweets from your favourite Twitterers, weather reports for your local area or breaking news.
+**Doodle-Dashboard** is used to create dashboards for displaying information from multiple sources; such as
+Tweets from your favourite Twitterers, notifications from Slack or breaking news from an RSS feed.
 
-.. image:: docs/images/raspberry-pi-weather.png
+.. image:: docs/images/raspberry-pi.png
+
+**WARNING: This project is under heavy development and will not have a reliable API until a stable version is released.**
 
 Requirements
 ------------
 
-  * `Python 3.5+ <https://www.python.org/downloads/>`_
+  * `Python 3.4+ <https://www.python.org/downloads/>`_
   * `pip <https://pip.pypa.io/en/stable/installing/>`_
 
 Getting started
@@ -40,13 +42,24 @@ Getting started
 
 1. Install package::
 
-    $ pip install doodle-dashboard
+    pip install doodle-dashboard
 
-2. `Create your dashboard's configuration <https://github.com/SketchingDev/Doodle-Dashboard/wiki/Create-a-dashboard>`_
+2. Start a dashboard:
 
-3. Start the dashboard::
+A dashboard is a YAML file that declares what notifications to show and to what display. Dashboard files can be hosted
+locally or remotely.
 
-    $ doodledashboard start <PATH TO CONFIGURATION>
+Starting a single dashboard::
+
+    doodledashboard start \
+      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/dashboard.yml
+
+Starting multiple dashboards::
+
+    doodledashboard start \
+      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/dashboard.yml \
+      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/build-radiator/dashboard.yml
+
 
 Development
 -----------
@@ -67,14 +80,4 @@ These steps assume that you're using virtualenv.
 
     $ python doodledashboard/cli.py
 
-ImportError: No module named
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you keep getting the ImportError when building the project check that you
-haven't already installed the application via pip, otherwise you might be pulling
-in the doodle dashboard classes from your local pip packages.
-
-Remove the library with::
-
-    $ sudo rm -rf /Library/Python/3.6/site-packages/doodledashboard/
-
+Refer to the `documentation <https://doodle-dashboard.readthedocs.io/en/latest/development.html>`_ for more detailed instructions.

@@ -1,7 +1,7 @@
 Installation
-------------
+============
 
-Before continuing make sure you have `Python 3.5+ <https://www.python.org/downloads/>`_ installed!
+Before continuing make sure you have `Python 3.4+ <https://www.python.org/downloads/>`_ installed!
 
 Doodle-Dashboard can then be installed using `pip`::
 
@@ -14,7 +14,7 @@ Done!
 
 The code is hosted at `Github <https://github.com/SketchingDev/Doodle-Dashboard>`_.
 
-Checkout the latest development version with::
+Checkout the latest master version with::
 
     $ git clone git@github.com:SketchingDev/Doodle-Dashboard.git
     $ cd Doodle-Dashboard

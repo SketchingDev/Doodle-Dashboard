@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Doodle-Dashboard's documentation!
-============================================
+Doodle-Dashboard's documentation!
+=================================
 **Create little dashboards that display useful information from multiple sources, like Tweets from your favourite
 Twitterers, weather reports for your local area or breaking news.**
 
@@ -14,13 +14,16 @@ Twitterers, weather reports for your local area or breaking news.**
 
    installation.rst
    getting_started.rst
+   development.rst
    tips_developing_displays.rst
 
 
 Introduction
 ------------
 
-Test 123
+Coming soon!
+
+.. image:: images/raspberry-pi.png
 
 Indices and tables
 ==================

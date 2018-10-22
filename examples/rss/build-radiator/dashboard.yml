@@ -4,6 +4,7 @@ display: console
 data-feeds:
   - source: rss
     url: https://api.travis-ci.org/repos/SketchingDev/Doodle-Dashboard/builds.atom
+     # By sorting oldest first the last message passed to the notification's updater will be latest
     sort: oldest
 
 notifications:
@@ -11,13 +12,13 @@ notifications:
     type: image
     update-with:
       name: image-depending-on-message-content
-      default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/status-icons/unknown.png
+      default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/images/unknown.png
       images:
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/status-icons/failure.png
+        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/images/failure.png
           if-contains: "State: failed"
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/status-icons/building.png
+        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/images/building.png
           if-contains: "State: started"
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/status-icons/success.png
+        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/images/success.png
           if-contains: "State: passed"
       filter-messages:
         - type: message-contains-text

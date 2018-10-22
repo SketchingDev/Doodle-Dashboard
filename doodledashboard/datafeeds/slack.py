@@ -22,7 +22,8 @@ class SlackFeed(DataFeed):
     def _create_client(self):
         secrets = self.get_secret_store()
         if self._SECRET_ID in secrets:
-            return SlackClient(self._SECRET_ID)
+            secret_token = secrets[self._SECRET_ID]
+            return SlackClient(secret_token)
         else:
             raise SecretNotFound(self, self._SECRET_ID)
 

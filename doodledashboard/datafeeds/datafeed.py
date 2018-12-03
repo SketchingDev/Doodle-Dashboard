@@ -16,10 +16,12 @@ class Message:
         self._text = text
         self._source_name = str(source) if source else ""
 
-    def get_source_name(self):
+    @property
+    def source_name(self):
         return self._source_name
 
-    def get_text(self):
+    @property
+    def text(self):
         return self._text
 
 
@@ -27,8 +29,8 @@ class MessageJsonEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Message):
             return {
-                "text": obj.get_text(),
-                "source": str(obj.get_source_name())
+                "text": obj.text,
+                "source": str(obj.source_name)
             }
 
         return json.JSONEncoder.default(self, obj)
@@ -37,7 +39,8 @@ class MessageJsonEncoder(json.JSONEncoder):
 class DataFeed(ABC):
 
     def __init__(self):
-        self._secret_store = None
+        self._secret_store = {}
+        self._name = ""
 
     @abstractmethod
     def get_latest_messages(self):
@@ -46,16 +49,18 @@ class DataFeed(ABC):
         :return: An array of the latest messages from the datafeed
         """
 
-    @staticmethod
-    @abstractmethod
-    def get_config_factory():
-        """
-        :return: The factory class used to create the datafeed from the
-        configuration.
-        """
+    @property
+    def name(self):
+        return self._name
 
-    def set_secret_store(self, secret_store):
-        self._secret_store = secret_store
+    @name.setter
+    def name(self, name):
+        self._name = name
 
-    def get_secret_store(self):
+    @property
+    def secret_store(self):
         return self._secret_store
+
+    @secret_store.setter
+    def secret_store(self, secret_store):
+        self._secret_store = secret_store

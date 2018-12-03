@@ -6,14 +6,12 @@ import re
 from yaml import YAMLError
 
 from doodledashboard import __about__
-from doodledashboard.configuration.component_loaders import ExternalPackageLoader, CreatorsContainer, \
-    StaticComponentLoader
-from doodledashboard.configuration.config import DashboardConfigReader, \
-    ValidateDashboard, InvalidConfigurationException
-from doodledashboard.dashboard_runner import DashboardRunner
+from doodledashboard.component import ExternalPackageSource, StaticComponentSource, ComponentConfigLoader, ComponentType
+from doodledashboard.configuration import DashboardConfigReader, InvalidConfigurationException
+from doodledashboard.dashboard import DashboardRunner, DashboardValidator, ValidationException
 from doodledashboard.datafeeds.datafeed import MessageJsonEncoder
 from doodledashboard.error_messages import get_error_message
-from doodledashboard.filters.record_filter import RecordFilter
+from doodledashboard.notifications.notification import FilteredNotification
 from doodledashboard.secrets_store import InvalidSecretsException, try_read_secrets_file, SecretNotFound
 
 
@@ -72,21 +70,25 @@ def start(dashboards, once, secrets):
         click.echo(get_error_message(err, default="Secrets file is invalid"), err=True)
         raise click.Abort()
 
-    default_configuration = """
-        interval: 15
-        display: console
-        """
-
-    read_configs = [default_configuration]
+    read_configs = ["""
+    dashboard:
+      display:
+        type: console
+    """]
     for dashboard_file in dashboards:
         read_configs.append(read_file(dashboard_file))
 
-    dashboard_config = DashboardConfigReader(collect_component_creators(), loaded_secrets)
+    dashboard_config = DashboardConfigReader(initialise_component_loader(), loaded_secrets)
 
     try:
         dashboard = read_dashboard_from_config(dashboard_config, read_configs)
-        ValidateDashboard().validate(dashboard)
     except YAMLError as err:
+        click.echo(get_error_message(err, default="Dashboard configuration is invalid"), err=True)
+        raise click.Abort()
+
+    try:
+        DashboardValidator().validate(dashboard)
+    except ValidationException as err:
         click.echo(get_error_message(err, default="Dashboard configuration is invalid"), err=True)
         raise click.Abort()
 
@@ -122,7 +124,7 @@ def view(action, dashboards, secrets):
         click.echo(get_error_message(err, default="Secrets file is invalid"), err=True)
         raise click.Abort()
 
-    dashboard_config = DashboardConfigReader(collect_component_creators(), loaded_secrets)
+    dashboard_config = DashboardConfigReader(initialise_component_loader(), loaded_secrets)
 
     read_configs = [read_file(f) for f in dashboards]
     dashboard = read_dashboard_from_config(dashboard_config, read_configs)
@@ -133,48 +135,43 @@ def view(action, dashboards, secrets):
         click.echo(get_error_message(err, default="Datafeed didn't have required secret"), err=True)
         raise click.Abort()
 
-    output = {"source-data": messages}
+    cli_output = {"source-data": messages}
 
     if action == "notifications":
-        output["notifications"] = []
+        cli_output["notifications"] = []
 
-        for notification in dashboard.get_notifications():
-            notification_before = str(notification)
+        for notification in dashboard.notifications:
+            notification_output = notification.create(messages)
 
-            updater = notification.get_updater()
-            record_filter = RecordFilter()
-            if updater:
-                updater.add_message_filters([record_filter])
+            filtered_messages = messages
 
-            for message in messages:
-                notification.update(message)
+            if isinstance(notification, FilteredNotification):
+                filtered_messages = notification.filter_messages(messages)
 
-            output["notifications"].append({
-                "filtered-messages": messages if not updater else record_filter.get_messages(),
-                "notification-before": notification_before,
-                "notification-after": str(notification)
+            cli_output["notifications"].append({
+                "filtered-messages": filtered_messages,
+                "notification": str(notification_output)
             })
-
-    click.echo(json.dumps(output, sort_keys=True, indent=4, cls=MessageJsonEncoder))
+    json_output = json.dumps(cli_output, sort_keys=True, indent=4, cls=MessageJsonEncoder)
+    click.echo(json_output)
 
 
 @cli.command()
 @click.argument("component_type",
-                type=click.Choice(["displays", "datafeeds", "filters", "notifications", "updaters", "all"]),
+                type=click.Choice(["displays", "datafeeds", "filters", "notifications", "all"]),
                 default="all")
 def list(component_type):
     """List components that are available on your machine"""
-    creator_container = collect_component_creators()
+    config_loader = initialise_component_loader()
     component_types = sorted({
-                                 "displays": lambda: creator_container.get_display_creators(),
-                                 "datafeeds": lambda: creator_container.get_data_feed_creators(),
-                                 "filters": lambda: creator_container.get_filter_creators(),
-                                 "notifications": lambda: creator_container.get_notification_creators(),
-                                 "updaters": lambda: creator_container.get_notification_updater_creators()
-                             }.items(), key=lambda t: t[0])
+         "displays": lambda: config_loader.load_by_type(ComponentType.DISPLAY),
+         "datafeeds": lambda: config_loader.load_by_type(ComponentType.DATA_FEED),
+         "filters": lambda: config_loader.load_by_type(ComponentType.FILTER),
+         "notifications": lambda: config_loader.load_by_type(ComponentType.NOTIFICATION)
+    }.items(), key=lambda t: t[0])
 
     def print_ids(creators):
-        ids = {c.id_key_value[1] for c in creators}
+        ids = {c.id_key_value[1] if hasattr(c, "id_key_value") else c.get_id() for c in creators}
         for i in sorted(ids):
             click.echo(" - %s" % i)
 
@@ -197,27 +194,23 @@ def read_dashboard_from_config(dashboard_config, configs):
         raise
 
 
-def collect_component_creators():
-    container = CreatorsContainer()
-    ExternalPackageLoader().populate(container)
-    StaticComponentLoader().populate(container)
-
-    return container
+def initialise_component_loader():
+    configs = ComponentConfigLoader()
+    configs.add_source(ExternalPackageSource())
+    configs.add_source(StaticComponentSource())
+    return configs
 
 
 def explain_dashboard(dashboard):
-    interval = dashboard.get_interval()
-    click.echo("Interval: %s" % str(interval))
-
-    display = dashboard.get_display()
+    display = dashboard.display
     click.echo("Display loaded: %s" % str(display))
 
-    data_sources = dashboard.get_data_feeds()
+    data_sources = dashboard.data_feeds
     click.echo("%s data sources loaded" % len(data_sources))
     for data_source in data_sources:
         click.echo(" - %s" % str(data_source))
 
-    notifications = dashboard.get_notifications()
+    notifications = dashboard.notifications
     click.echo("%s notifications loaded" % len(notifications))
     for notification in notifications:
         click.echo(" - %s" % str(notification))

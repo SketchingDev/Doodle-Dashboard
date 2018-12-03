@@ -2,7 +2,7 @@ import logging
 from requests import ConnectionError
 from slackclient import SlackClient
 
-from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
+from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException, ComponentConfig
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 from doodledashboard.secrets_store import SecretNotFound
 
@@ -20,10 +20,10 @@ class SlackFeed(DataFeed):
         self._connected_previously = False
 
     def _create_client(self):
-        secrets = self.get_secret_store()
-        if self._SECRET_ID in secrets:
-            secret_token = secrets[self._SECRET_ID]
-            return SlackClient(secret_token)
+        slack_token = self.secret_store.get(self._SECRET_ID)
+        if slack_token:
+            return SlackClient(slack_token)
+
         else:
             raise SecretNotFound(self, self._SECRET_ID)
 
@@ -96,9 +96,6 @@ class SlackFeed(DataFeed):
         channel_list = self._client.api_call("channels.list", exclude_archived=1)
         return next(iter([c for c in channel_list["channels"] if c["name"] == channel_name]), None)
 
-    def __str__(self):
-        return "Slack feed for %s channel" % self._channel_name
-
     @staticmethod
     def _filter_events_with_text(events):
         return [e for e in events if "text" in e]
@@ -111,23 +108,23 @@ class SlackFeed(DataFeed):
     def _filter_events_by_channel(channel, events):
         return [e for e in events if "channel" in e and e["channel"] == channel["id"]]
 
+    def __str__(self):
+        return "Slack feed for %s channel" % self._channel_name
+
+
+class SlackFeedConfig(ComponentConfig, DataFeedConfig):
+
     @staticmethod
-    def get_config_factory():
-        return SlackFeedConfig()
+    def get_id():
+        return "slack"
 
-
-class SlackFeedConfig(ConfigSection):
-
-    @property
-    def id_key_value(self):
-        return "source", "slack"
-
-    def create(self, config_section):
-        if "token" not in config_section:
+    @staticmethod
+    def create(options):
+        if "token" not in options:
             raise MissingRequiredOptionException("Expected 'token' option to exist")
 
-        if "channel" not in config_section:
+        if "channel" not in options:
             raise MissingRequiredOptionException("Expected 'channel' option to exist")
 
-        channel = config_section["channel"]
+        channel = options["channel"]
         return SlackFeed(channel)

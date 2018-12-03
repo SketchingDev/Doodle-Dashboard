@@ -27,7 +27,8 @@ setup(
         "feedparser",
         "pyyaml",
         "click",
-        "doodle-dashboard-display-console>=0.0.16"
+        "image-to-ascii-converter",
+        "ratelimit"
     ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
@@ -35,25 +36,22 @@ setup(
         "console_scripts": [
             "doodledashboard=doodledashboard.cli:cli"
         ],
+        "doodledashboard.custom.displays": [
+            "console=doodledashboard.displays.console:ConsoleDisplayConfig"
+        ],
         "doodledashboard.custom.filters": [
-            "contains-text=doodledashboard.filters.contains_text:ContainsTextFilter",
-            "matches-regex=doodledashboard.filters.matches_regex:MatchesRegexFilter"
+            "contains-text=doodledashboard.filters.contains_text:ContainsTextFilterConfig",
+            "matches-regex=doodledashboard.filters.matches_regex:MatchesRegexFilterConfig"
         ],
         "doodledashboard.custom.datafeeds": [
-            "datetime=doodledashboard.datafeeds.datetime:DateTimeFeed",
-            "rss=doodledashboard.datafeeds.rss:RssFeed",
-            "slack=doodledashboard.datafeeds.slack:SlackFeed",
-            "text=doodledashboard.datafeeds.text:TextFeed"
+            "datetime=doodledashboard.datafeeds.datetime:DateTimeFeedConfig",
+            "rss=doodledashboard.datafeeds.rss:RssFeedConfig",
+            "slack=doodledashboard.datafeeds.slack:SlackFeedConfig",
+            "text=doodledashboard.datafeeds.text:TextFeedConfig"
         ],
-        "doodledashboard.custom.notifications": [
-            "text=doodledashboard.notifications:TextNotification",
-            "image=doodledashboard.notifications:ImageNotification",
-            "image-with-text=doodledashboard.notifications:ImageWithTextNotification",
-            "colour=doodledashboard.notifications:ColourNotification"
-        ],
-        "doodledashboard.custom.notification.updaters": [
-            "image=doodledashboard.updaters.image.image:ImageNotificationUpdater",
-            "text=doodledashboard.updaters.text.text:TextNotificationUpdater"
+        "doodledashboard.custom.notification": [
+            "image-depending-on-content=doodledashboard.notifications.image.image:ImageDependingOnMessageContentConfig",
+            "text-in-message=doodledashboard.notifications.text.text:TextInMessageConfig"
         ]
     },
     classifiers=[

@@ -1,6 +1,6 @@
 import feedparser
 
-from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
+from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException, ComponentConfig
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
@@ -33,9 +33,6 @@ class RssFeed(DataFeed):
 
         return [self._convert_to_message(entry) for entry in sorted_entries]
 
-    def __str__(self):
-        return "RSS feed for %s" % self._feed_url
-
     def _convert_to_message(self, feed_item):
         feed_fields = []
 
@@ -45,29 +42,28 @@ class RssFeed(DataFeed):
 
         return Message("\n".join(feed_fields), self)
 
+    def __str__(self):
+        return "RSS feed for %s" % self._feed_url
+
+
+class RssFeedConfig(ComponentConfig, DataFeedConfig):
+
     @staticmethod
-    def get_config_factory():
-        return RssFeedConfig()
+    def get_id():
+        return "rss"
 
-
-class RssFeedConfig(ConfigSection):
-
-    @property
-    def id_key_value(self):
-        return "source", "rss"
-
-    def create(self, config_section):
-        if "url" not in config_section:
+    def create(self, options):
+        if "url" not in options:
             raise MissingRequiredOptionException("Expected 'url' option to exist")
 
-        url = config_section["url"]
+        url = options["url"]
         sort_order = None
-        if "sort" in config_section:
-            if config_section["sort"] not in ["newest", "oldest"]:
+        if "sort" in options:
+            if options["sort"] not in ["newest", "oldest"]:
                 raise MissingRequiredOptionException(
                     "Sorting value for RSS feed can only be either ascending or descending"
                 )
 
-            sort_order = config_section["sort"]
+            sort_order = options["sort"]
 
         return RssFeed(url, sort_order)

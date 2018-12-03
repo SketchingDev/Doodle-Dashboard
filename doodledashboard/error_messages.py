@@ -1,5 +1,6 @@
-from doodledashboard.configuration.config import EmptyConfiguration, DisplayNotFound, \
-    DisplayDoesNotSupportNotification, ConfigYamlParsingError
+from doodledashboard.dashboard import DisplayDoesNotSupportNotification
+
+from doodledashboard.configuration import EmptyConfiguration, DisplayNotFound, ConfigYamlParsingError
 from doodledashboard.secrets_store import SecretsYamlParsingError, SecretNotFound
 
 
@@ -35,11 +36,12 @@ def display_does_not_support_notification(err: DisplayDoesNotSupportNotification
     if len(supported_notifications) > 0:
         notification_list = "\n".join([" - %s" % n.__name__ for n in supported_notifications])
 
-        return "Display '%s' does not support the notification '%s'. " \
-               "The notifications this display does support are:\n%s" % \
+        return "Display '%s' does not support the notification output '%s'. " \
+               "You can only use notifications that have the following outputs, as this is what the display " \
+               "supports:\n%s" % \
                (err.display, err.notification, notification_list)
 
-    return "Display '%s' does not support any notifications, which is very odd..." % err.display
+    return "Display '%s' does not support any notification outputs, which is very odd..." % err.display
 
 
 def data_feed_could_not_find_a_secret(err: SecretNotFound):

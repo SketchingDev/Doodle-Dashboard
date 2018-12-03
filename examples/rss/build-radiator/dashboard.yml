@@ -1,25 +1,32 @@
-interval: 5
-display: console
+dashboard:
 
-data-feeds:
-  - source: rss
-    url: https://api.travis-ci.org/repos/SketchingDev/Doodle-Dashboard/builds.atom
-     # By sorting oldest first the last message passed to the notification's updater will be latest
-    sort: oldest
+  display:
+    type: console
+    options:
+      # It is the responsibility of the display to decide how to show the notifications
+      show-name-of-notification: true
+      seconds-per-notifications: 5
 
-notifications:
-  - title: Doodle-Dashboard build status
-    type: image
-    update-with:
-      name: image-depending-on-message-content
-      default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/images/unknown.png
-      images:
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/images/failure.png
-          if-contains: "State: failed"
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/images/building.png
-          if-contains: "State: started"
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/build-radiator/images/success.png
-          if-contains: "State: passed"
-      filter-messages:
+  data-feeds:
+    - name: CircleCI feed # Optional - will be used to describe the data-feed in the logs
+      type: rss
+      options:
+        url: https://api.travis-ci.org/repos/SketchingDev/Doodle-Dashboard/builds.atom
+        sort: oldest
+
+  notifications:
+    - name: Doodle-Dashboard build status
+      type: image-depending-on-message-content
+      options:
+        default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/build-radiator/images/unknown.png
+        images:
+          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/build-radiator/images/failure.png
+            if-contains: "State: failed"
+          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/build-radiator/images/building.png
+            if-contains: "State: started"
+          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/build-radiator/images/success.png
+            if-contains: "State: passed"
+      filters:
         - type: message-contains-text
-          text: "SketchingDev/Doodle-Dashboard Build"
+          options:
+            text: "SketchingDev/Doodle-Dashboard Build"

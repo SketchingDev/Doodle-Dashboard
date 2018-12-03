@@ -1,4 +1,4 @@
-from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
+from doodledashboard.component import MissingRequiredOptionException, DataFeedConfig, ComponentConfig
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
@@ -13,25 +13,22 @@ class TextFeed(DataFeed):
     def get_latest_messages(self):
         return [Message(text, self) for text in self._text]
 
-    def get_text(self):
+    @property
+    def text(self):
         return self._text
 
     def __str__(self):
         return "Text"
 
+
+class TextFeedConfig(ComponentConfig, DataFeedConfig):
+
     @staticmethod
-    def get_config_factory():
-        return TextFeedConfig()
+    def get_id():
+        return "text"
 
-
-class TextFeedConfig(ConfigSection):
-
-    @property
-    def id_key_value(self):
-        return "source", "text"
-
-    def create(self, config_section):
-        if "text" not in config_section:
+    def create(self, options):
+        if "text" not in options:
             raise MissingRequiredOptionException("Expected 'text' option to exist")
 
-        return TextFeed(config_section["text"])
+        return TextFeed(options["text"])

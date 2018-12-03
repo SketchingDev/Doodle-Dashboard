@@ -1,4 +1,4 @@
-from doodledashboard.configuration.config import MissingRequiredOptionException, ConfigSection
+from doodledashboard.component import FilterConfig, MissingRequiredOptionException, ComponentConfig
 from doodledashboard.filters.filter import MessageFilter
 
 
@@ -8,29 +8,26 @@ class ContainsTextFilter(MessageFilter):
         self._text = text
 
     def filter(self, message):
-        return self._text in message.get_text()
+        return self._text in message.text
 
     def remove_text(self, text_entity):
-        return text_entity.get_text() \
+        return text_entity.text \
             .replace(self._text, "") \
             .strip()
 
-    def get_text(self):
+    @property
+    def text(self):
         return self._text
 
+
+class ContainsTextFilterConfig(ComponentConfig, FilterConfig):
+
     @staticmethod
-    def get_config_factory():
-        return ContainsTextFilterConfig()
+    def get_id():
+        return "message-contains-text"
 
-
-class ContainsTextFilterConfig(ConfigSection):
-
-    @property
-    def id_key_value(self):
-        return "type", "message-contains-text"
-
-    def create(self, config_section):
-        if "text" not in config_section:
+    def create(self, options):
+        if "text" not in options:
             raise MissingRequiredOptionException("Expected 'text' option to exist")
 
-        return ContainsTextFilter(str(config_section["text"]))
+        return ContainsTextFilter(str(options["text"]))

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from doodledashboard.configuration.config import ConfigSection
+from doodledashboard.component import DataFeedConfig, ComponentConfig
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
@@ -20,11 +20,11 @@ class DateTimeFeed(DataFeed):
         return DateTimeFeedConfig()
 
 
-class DateTimeFeedConfig(ConfigSection):
+class DateTimeFeedConfig(ComponentConfig, DataFeedConfig):
 
-    @property
-    def id_key_value(self):
-        return "source", "datetime"
+    @staticmethod
+    def get_id():
+        return "datetime"
 
-    def create(self, config_section):
+    def create(self, options):
         return DateTimeFeed()

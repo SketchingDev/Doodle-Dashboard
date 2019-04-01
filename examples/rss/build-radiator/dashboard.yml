@@ -4,7 +4,7 @@ dashboard:
     type: console
     options:
       # It is the responsibility of the display to decide how to show the notifications
-      show-name-of-notification: true
+      show-notification-name: true
       seconds-per-notifications: 5
 
   data-feeds:

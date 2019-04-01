@@ -45,7 +45,7 @@ class TestTextNotification(unittest.TestCase):
     def test_centred(self, console_size, input_text, expected_ascii_terminal_path):
         text_output = TextNotificationOutput(input_text)
 
-        console = ConsoleDisplay(show_notification_names=False, period=0, size=console_size)
+        console = ConsoleDisplay(show_notification_name=False, period=0, size=console_size)
         cmd = create_cmd(lambda: console.draw(text_output))
         result = CliRunner().invoke(cmd, catch_exceptions=False)
 
@@ -63,7 +63,7 @@ class TestImageNotification(unittest.TestCase):
 
         image_output = ImageNotificationOutput(input_image)
 
-        console = ConsoleDisplay(show_notification_names=False, period=0, size=console_size)
+        console = ConsoleDisplay(show_notification_name=False, period=0, size=console_size)
         cmd = create_cmd(lambda: console.draw(image_output))
         result = CliRunner().invoke(cmd, catch_exceptions=False)
 

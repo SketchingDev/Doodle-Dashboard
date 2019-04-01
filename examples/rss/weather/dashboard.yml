@@ -1,20 +1,25 @@
-interval: 5
-display: console
+dashboard:
 
-data-feeds:
-  - source: rss
-    url: https://weather-broker-cdn.api.bbci.co.uk/en/observation/rss/2643743
+  display:
+    type: console
+    options:
+      show-notification-name: true
+      seconds-per-notification: 5
 
-notifications:
-  - title: Display weather
-    type: image
-    update-with:
-      name: image-depending-on-message-content
-      default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/images/unknown.png
-      images:
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/images/rain.bmp
-          if-contains: rain
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/images/storm.bmp
-          if-contains: storm
-        - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/images/sun.bmp
-          if-contains: sun
+  data-feeds:
+    - type: rss
+      options:
+        url: https://weather-broker-cdn.api.bbci.co.uk/en/observation/rss/2643743
+
+  notifications:
+    - name: Display weather
+      type: image-depending-on-message-content
+      options:
+        default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/images/unknown.png
+        images:
+          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/images/rain.bmp
+            if-contains: rain
+          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/images/storm.bmp
+            if-contains: storm
+          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/images/sun.bmp
+            if-contains: sun

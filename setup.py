@@ -25,7 +25,7 @@ setup(
         "requests",
         "slackclient",
         "feedparser",
-        "pyyaml",
+        "pyyaml>=4.2b1",
         "click",
         "image-to-ascii-converter",
         "ratelimit"

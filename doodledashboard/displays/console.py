@@ -1,6 +1,7 @@
-import click
 import textwrap
-from ratelimit import limits, sleep_and_retry
+import time
+
+import click
 from sketchingdev.image_to_ascii.centre import centre_in_container
 
 from doodledashboard.component import ComponentConfig, DisplayConfig
@@ -48,25 +49,12 @@ def _handle_image(size, notification):
     return format_image(size, notification.image_path)
 
 
-class LimitCalls(object):
-    def __init__(self, period=10):
-        self._limits = limits(calls=1, period=period, raise_on_limit=False)
-
-    def __call__(self, original_func):
-        def update_limit_period(*args, **kwargs):
-            console = args[0]
-            self._limits.period = console.seconds_per_notification
-            return self._limits(original_func)(*args, **kwargs)
-
-        return update_limit_period
-
-
 class ConsoleDisplay(Display):
     """
     Draws a notification to the console every 5 seconds
     """
 
-    _DEFAULT_PERIOD = 5
+    DEFAULT_PERIOD = 5
 
     _UNSUPPORTED_NOTIFICATION_ERROR = "Notification type '%s' not supported by this display"
 
@@ -75,18 +63,16 @@ class ConsoleDisplay(Display):
         ImageNotificationOutput: _handle_image
     }
 
-    def __init__(self, show_notification_names=False, period=_DEFAULT_PERIOD, size=click.get_terminal_size()):
+    def __init__(self, show_notification_name=False, period=DEFAULT_PERIOD, size=click.get_terminal_size()):
         super().__init__()
-        self._show_notification_names = show_notification_names
+        self._show_notification_names = show_notification_name
         self._seconds_per_notification = period
 
-        if show_notification_names and size[1] > 1:
+        if show_notification_name and size[1] > 1:
             self._size = self._reduce_height_by_1(size)
         else:
             self._size = size
 
-    @sleep_and_retry
-    @LimitCalls(period=_DEFAULT_PERIOD)
     def draw(self, notification):
         click.clear()
         factory = self._find_factory(notification)
@@ -95,6 +81,7 @@ class ConsoleDisplay(Display):
             click.echo(notification.name)
 
         click.echo(factory(self._size, notification), nl=False)
+        time.sleep(self._seconds_per_notification)
 
     def _find_factory(self, notification, default=lambda x, y: ConsoleDisplay._UNSUPPORTED_NOTIFICATION_ERROR % str(y)):
         for factory_type, factory in self._NOTIFICATIONS.items():
@@ -126,6 +113,6 @@ class ConsoleDisplayConfig(ComponentConfig, DisplayConfig):
         return "console"
 
     def create(self, options):
-        show_notification_names = options.get("show-name-of-notification", False)
-        seconds_per_notification = options.get("seconds-per-notifications", ConsoleDisplay._DEFAULT_PERIOD)
-        return ConsoleDisplay(show_notification_names, seconds_per_notification)
+        show_notification_name = options.get("show-notification-name", False)
+        seconds_per_notification = options.get("seconds-per-notifications", ConsoleDisplay.DEFAULT_PERIOD)
+        return ConsoleDisplay(show_notification_name, seconds_per_notification)

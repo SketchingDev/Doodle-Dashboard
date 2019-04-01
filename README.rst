@@ -46,19 +46,19 @@ Getting started
 
 2. Start a dashboard:
 
-A dashboard is a YAML file that declares what notifications to show and to what display. Dashboard files can be hosted
+A dashboard is a YAML file that declares the display to use and the notification to display on it. Dashboard files can be hosted
 locally or remotely.
 
 Starting a single dashboard::
 
     doodledashboard start \
-      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/dashboard.yml
+      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/dashboard.yml
 
 Starting multiple dashboards::
 
     doodledashboard start \
-      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/dashboard.yml \
-      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/build-radiator/dashboard.yml
+      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/dashboard.yml \
+      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/build-radiator/dashboard.yml
 
 
 Development

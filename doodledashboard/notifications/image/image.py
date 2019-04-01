@@ -59,6 +59,13 @@ class ImageDependingOnMessageContent(Notification):
     def get_output_types(self):
         return [ImageNotificationOutput]
 
+    def __str__(self):
+        notification_name = "ImageDependingOnMessageContent"
+        if self._name:
+            notification_name += " (%s)" % self._name
+
+        return notification_name
+
 
 class ImageDependingOnMessageContentConfig(ComponentConfig, NotificationConfig):
 

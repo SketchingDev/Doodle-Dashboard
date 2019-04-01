@@ -15,7 +15,7 @@ class SlackFeed(DataFeed):
         DataFeed.__init__(self)
         self._client = client
         self._channel_name = channel_name
-        self._logger = logging.getLogger("doodledashboard.SlackFeed")
+        self._logger = logging.getLogger(__name__)
         self._connected = False
         self._connected_previously = False
 
@@ -40,12 +40,12 @@ class SlackFeed(DataFeed):
             self._channel = self._try_find_channel(self._channel_name)
 
         events = self._client.rtm_read()
-        self._logger.info("Events from Slack: %s" % events)
+        self._logger.info("Events from Slack: %s", events)
 
         if len(events) is 1 and events[0]["type"] == "hello":
-            self._logger.info("Slack connection confirmed with hello: %s" % events)
+            self._logger.info("Slack connection confirmed with hello: %s", events)
             events = self._client.rtm_read()
-            self._logger.info("Events from Slack: %s" % events)
+            self._logger.info("Events from Slack: %s", events)
 
         events = SlackFeed._filter_events_by_channel(self._channel, events)
         events = SlackFeed._filter_events_by_type(events, "message")
@@ -60,7 +60,7 @@ class SlackFeed(DataFeed):
             if response["ok"]:
                 connected = True
             else:
-                self._logger.info("Slack threw the error '%s'" % response['error'])
+                self._logger.info("Slack threw the error '%s'", response['error'])
         except ConnectionError:
             connected = False
         return connected

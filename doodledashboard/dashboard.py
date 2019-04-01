@@ -33,7 +33,7 @@ class Dashboard:
 class DashboardRunner:
 
     def __init__(self, dashboard):
-        self._logger = logging.getLogger("doodledashboard.Dashboard")
+        self._logger = logging.getLogger(__name__)
         self._dashboard = dashboard
 
     def cycle(self):

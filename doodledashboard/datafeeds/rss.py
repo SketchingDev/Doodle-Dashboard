@@ -1,3 +1,4 @@
+import logging
 import feedparser
 
 from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException, ComponentConfig
@@ -13,6 +14,7 @@ class RssFeed(DataFeed):
 
     def __init__(self, url, sort_order=None):
         DataFeed.__init__(self)
+        self._logger = logging.getLogger(__name__)
         self._feed_url = url
         self._sort_order = sort_order
 
@@ -23,7 +25,11 @@ class RssFeed(DataFeed):
         return self._sort_order
 
     def get_latest_messages(self):
-        feed = feedparser.parse(self._feed_url)
+        try:
+            feed = feedparser.parse(self._feed_url)
+        except RuntimeError as err:
+            self._logger.error("Failed to download RSS feed for %s due to %s", self._feed_url, err)
+            return []
 
         if self._sort_order:
             reverse = RssFeed._SORT_ORDER[self._sort_order]

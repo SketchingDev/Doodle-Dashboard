@@ -11,7 +11,7 @@ class FileDownloader:
 
     def __init__(self):
         self._downloaded_files = []
-        self._logger = logging.getLogger("doodledashboard")
+        self._logger = logging.getLogger(__name__)
 
     def download(self, url):
         filename_from_url = self._extract_filename(url)
@@ -21,7 +21,7 @@ class FileDownloader:
 
         fd, path = tempfile.mkstemp(filename)
 
-        logging.info("Downloading %s to %s", [url, path])
+        self._logger.info("Downloading %s to %s", url, path)
         with urllib.request.urlopen(url) as response, os.fdopen(fd, "wb") as out_file:
             out_file.write(response.read())
 

@@ -12,3 +12,13 @@ install: pip install tox-travis coveralls
 script: tox
 
 after_success: coveralls
+
+deploy:
+  provider: pypi
+  user: SketchingDev
+  password:
+    secure: qmStBhBR5oyTpM/PjUcYFjQPcL68UVTLMJMmZwp7iX3AraV582aK/r+84//L/16iA6r8rdsjnxCgre7M+qmhABWwQcHkGtJ1KmhTtRXpySyND3zZHiZMK/p4CqdN1pbDSNdobx4y+ylRUNqv161VqCCTru30bLHK2ljCHN1LEJRbZ0eigoqn+IO0954Rd6Sa8/m7xkdRNBL8c+WnkEpJF+h/1aSiaQiR+FwjQet9d+BZzPD5lJYDJ3sHgNVjacpA5j3MleM4Jn5cBPkygNaFfqx5m8ynZcP1cGu32H9IlegbxdyuXLyXXJI2lql872W0G32P1mplCluAIVBvAMibHfK2hdtKauHNKpO6n6enI7MvCjUR4S0dcTo5WyiVS9E33EhvohIxsTRc7x6ha8B0aJ1C1O7nnojyj+1ZHKUcGqjur0/j9YdlHU+DHOzljdT2rWA/EXW2e2XkcEcmSIhkTy+mflOzxOGadalBaJuUSauUddDYVQxBE7IxHcJSpMNH177N2h1n0gPQp80md+73OtfSIkYarno8uavXL0g3lRe/r+6A0ViIy0OmNW2fdFL+8537AoAo/wI8CTfegvE1nV41Po7it+Q7vQMnZ6L4wr2s9NsLEAHYNL3tNN5bnDxLmyt5zGJl24357g9VIHn65w5FNTVsxzSA7VK021WMX3A=
+  on:
+    branch: master
+    python: '3.4'
+    tags: true

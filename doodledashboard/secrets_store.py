@@ -1,6 +1,5 @@
 import logging
 import yaml
-from yaml import YAMLError
 
 
 class SecretNotFound(Exception):
@@ -22,6 +21,7 @@ class InvalidSecretsException(Exception):
 
 class SecretsYamlParsingError(InvalidSecretsException):
     def __init__(self, parsing_exception, secrets_path):
+        super().__init__("Error parsing YAML file %s due to %s" % (secrets_path, parsing_exception))
         self.parsing_exception = parsing_exception
         self.secrets_path = secrets_path
 
@@ -32,18 +32,17 @@ def read_secrets(file_path):
 
     try:
         return yaml.safe_load(secrets_yaml)
-    except YAMLError as err:
+    except yaml.YAMLError as err:
         raise SecretsYamlParsingError(err, file_path)
 
 
 def try_read_secrets_file(secrets_file):
+    secrets = {}
+
     try:
         secrets = read_secrets(secrets_file)
-        if secrets is None:
-            secrets = {}
-        return secrets
     except FileNotFoundError:
-        logger = logging.getLogger("doodledashboard")
-        logger.info("Secrets file not found: %s" % secrets_file)
+        logger = logging.getLogger(__name__)
+        logger.info("Secrets file not found: %s", secrets_file)
 
-    return {}
+    return secrets if secrets is not None else {}

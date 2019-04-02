@@ -165,19 +165,19 @@ class InvalidConfigurationException(Exception):
 
 class ComponentNotFoundForType(InvalidConfigurationException):
     def __init__(self, component_type):
-        super().__init__("Component not found for %s" % component_type)
+        super().__init__("Component not found for type '%s'" % component_type)
         self.component_type = component_type
 
 
 class EmptyConfiguration(InvalidConfigurationException):
     def __init__(self, configuration_files):
-        super().__init__("Configuration files %s empty" % configuration_files)
+        super().__init__("Configuration files are empty: %s" % configuration_files)
         self.configuration_files = configuration_files
 
 
 class ConfigYamlParsingError(InvalidConfigurationException):
     def __init__(self, parsing_exception, config):
-        super().__init__("Error parsing YAML")
+        super().__init__("Error parsing YAML file %s due to %s" % (config, parsing_exception))
         self.parsing_exception = parsing_exception
         self.config = config
 

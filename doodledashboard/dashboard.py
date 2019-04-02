@@ -89,6 +89,7 @@ class ValidationException(Exception):
 
 class DisplayDoesNotSupportNotification(ValidationException):
     def __init__(self, display, notification, output_type_not_supported):
+        super().__init__("Display '%s' does not support output type '%s'" % (display.name, output_type_not_supported))
         self.display = display
         self.notification = notification
         self.output_type_not_supported = output_type_not_supported

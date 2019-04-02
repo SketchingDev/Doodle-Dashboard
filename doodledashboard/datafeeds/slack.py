@@ -86,7 +86,7 @@ class SlackFeed(DataFeed):
             channel = self._find_channel(channel_name)
             if not channel:
                 self._logger.info(
-                    "Failed to find Slack channel '%s'. Have you provided created it?" % self._channel_name)
+                    "Failed to find Slack channel '%s'. Have you provided created it?", self._channel_name)
         except ConnectionError:
             pass
 

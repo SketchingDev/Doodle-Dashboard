@@ -1,6 +1,6 @@
 import yaml
+
 from functools import reduce
-from yaml import YAMLError
 
 from doodledashboard.component import ComponentType
 from doodledashboard.dashboard import Dashboard
@@ -123,7 +123,7 @@ class DashboardConfigReader:
         for yaml_config in yaml_configs:
             try:
                 config = yaml.safe_load(yaml_config)
-            except YAMLError as err:
+            except yaml.YAMLError as err:
                 raise ConfigYamlParsingError(err, yaml_config)
 
             dashboards.append(self._create_dashboard(config))
@@ -165,20 +165,24 @@ class InvalidConfigurationException(Exception):
 
 class ComponentNotFoundForType(InvalidConfigurationException):
     def __init__(self, component_type):
+        super().__init__("Component not found for %s" % component_type)
         self.component_type = component_type
 
 
 class EmptyConfiguration(InvalidConfigurationException):
     def __init__(self, configuration_files):
+        super().__init__("Configuration files %s empty" % configuration_files)
         self.configuration_files = configuration_files
 
 
 class ConfigYamlParsingError(InvalidConfigurationException):
     def __init__(self, parsing_exception, config):
+        super().__init__("Error parsing YAML")
         self.parsing_exception = parsing_exception
         self.config = config
 
 
 class DisplayNotFound(InvalidConfigurationException):
     def __init__(self, display_id):
+        super().__init__("Display %s not found" % display_id)
         self.display_id = display_id

@@ -21,6 +21,9 @@ Doodle-Dashboard: Simple dashboards for all!
     :target: https://coveralls.io/github/SketchingDev/Doodle-Dashboard?branch=master
     :alt: Test coverage
 
+.. image:: https://img.shields.io/lgtm/grade/python/g/SketchingDev/Doodle-Dashboard.svg?logo=lgtm&logoWidth=18
+    :target: https://lgtm.com/projects/g/SketchingDev/Doodle-Dashboard/context:python
+    :alt: Language grade: Python
 
 ---------------
 

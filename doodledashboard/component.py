@@ -8,6 +8,9 @@ class ComponentConfig(ABC):
     Inherited by components that can be defined and created from a dashboard file
     """
 
+    def __init__(self):
+        self.name = None
+
     @staticmethod
     @abstractmethod
     def get_id():
@@ -43,7 +46,7 @@ class FilterConfig:
 
 class NotificationConfig:
     """
-
+    Interface used to tell the component loader what type of component the implementor is.
     """
 
 

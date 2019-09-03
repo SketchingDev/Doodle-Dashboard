@@ -28,13 +28,17 @@ class DashboardMerger:
 
 class ComponentConfigParser:
     """
-    Parses a the most common configuration of:
+    A generic component parser, which parses the following configuration:
         {
             'type': '<component ID>'
+            'name': '<component name>'
             'options:
                 'key1': '<value>'
                 'key2': '<value>'
         }
+
+    This can be extended by component types that have custom configuration, e.g. like notifications
+    which has the concept of filters
     """
 
     def __init__(self, section_component_configs):
@@ -73,6 +77,9 @@ class ComponentConfigParser:
 
 
 class NotificationComponentsConfigParser(ComponentConfigParser):
+    """
+    Parser specific to the notification component type, which contains filters
+    """
 
     def __init__(self, notification_configs, filter_parser):
         super().__init__(notification_configs)

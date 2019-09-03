@@ -61,7 +61,7 @@ class ImageDependingOnMessageContent(Notification):
 
     def __str__(self):
         notification_name = "ImageDependingOnMessageContent"
-        if self._name:
+        if self.name:
             notification_name += " (%s)" % self._name
 
         return notification_name

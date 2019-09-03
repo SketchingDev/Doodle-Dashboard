@@ -41,7 +41,8 @@ setup(
         ],
         "doodledashboard.custom.filters": [
             "contains-text=doodledashboard.filters.contains_text:ContainsTextFilterConfig",
-            "matches-regex=doodledashboard.filters.matches_regex:MatchesRegexFilterConfig"
+            "matches-regex=doodledashboard.filters.matches_regex:MatchesRegexFilterConfig",
+            "from-source=doodledashboard.filters.message_from_source:MessageFromSourceFilterConfig"
         ],
         "doodledashboard.custom.datafeeds": [
             "datetime=doodledashboard.datafeeds.datetime:DateTimeFeedConfig",

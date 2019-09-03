@@ -122,6 +122,7 @@ class StartCommand(CliTestCase):
         with runner.isolated_filesystem():
             self.save_file("config_with_unsupported_output.yml", config_with_unsupported_output)
             result = self.call_cli(runner, start, "config_with_unsupported_output.yml --once")
+
         self.assertIn("does not support the notification output", result.output)
         self.assertEqual(1, result.exit_code)
 

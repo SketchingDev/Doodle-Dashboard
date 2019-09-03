@@ -4,17 +4,17 @@ from abc import ABC, abstractmethod
 
 class Message:
     """
-    Represents a single_config textual entity from a data feed.
+    Represents a textual entity from a data feed.
     """
 
-    def __init__(self, text, source=None):
+    def __init__(self, text, source_name=''):
         """
         :param text: Entity's text
-        :param source: Source of the entity, which is converted to a string via `str()` to produce the source name
+        :param source_name: Name of the message source
         """
 
         self._text = text
-        self._source_name = str(source) if source else ""
+        self._source_name = source_name
 
     @property
     def source_name(self):
@@ -40,7 +40,7 @@ class DataFeed(ABC):
 
     def __init__(self):
         self._secret_store = {}
-        self._name = ""
+        self.name = ""
 
     @abstractmethod
     def get_latest_messages(self):
@@ -49,6 +49,9 @@ class DataFeed(ABC):
         :return: An array of the latest messages from the datafeed
         """
 
+    # TODO Every component duplicates the name getter/setter.
+    #  Duplication could be removed by moving into common NamedComponent class, although I think this might create
+    #  an odd circular dependency loop
     @property
     def name(self):
         return self._name

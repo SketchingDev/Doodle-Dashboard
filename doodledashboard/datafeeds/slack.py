@@ -23,7 +23,6 @@ class SlackFeed(DataFeed):
         slack_token = self.secret_store.get(self._SECRET_ID)
         if slack_token:
             return SlackClient(slack_token)
-
         else:
             raise SecretNotFound(self, self._SECRET_ID)
 
@@ -51,7 +50,7 @@ class SlackFeed(DataFeed):
         events = SlackFeed._filter_events_by_type(events, "message")
         events = SlackFeed._filter_events_with_text(events)
 
-        return [Message(event["text"], self) for event in events]
+        return [Message(event["text"], self.name) for event in events]
 
     def _test_connection(self):
         connected = False
@@ -118,8 +117,7 @@ class SlackFeedConfig(ComponentConfig, DataFeedConfig):
     def get_id():
         return "slack"
 
-    @staticmethod
-    def create(options):
+    def create(self, options):
         if "token" not in options:
             raise MissingRequiredOptionException("Expected 'token' option to exist")
 

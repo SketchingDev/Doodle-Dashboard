@@ -46,7 +46,7 @@ class RssFeed(DataFeed):
             if field in feed_item:
                 feed_fields.append(feed_item[field])
 
-        return Message("\n".join(feed_fields), self)
+        return Message("\n".join(feed_fields), self.name)
 
     def __str__(self):
         return "RSS feed for %s" % self._feed_url

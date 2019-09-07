@@ -37,7 +37,7 @@ class TestConfig(unittest.TestCase):
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             config.create(self._EMPTY_OPTIONS)
-        self.assertEqual("Expected 'images' list and/or default-image to exist", exception.value.value)
+        self.assertEqual("Expected 'images' list and/or default-image to exist", exception.value.message)
 
     def test_exception_raised_when_image_missing_path_in_options(self):
         config = ImageDependingOnMessageContentConfig()
@@ -50,7 +50,7 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as exception:
             config.create(options)
 
-        self.assertEqual("Expected 'path' option to exist", exception.value.value)
+        self.assertEqual("Expected 'path' option to exist", exception.value.message)
 
     def test_exception_raised_when_image_in_list_missing_pattern_and_contains(self):
         config = ImageDependingOnMessageContentConfig()
@@ -63,7 +63,7 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as exception:
             config.create(options)
 
-        self.assertEqual("Expected either 'if-contains' or 'if-matches' option to exist", exception.value.value)
+        self.assertEqual("Expected either 'if-contains' or 'if-matches' option to exist", exception.value.message)
 
     def test_exception_raised_when_image_in_list_image_contains_pattern_and_contains(self):
         options = {
@@ -81,7 +81,7 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as exception:
             config.create(options)
 
-        self.assertEqual("Expected either 'if-contains' or 'if-matches' option, but not both", exception.value.value)
+        self.assertEqual("Expected either 'if-contains' or 'if-matches' option, but not both", exception.value.message)
 
     def test_output_created_with_path_and_pattern(self):
         self.http_server.serve_content("<IMAGE CONTENT>")

@@ -9,7 +9,7 @@ class ComponentConfig(ABC):
     """
 
     def __init__(self):
-        self.name = None
+        pass
 
     @staticmethod
     @abstractmethod
@@ -51,17 +51,20 @@ class NotificationConfig:
 
 
 class ComponentCreationException(Exception):
-    def __init__(self, value):
-        super().__init__(value)
-        self.value = value
+    def __init__(self, message):
+        self._message = message
 
     def __str__(self):
-        return repr(self.value)
+        return repr(self._message)
+
+    @property
+    def message(self):
+        return self._message
 
 
 class MissingRequiredOptionException(ComponentCreationException):
-    def __init__(self, value):
-        super().__init__(value)
+    def __init__(self, message):
+        super().__init__(message)
 
 
 class ComponentType(Enum):
@@ -97,7 +100,7 @@ class ComponentConfigsSource(ABC):
     }
 
     @abstractmethod
-    def load(self, type):
+    def load(self, component_type):
         """
         Returns an array of all the component configs
         """

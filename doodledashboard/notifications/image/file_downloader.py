@@ -24,6 +24,7 @@ class FileDownloader:
         self._logger.info("Downloading %s to %s", url, path)
         with urllib.request.urlopen(url) as response, os.fdopen(fd, "wb") as out_file:
             out_file.write(response.read())
+            self._logger.info("Downloaded %s", url)
 
         self._downloaded_files.append(path)
 

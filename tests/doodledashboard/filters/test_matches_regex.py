@@ -16,7 +16,7 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as err_info:
             MatchesRegexFilterConfig().create(self._EMPTY_OPTIONS)
 
-        self.assertEqual("Expected 'pattern' option to exist", err_info.value.value)
+        self.assertEqual("Expected 'pattern' option to exist", err_info.value.message)
 
 
 class TestFilter(unittest.TestCase):

@@ -163,33 +163,53 @@ class DashboardConfigReader:
 
 
 class InvalidConfigurationException(Exception):
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, message):
+        self._message = message
 
     def __str__(self):
-        return repr(self.value)
+        return repr(self._message)
 
 
 class ComponentNotFoundForType(InvalidConfigurationException):
     def __init__(self, component_type):
         super().__init__("Component not found for type '%s'" % component_type)
-        self.component_type = component_type
+        self._component_type = component_type
+
+    @property
+    def component_type(self):
+        return self._component_type
 
 
 class EmptyConfiguration(InvalidConfigurationException):
     def __init__(self, configuration_files):
         super().__init__("Configuration files are empty: %s" % configuration_files)
-        self.configuration_files = configuration_files
+        self._configuration_files = configuration_files
+
+    @property
+    def configuration_files(self):
+        return self._configuration_files
 
 
 class ConfigYamlParsingError(InvalidConfigurationException):
     def __init__(self, parsing_exception, config):
         super().__init__("Error parsing YAML file %s due to %s" % (config, parsing_exception))
-        self.parsing_exception = parsing_exception
-        self.config = config
+        self._parsing_exception = parsing_exception
+        self._config = config
+
+    @property
+    def parsing_exception(self):
+        return self._parsing_exception
+
+    @property
+    def config(self):
+        return self._config
 
 
 class DisplayNotFound(InvalidConfigurationException):
     def __init__(self, display_id):
         super().__init__("Display %s not found" % display_id)
-        self.display_id = display_id
+        self._display_id = display_id
+
+    @property
+    def display_id(self):
+        return self._display_id

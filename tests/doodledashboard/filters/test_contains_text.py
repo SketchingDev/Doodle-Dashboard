@@ -17,7 +17,7 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as err_info:
             ContainsTextFilterConfig().create(self._EMPTY_OPTIONS)
 
-        self.assertEqual("Expected 'text' option to exist", err_info.value.value)
+        self.assertEqual("Expected 'text' option to exist", err_info.value.message)
 
 
 class TestFilter(unittest.TestCase):

@@ -1,14 +1,13 @@
-import urllib.request
-from urllib.error import HTTPError
 import urllib.parse
+import urllib.request
 
 from doodledashboard.component import ComponentConfig, MissingRequiredOptionException, NotificationConfig, \
     ComponentCreationException
 from doodledashboard.filters.contains_text import ContainsTextFilter
 from doodledashboard.filters.matches_regex import MatchesRegexFilter
-from doodledashboard.notifications.outputs import ImageNotificationOutput
 from doodledashboard.notifications.image.file_downloader import FileDownloader
 from doodledashboard.notifications.notification import Notification
+from doodledashboard.notifications.outputs import ImageNotificationOutput
 
 
 class ImageDependingOnMessageContent(Notification):
@@ -109,8 +108,8 @@ class ImageDependingOnMessageContentConfig(ComponentConfig, NotificationConfig):
     def download(self, url):
         try:
             return self._file_downloader.download(url)
-        except HTTPError as err:
-            raise ComponentCreationException("Error '%s' when downloading %s" % (err.msg, err.url))
+        except Exception as err:
+            raise ImageUnavailable(url, err)
 
     @staticmethod
     def _encode_url(full_url):
@@ -138,3 +137,18 @@ class ImageDependingOnMessageContentConfig(ComponentConfig, NotificationConfig):
             return MatchesRegexFilter(image_config_section["if-matches"])
         else:
             return ContainsTextFilter(image_config_section["if-contains"])
+
+
+class ImageUnavailable(ComponentCreationException):
+    def __init__(self, url, error):
+        super().__init__("Error downloading '%s'" % url)
+        self._url = url
+        self._error = error
+
+    @property
+    def url(self):
+        return self._url
+
+    @property
+    def error(self):
+        return self._error

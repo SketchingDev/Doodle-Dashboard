@@ -17,7 +17,7 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as err_info:
             RssFeedConfig().create(self._EMPTY_OPTIONS)
 
-        self.assertEqual("Expected 'url' option to exist", err_info.value.value)
+        self.assertEqual("Expected 'url' option to exist", err_info.value.message)
 
     def test_data_feed_created_with_url_from_options(self):
         options_with_url = {
@@ -37,7 +37,7 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as err_info:
             RssFeedConfig().create(options_with_invalid_sort)
 
-        self.assertEqual("Sorting value for RSS feed can only be either ascending or descending", err_info.value.value)
+        self.assertEqual("Sorting value for RSS feed can only be either ascending or descending", err_info.value.message)
 
     def test_data_feed_created_with_ascending_sort_order_from_options(self):
         options_with_ascending_order = {

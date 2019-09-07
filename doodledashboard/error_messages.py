@@ -1,6 +1,7 @@
 from doodledashboard.dashboard import DisplayDoesNotSupportNotification
 
 from doodledashboard.configuration import EmptyConfiguration, DisplayNotFound, ConfigYamlParsingError
+from doodledashboard.notifications.image.image import ImageUnavailable
 from doodledashboard.secrets_store import SecretsYamlParsingError, SecretNotFound
 
 
@@ -50,6 +51,10 @@ def data_feed_could_not_find_a_secret(err: SecretNotFound):
     )
 
 
+def failed_to_download_image(err: ImageUnavailable):
+    return "Failed to download the image '%s'. Perhaps check your internet connection?" % err.url
+
+
 error_messages = {
     EmptyConfiguration: empty_configuration,
     ConfigYamlParsingError: error_parsing_yaml,
@@ -57,4 +62,5 @@ error_messages = {
     DisplayNotFound: display_not_found,
     DisplayDoesNotSupportNotification: display_does_not_support_notification,
     SecretNotFound: data_feed_could_not_find_a_secret,
+    ImageUnavailable: failed_to_download_image
 }

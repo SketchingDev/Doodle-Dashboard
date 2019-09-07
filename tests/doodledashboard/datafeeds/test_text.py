@@ -15,7 +15,7 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as err_info:
             TextFeedConfig().create(self._EMPTY_OPTIONS)
 
-        self.assertEqual("Expected 'text' option to exist", err_info.value.value)
+        self.assertEqual("Expected 'text' option to exist", err_info.value.message)
 
     def test_data_feed_created_with_text_from_options(self):
         options_with_text = {

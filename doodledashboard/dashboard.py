@@ -80,16 +80,28 @@ class DashboardValidator:
 
 
 class ValidationException(Exception):
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, message):
+        self._message = message
 
     def __str__(self):
-        return repr(self.value)
+        return repr(self._message)
 
 
 class DisplayDoesNotSupportNotification(ValidationException):
     def __init__(self, display, notification, output_type_not_supported):
         super().__init__("Display '%s' does not support output type '%s'" % (display.name, output_type_not_supported))
-        self.display = display
-        self.notification = notification
-        self.output_type_not_supported = output_type_not_supported
+        self._display = display
+        self._notification = notification
+        self._output_type_not_supported = output_type_not_supported
+
+    @property
+    def display(self):
+        return self._display
+
+    @property
+    def notification(self):
+        return self._notification
+
+    @property
+    def output_type_not_supported(self):
+        return self._output_type_not_supported

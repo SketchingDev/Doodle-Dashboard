@@ -4,26 +4,39 @@ import yaml
 
 class SecretNotFound(Exception):
     def __init__(self, data_feed, missing_token):
-        self.data_feed = data_feed
-        self.missing_token = missing_token
+        self._data_feed = data_feed
+        self._missing_token = missing_token
 
-    # def __str__(self):
-    #     return "Secret Not Found (missing_token=%s, data_feed=%s)" % (self.missing_token, self.data_feed)
+    @property
+    def data_feed(self):
+        return self._data_feed
+
+    @property
+    def missing_token(self):
+        return self._missing_token
 
 
 class InvalidSecretsException(Exception):
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, message):
+        self._message = message
 
     def __str__(self):
-        return repr(self.value)
+        return repr(self._message)
 
 
 class SecretsYamlParsingError(InvalidSecretsException):
     def __init__(self, parsing_exception, secrets_path):
         super().__init__("Error parsing YAML file %s due to %s" % (secrets_path, parsing_exception))
-        self.parsing_exception = parsing_exception
-        self.secrets_path = secrets_path
+        self._parsing_exception = parsing_exception
+        self._secrets_path = secrets_path
+
+    @property
+    def parsing_exception(self):
+        return self._parsing_exception
+
+    @property
+    def secrets_path(self):
+        return self._secrets_path
 
 
 def read_secrets(file_path):

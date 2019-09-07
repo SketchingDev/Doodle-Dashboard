@@ -108,13 +108,8 @@ class ComponentConfigsSource(ABC):
     def _filter_component_configs_by_type(self, classes, component_type):
         component_subclass = self._COMPONENT_SUBCLASS_MAP.get(component_type)
 
-        # @todo Rewrite filtering of components below to use filter keyword
-        filtered = []
-        for component in classes:
-            if issubclass(component, component_subclass):
-                filtered.append(component())
-
-        return filtered
+        filtered_components = filter(lambda c: issubclass(c, component_subclass), classes)
+        return list(map(lambda c: c(), filtered_components))
 
 
 class StaticComponentSource(ComponentConfigsSource):

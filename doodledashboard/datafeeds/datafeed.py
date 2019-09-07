@@ -49,9 +49,9 @@ class DataFeed(ABC):
         :return: An array of the latest messages from the datafeed
         """
 
-    # TODO Every component duplicates the name getter/setter.
-    #  Duplication could be removed by moving into common NamedComponent class, although I think this might create
-    #  an odd circular dependency loop
+    # @todo Remove duplication of `name` getter/setter.
+    # @body Duplication could be removed by moving into common NamedComponent class, although I think this might create
+    # an odd circular dependency loop
     @property
     def name(self):
         return self._name

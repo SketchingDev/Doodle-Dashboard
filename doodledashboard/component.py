@@ -108,7 +108,7 @@ class ComponentConfigsSource(ABC):
     def _filter_component_configs_by_type(self, classes, component_type):
         component_subclass = self._COMPONENT_SUBCLASS_MAP.get(component_type)
 
-        # TODO use filter keyword to do filtering below
+        # @todo Rewrite filtering of components below to use filter keyword
         filtered = []
         for component in classes:
             if issubclass(component, component_subclass):

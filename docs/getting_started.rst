@@ -12,12 +12,12 @@ locally or remotely.
 
 Starting a single dashboard::
 
-    doodledashboard start \
+    doodle-dashboard start \
       https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/dashboard.yml
 
 Starting multiple dashboards::
 
-    doodledashboard start \
+    doodle-dashboard start \
       https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/weather/dashboard.yml \
       https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/examples/rss/build-radiator/dashboard.yml
 

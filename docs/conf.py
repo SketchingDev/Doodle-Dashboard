@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Doodle-Dashboard'
-copyright = '2018, SketchingDev'
+copyright = '2019, SketchingDev'
 author = 'SketchingDev'
 
 # The short X.Y version

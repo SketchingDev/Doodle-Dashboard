@@ -34,7 +34,7 @@ setup(
     tests_require=["pytest"],
     entry_points={
         "console_scripts": [
-            "doodledashboard=doodledashboard.cli:cli"
+            "doodle-dashboard=doodledashboard.cli:cli"
         ],
         "doodledashboard.custom.displays": [
             "console=doodledashboard.displays.console:ConsoleDisplayConfig"

@@ -1,5 +1,7 @@
 import json
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from doodledashboard.component import NamedComponent
 
 
 class Message:
@@ -36,11 +38,11 @@ class MessageJsonEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class DataFeed(ABC):
+class DataFeed(NamedComponent):
 
     def __init__(self):
+        super().__init__()
         self._secret_store = {}
-        self.name = ""
 
     @abstractmethod
     def get_latest_messages(self):
@@ -48,17 +50,6 @@ class DataFeed(ABC):
         Called by the dashboard when it is ready to process new messages.
         :return: An array of the latest messages from the datafeed
         """
-
-    # @todo Remove duplication of `name` getter/setter.
-    # @body Duplication could be removed by moving into common NamedComponent class, although I think this might create
-    # an odd circular dependency loop
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        self._name = name
 
     @property
     def secret_store(self):

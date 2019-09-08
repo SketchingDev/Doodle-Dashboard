@@ -1,21 +1,15 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from doodledashboard.component import NamedComponent
 
 
-class Notification(ABC):
+class Notification(NamedComponent):
     """
     A notification creates an output (text, image etc) from a batch of messages that it is provided.
     """
 
     def __init__(self):
-        self._name = ""
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        self._name = name
+        super().__init__()
 
     def create(self, messages):
         output = self.create_output(messages)

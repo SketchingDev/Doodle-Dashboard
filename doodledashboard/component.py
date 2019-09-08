@@ -3,6 +3,20 @@ from enum import Enum
 from pkg_resources import iter_entry_points
 
 
+class NamedComponent(ABC):
+
+    def __init__(self):
+        self._name = ""
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
+
+
 class ComponentConfig(ABC):
     """
     Inherited by components that can be defined and created from a dashboard file

@@ -1,18 +1,12 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from doodledashboard.component import NamedComponent
 
 
-class Display(ABC):
+class Display(NamedComponent):
 
     def __init__(self):
-        self._name = ""
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        self._name = name
+        super().__init__()
 
     @abstractmethod
     def draw(self, notification):

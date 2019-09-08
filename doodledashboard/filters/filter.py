@@ -1,17 +1,11 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from doodledashboard.component import NamedComponent
 
 
-class MessageFilter(ABC):
+class MessageFilter(NamedComponent):
     def __init__(self):
-        self._name = ""
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        self._name = name
+        super().__init__()
 
     @abstractmethod
     def filter(self, message):

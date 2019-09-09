@@ -22,14 +22,12 @@ setup(
     license="MIT",
     packages=find_packages(exclude=["tests", "examples"]),
     install_requires=[
-        "requests",
-        "slackclient",
-        "feedparser",
         "pyyaml>=4.2b1",
         "click",
         "image-to-ascii-converter",
-        # @todo Remove ratelimit
-        "ratelimit"
+        "requests",
+        "slackclient",
+        "feedparser",
     ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],

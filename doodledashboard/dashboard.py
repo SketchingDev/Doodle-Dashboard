@@ -56,11 +56,12 @@ class DashboardRunner:
         for notification in self._dashboard.notifications:
             yield notification.create(messages)
 
-    def draw_notifications(self, notifications):
+    def draw_notifications(self, notification_outputs):
         display = self._dashboard.display
 
-        for notification in notifications:
-            display.draw(notification)
+        for notification_output in notification_outputs:
+            if notification_output is not None:
+                display.draw(notification_output)
 
 
 class DashboardValidator:

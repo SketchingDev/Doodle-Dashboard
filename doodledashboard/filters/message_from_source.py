@@ -8,7 +8,7 @@ class MessageFromSourceFilter(MessageFilter):
         self._source_name = source_name
 
     def filter(self, message):
-        return message.source_name is self._source_name
+        return message.source_name == self._source_name
 
     @property
     def source_name(self):
@@ -22,7 +22,7 @@ class MessageFromSourceFilterConfig(ComponentConfig, FilterConfig):
         return "message-from-source"
 
     def create(self, options):
-        if "sourceName" not in options:
-            raise MissingRequiredOptionException("Expected 'sourceName' option to exist")
+        if "source-name" not in options:
+            raise MissingRequiredOptionException("Expected 'source-name' option to exist")
 
-        return MessageFromSourceFilter(str(options["sourceName"]))
+        return MessageFromSourceFilter(str(options["source-name"]))

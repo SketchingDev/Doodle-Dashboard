@@ -9,14 +9,15 @@ class Display(NamedComponent):
         super().__init__()
 
     @abstractmethod
-    def draw(self, notification):
+    def draw(self, notification_output):
         """
         Called by the dashboard when the display should try and draw the notification.
 
         Implementations should block the thread whilst the display is showing a notification, as soon as the thread is
         unblocked then all data-sources will be polled.
 
-        :param notification: The notification to draw that is of a type returned by `get_supported_notifications()`
+        :param notification_output: The notification to draw that is of a type returned by
+        `get_supported_notifications()`
         """
 
     @staticmethod

@@ -28,6 +28,7 @@ setup(
         "pyyaml>=4.2b1",
         "click",
         "image-to-ascii-converter",
+        # @todo Remove ratelimit
         "ratelimit"
     ],
     setup_requires=["pytest-runner"],

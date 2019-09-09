@@ -5,15 +5,23 @@ from doodledashboard.component import NamedComponent
 
 class Notification(NamedComponent):
     """
-    A notification creates an output (text, image etc) from a batch of messages that it is provided.
+    A notification creates an output (text, image etc) from a batch of messages that it is provided. Alternatively it
+    can return None to be skipped.
     """
 
     def __init__(self):
         super().__init__()
 
     def create(self, messages):
+        """
+        Produces an output that is passed to the display. If the notification doesn't have anything to display then
+        return None
+        :param messages:
+        :return: Output or None
+        """
         output = self.create_output(messages)
-        output.name = self.name
+        if output:
+            output.name = self.name
 
         return output
 

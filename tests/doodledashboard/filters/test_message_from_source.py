@@ -17,10 +17,10 @@ class TestConfig(unittest.TestCase):
         with pytest.raises(MissingRequiredOptionException) as err_info:
             MessageFromSourceFilterConfig().create(self._EMPTY_OPTIONS)
 
-        self.assertEqual("Expected 'sourceName' option to exist", err_info.value.message)
+        self.assertEqual("Expected 'source-name' option to exist", err_info.value.message)
 
     def test_filter_from_config_factory_configured_correctly(self):
-        source_filter = MessageFromSourceFilterConfig().create({'sourceName': 'test-config-source-name'})
+        source_filter = MessageFromSourceFilterConfig().create({'source-name': 'test-config-source-name'})
         self.assertEqual(source_filter.source_name, 'test-config-source-name')
 
 

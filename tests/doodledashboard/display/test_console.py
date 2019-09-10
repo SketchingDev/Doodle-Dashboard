@@ -1,5 +1,6 @@
 import click
 import unittest
+from unittest.mock import Mock
 
 from click.testing import CliRunner
 from parameterized import parameterized
@@ -45,13 +46,28 @@ class TestTextNotification(unittest.TestCase):
     def test_centred(self, console_size, input_text, expected_ascii_terminal_path):
         text_output = TextNotificationOutput(input_text)
 
-        console = ConsoleDisplay(show_notification_name=False, period=0, size=console_size)
+        console = ConsoleDisplay(show_notification_name=False, period=0, get_size=lambda: console_size)
         cmd = create_cmd(lambda: console.draw(text_output))
         result = CliRunner().invoke(cmd, catch_exceptions=False)
 
         with open(expected_ascii_terminal_path, "r") as f:
             expected_terminal_output = f.read()
         self.assertEqual(expected_terminal_output, result.output)
+
+    def test_console_resizes_dynamically(self):
+        mock_size_getter = Mock()
+        mock_size_getter.side_effect = [(5, 1), (5, 2)]
+
+        text_output = TextNotificationOutput("Hello World")
+
+        console = ConsoleDisplay(show_notification_name=False, period=0, get_size=mock_size_getter)
+        cmd1 = create_cmd(lambda: console.draw(text_output))
+        cmd2 = create_cmd(lambda: console.draw(text_output))
+        result1 = CliRunner().invoke(cmd1, catch_exceptions=False)
+        result2 = CliRunner().invoke(cmd2, catch_exceptions=False)
+
+        self.assertEqual("Hello", result1.output)
+        self.assertEqual("Hello\nWorld", result2.output)
 
 
 class TestImageNotification(unittest.TestCase):
@@ -63,7 +79,7 @@ class TestImageNotification(unittest.TestCase):
 
         image_output = ImageNotificationOutput(input_image)
 
-        console = ConsoleDisplay(show_notification_name=False, period=0, size=console_size)
+        console = ConsoleDisplay(show_notification_name=False, period=0, get_size=lambda: console_size)
         cmd = create_cmd(lambda: console.draw(image_output))
         result = CliRunner().invoke(cmd, catch_exceptions=False)
 

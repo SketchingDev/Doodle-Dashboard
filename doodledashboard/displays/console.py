@@ -63,23 +63,26 @@ class ConsoleDisplay(Display):
         ImageNotificationOutput: _handle_image
     }
 
-    # @todo Dynamically resize with each re-draw
-    # @body Use a function to determine size, so it can be called with each draw. This allows console to be resized
-    def __init__(self, show_notification_name=False, period=DEFAULT_PERIOD, size=click.get_terminal_size()):
+    def __init__(self, show_notification_name=False, period=DEFAULT_PERIOD, get_size=click.get_terminal_size):
         super().__init__()
-        self._show_notification_names = show_notification_name
+        self._show_notification_name = show_notification_name
         self._seconds_per_notification = period
+        self._get_size = get_size
 
-        if show_notification_name and size[1] > 1:
+    def _calculate_new_size(self):
+        size = self._get_size()
+        if self._show_notification_name and size[1] > 1:
             self._size = self._reduce_height_by_1(size)
         else:
             self._size = size
 
     def draw(self, notification_output):
+        self._calculate_new_size()
+
         click.clear()
         factory = self._find_factory(notification_output)
 
-        if self._show_notification_names:
+        if self._show_notification_name:
             click.echo(notification_output.name)
 
         click.echo(factory(self._size, notification_output), nl=False)

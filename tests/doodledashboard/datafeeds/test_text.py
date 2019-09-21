@@ -53,7 +53,7 @@ class TestFeed(unittest.TestCase):
 
         data_feed = TextFeedConfig().create(options_with_text)
 
-        messages = data_feed.get_latest_messages()
+        messages = data_feed.get_messages()
         self.assertEqual(1, len(messages))
         self.assertEqual("Hello World", messages[0].text)
 
@@ -64,7 +64,7 @@ class TestFeed(unittest.TestCase):
 
         data_feed = TextFeedConfig().create(options_with_multiple_text)
 
-        messages = data_feed.get_latest_messages()
+        messages = data_feed.get_messages()
         self.assertEqual(2, len(messages))
         self.assertEqual("Hello", messages[0].text)
         self.assertEqual("World", messages[1].text)

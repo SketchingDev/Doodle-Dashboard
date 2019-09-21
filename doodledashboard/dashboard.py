@@ -48,7 +48,7 @@ class DashboardRunner:
     def poll_datafeeds(self):
         messages = []
         for feed in self._dashboard.data_feeds:
-            messages += feed.get_latest_messages()
+            messages += feed.get_messages()
 
         return messages
 

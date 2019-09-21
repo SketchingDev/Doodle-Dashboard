@@ -1,4 +1,6 @@
 import unittest
+import os.path
+import os
 
 import json
 from click.testing import CliRunner
@@ -94,19 +96,24 @@ class StartCommand(CliTestCase):
         self.assertEqual(1, result.exit_code)
 
     def test_secrets_not_found_info_shown_for_default_secrets_not_existing_when_verbose(self):
+        setattr(os.path, 'expanduser', lambda path: '/dummy-user-directory')
+
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = self.call_cli(runner, start, "--once --verbose")
 
-        self.assertIn("Secrets file not found: /.doodledashboard/secrets", result.output)
+        self.assertIn("Secrets file not found:", result.output)
+        self.assertIn("/dummy-user-directory/.doodledashboard/secrets.yml", result.output)
         self.assertEqual(0, result.exit_code)
 
     def test_secrets_not_found_info_not_shown_for_default_secrets_not_existing_when_not_verbose(self):
+        setattr(os.path, 'expanduser', lambda path: '/dummy-user-directory')
+
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = self.call_cli(runner, start, "--once")
 
-        self.assertNotIn("Secrets file not found: /.doodledashboard/secrets", result.output)
+        self.assertNotIn("Secrets file not found:", result.output)
         self.assertEqual(0, result.exit_code)
 
     def test_useful_error_if_secret_file_provided_does_not_exist(self):
@@ -177,11 +184,13 @@ class ViewCommand(CliTestCase):
         self.assertEqual(1, result.exit_code)
 
     def test_secrets_not_found_info_shown_for_default_secrets_not_existing_when_verbose(self):
+        setattr(os.path, 'expanduser', lambda path: '/dummy-user-directory')
+
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = self.call_cli(runner, view, "datafeeds --verbose")
 
-        self.assertIn("Secrets file not found: /.doodledashboard/secrets", result.output)
+        self.assertIn("Secrets file not found: /dummy-user-directory/.doodledashboard/secrets", result.output)
         self.assertEqual(0, result.exit_code)
 
     def test_secrets_not_found_info_not_shown_for_default_secrets_not_existing_when_not_verbose(self):
@@ -189,7 +198,7 @@ class ViewCommand(CliTestCase):
         with runner.isolated_filesystem():
             result = self.call_cli(runner, view)
 
-        self.assertNotIn("Secrets file not found: /.doodledashboard/secrets", result.output)
+        self.assertNotIn("Secrets file not found:", result.output)
         self.assertEqual(2, result.exit_code)
 
     def test_useful_error_if_secret_file_provided_does_not_exist(self):

@@ -27,6 +27,9 @@ class SlackFeed(DataFeed):
             raise SecretNotFound(self, self._SECRET_ID)
 
     def get_latest_messages(self):
+        if not self._client:
+            self._client = self._create_client()
+
         if not self._connected:
             self._connected = self._try_connect()
 

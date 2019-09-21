@@ -62,7 +62,7 @@ def start(dashboards, once, secrets):
     """
 
     if secrets is None:
-        secrets = os.path.join(os.path.expanduser("~"), "/.doodledashboard/secrets")
+        secrets = os.path.join(os.path.expanduser("~"), ".doodledashboard/secrets.yml")
 
     try:
         loaded_secrets = try_read_secrets_file(secrets)
@@ -116,7 +116,7 @@ def view(action, dashboards, secrets):
     """View the output of the datafeeds and/or notifications used in your DASHBOARDS"""
 
     if secrets is None:
-        secrets = os.path.join(os.path.expanduser("~"), "/.doodledashboard/secrets")
+        secrets = os.path.join(os.path.expanduser("~"), ".doodledashboard/secrets.yml")
 
     try:
         loaded_secrets = try_read_secrets_file(secrets)
@@ -188,7 +188,8 @@ def read_dashboard_from_config(dashboard_config, configs):
     try:
         return dashboard_config.read_yaml(configs)
     except InvalidConfigurationException as err:
-        click.echo(get_error_message(err, default="Error parsing configuration file"), err=True)
+
+        click.echo(get_error_message(err, default=err), err=True)
         raise click.Abort()
     except Exception:
         raise

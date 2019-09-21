@@ -7,9 +7,9 @@ dashboard:
       seconds-per-notification: 5
 
   data-feeds:
-    - type: rss
+    - type: open-weather
       options:
-        url: https://weather-broker-cdn.api.bbci.co.uk/en/observation/rss/2643743
+        place-name: London,GB
 
   notifications:
     - name: Display weather
@@ -17,9 +17,9 @@ dashboard:
       options:
         default-image: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/images/unknown.png
         images:
-          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/images/rain.bmp
+          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/open-weather/weather/images/rain.bmp
             if-contains: rain
-          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/images/storm.bmp
+          - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/open-weather/weather/images/storm.bmp
             if-contains: storm
           - path: https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/images/sun.bmp
             if-contains: sun

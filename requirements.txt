@@ -5,3 +5,5 @@ image-to-ascii-converter==0.0.1
 requests
 slackclient==1.0.9
 feedparser==5.2.1
+
+pyowm==2.10.0

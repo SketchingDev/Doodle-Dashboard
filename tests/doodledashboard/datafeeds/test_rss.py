@@ -103,7 +103,7 @@ class TestFeed(unittest.TestCase):
         }
 
         data_feed = RssFeedConfig().create(options)
-        messages = data_feed.get_latest_messages()
+        messages = data_feed.get_messages()
 
         self.assertEqual(3, len(messages))
         self.assertEqual("Dummy Item 1\nhttps://item/1\n2018-01-01T00:00:00+00:00", messages[0].text)
@@ -118,7 +118,7 @@ class TestFeed(unittest.TestCase):
         }
 
         data_feed = RssFeedConfig().create(options)
-        messages = data_feed.get_latest_messages()
+        messages = data_feed.get_messages()
 
         self.assertEqual(3, len(messages))
         self.assertEqual("Dummy Item 2\nhttps://item/2\n2018-01-03T00:00:00+00:00", messages[0].text)
@@ -132,7 +132,7 @@ class TestFeed(unittest.TestCase):
         }
 
         data_feed = RssFeedConfig().create(options)
-        messages = data_feed.get_latest_messages()
+        messages = data_feed.get_messages()
 
         self.assertEqual(3, len(messages))
         self.assertEqual("Dummy Item 1\nhttps://item/1\n2018-01-01T00:00:00+00:00", messages[0].text)

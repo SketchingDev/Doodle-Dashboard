@@ -8,7 +8,7 @@ class DateTimeFeed(DataFeed):
 
     def get_latest_messages(self):
         date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
-        return [Message(date_time, self.name)]
+        return [Message(date_time)]
 
     def __str__(self):
         return "Date/Time (e.g. 2002-12-25 00:00)"

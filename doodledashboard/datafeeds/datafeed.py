@@ -9,6 +9,7 @@ class Message:
     Represents a textual entity from a data feed.
     """
 
+    # @todo Update Messages to use dictionaries instead of text
     def __init__(self, text, source_name=''):
         """
         :param text: Entity's text
@@ -21,6 +22,10 @@ class Message:
     @property
     def source_name(self):
         return self._source_name
+
+    @source_name.setter
+    def source_name(self, source_name):
+        self._source_name = source_name
 
     @property
     def text(self):
@@ -38,6 +43,8 @@ class MessageJsonEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
+# @todo Should secret be passed to DataFeedConfig instead
+# @body By passing it to the config then all configuration/validation of the data-feed happens in one place
 class DataFeed(NamedComponent):
 
     def __init__(self):
@@ -50,6 +57,13 @@ class DataFeed(NamedComponent):
         Called by the dashboard when it is ready to process new messages.
         :return: An array of the latest messages from the datafeed
         """
+
+    def get_messages(self):
+        messages = self.get_latest_messages()
+        for message in messages:
+            message.source_name = self.name
+
+        return messages
 
     @property
     def secret_store(self):

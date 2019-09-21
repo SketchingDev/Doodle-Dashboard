@@ -28,6 +28,7 @@ setup(
         "requests",
         "slackclient",
         "feedparser",
+        "pyowm"
     ],
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
@@ -47,7 +48,8 @@ setup(
             "datetime=doodledashboard.datafeeds.datetime:DateTimeFeedConfig",
             "rss=doodledashboard.datafeeds.rss:RssFeedConfig",
             "slack=doodledashboard.datafeeds.slack:SlackFeedConfig",
-            "text=doodledashboard.datafeeds.text:TextFeedConfig"
+            "text=doodledashboard.datafeeds.text:TextFeedConfig",
+            "open-weather=doodledashboard.datafeeds.open_weather:OpenWeatherConfig"
         ],
         "doodledashboard.custom.notification": [
             "image-depending-on-content=doodledashboard.notifications.image.image:ImageDependingOnMessageContentConfig",

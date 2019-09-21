@@ -11,7 +11,7 @@ class TextFeed(DataFeed):
             self._text = [text]
 
     def get_latest_messages(self):
-        return [Message(text, self.name) for text in self._text]
+        return [Message(text) for text in self._text]
 
     @property
     def text(self):

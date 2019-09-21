@@ -20,7 +20,7 @@ class TestFeed(unittest.TestCase):
 
     def test_feed_returns_date_and_time(self):
         data_feed = DateTimeFeedConfig().create(self._EMPTY_OPTIONS)
-        entities = data_feed.get_latest_messages()
+        entities = data_feed.get_messages()
 
         self.assertEqual(1, len(entities))
         self.assertRegex(entities[0].text, "\d{4}-\d{2}-\d{2} \d{2}:\d{2}", "Text matches date/time pattern")

@@ -13,8 +13,8 @@ class ListCommand(CliTestCase):
         with runner.isolated_filesystem():
             result = self.call_cli(runner, list, "invalid-component-type")
 
-        self.assertIn('Error: Invalid value for "component_type": invalid choice: invalid-component-type. (choose from',
-                      result.output)
+        self.assertIn('invalid choice: invalid-component-type. (choose from displays, datafeeds, filters, '
+                      'notifications, all)', result.output)
         self.assertEqual(2, result.exit_code)
 
 

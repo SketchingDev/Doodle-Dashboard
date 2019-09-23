@@ -4,7 +4,7 @@ import unittest
 from click.testing import CliRunner
 
 from doodledashboard.cli import start, view
-from doodledashboard.component import NotificationConfig, StaticComponentSource
+from doodledashboard.component import NotificationCreator, StaticComponentSource
 from doodledashboard.notifications.notification import Notification
 from doodledashboard.notifications.outputs import NotificationOutput
 from tests.doodledashboard.it.support import CliTestCase
@@ -26,7 +26,7 @@ class DummyNotification(Notification):
         return [DummyNotificationOutput]
 
 
-class DummyNotificationConfig(NotificationConfig):
+class DummyNotificationCreator(NotificationCreator):
 
     @staticmethod
     def get_id():
@@ -108,7 +108,7 @@ class StartCommand(CliTestCase):
         self.assertEqual(0, result.exit_code)
 
     def test_display_that_does_not_support_notification_output_shows_error(self):
-        StaticComponentSource.add(DummyNotificationConfig)
+        StaticComponentSource.add(DummyNotificationCreator)
         config_with_unsupported_output = """
         dashboard:
           display:

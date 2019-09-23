@@ -4,7 +4,7 @@ import click
 from click.testing import CliRunner
 
 from doodledashboard.cli import list, start
-from doodledashboard.component import DisplayConfig
+from doodledashboard.component import DisplayCreator
 from doodledashboard.component import StaticComponentSource
 from doodledashboard.displays.display import Display
 from doodledashboard.notifications.outputs import TextNotificationOutput
@@ -24,7 +24,7 @@ class DummyDisplay(Display):
         return "dummy display"
 
 
-class DummyDisplayConfig(DisplayConfig):
+class DummyDisplayCreator(DisplayCreator):
 
     @staticmethod
     def get_id():
@@ -37,7 +37,7 @@ class DummyDisplayConfig(DisplayConfig):
 class ListCommand(CliTestCase):
 
     def test_display_shown_in_list_of_available_displays(self):
-        StaticComponentSource.add(DummyDisplayConfig)
+        StaticComponentSource.add(DummyDisplayCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -48,7 +48,7 @@ class ListCommand(CliTestCase):
         self.assertEqual(0, result.exit_code)
 
     def test_display_shown_in_list_all(self):
-        StaticComponentSource.add(DummyDisplayConfig)
+        StaticComponentSource.add(DummyDisplayCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -68,7 +68,7 @@ class StartCommand(CliTestCase):
             type: test-display
         """
 
-        StaticComponentSource.add(DummyDisplayConfig)
+        StaticComponentSource.add(DummyDisplayCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -92,7 +92,7 @@ class StartCommand(CliTestCase):
               type: text-from-message
         """
 
-        StaticComponentSource.add(DummyDisplayConfig)
+        StaticComponentSource.add(DummyDisplayCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():

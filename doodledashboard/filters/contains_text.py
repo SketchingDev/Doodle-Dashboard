@@ -1,4 +1,4 @@
-from doodledashboard.component import FilterConfig, MissingRequiredOptionException
+from doodledashboard.component import FilterCreator, MissingRequiredOptionException
 from doodledashboard.filters.filter import MessageFilter
 
 
@@ -20,7 +20,7 @@ class ContainsTextFilter(MessageFilter):
         return self._text
 
 
-class ContainsTextFilterConfig(FilterConfig):
+class ContainsTextFilterCreator(FilterCreator):
 
     @staticmethod
     def get_id():

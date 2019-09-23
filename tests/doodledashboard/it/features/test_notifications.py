@@ -4,7 +4,7 @@ import unittest
 from click.testing import CliRunner
 
 from doodledashboard.cli import list, view, start
-from doodledashboard.component import StaticComponentSource, NotificationConfig
+from doodledashboard.component import StaticComponentSource, NotificationCreator
 from doodledashboard.notifications.notification import Notification
 from doodledashboard.notifications.outputs import TextNotificationOutput
 from tests.doodledashboard.it.support import CliTestCase
@@ -23,7 +23,7 @@ class DummyNotification(Notification):
         return [TextNotificationOutput]
 
 
-class DummyNotificationConfig(NotificationConfig):
+class DummyNotificationCreator(NotificationCreator):
 
     @staticmethod
     def get_id():
@@ -36,7 +36,7 @@ class DummyNotificationConfig(NotificationConfig):
 class ListCommand(CliTestCase):
 
     def test_notification_shown_in_list_of_available_notifications(self):
-        StaticComponentSource.add(DummyNotificationConfig)
+        StaticComponentSource.add(DummyNotificationCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -47,7 +47,7 @@ class ListCommand(CliTestCase):
         self.assertEqual(0, result.exit_code)
 
     def test_notification_shown_in_list_all(self):
-        StaticComponentSource.add(DummyNotificationConfig)
+        StaticComponentSource.add(DummyNotificationCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -118,7 +118,7 @@ class StartCommand(CliTestCase):
                 test-option: Value from options
         """
 
-        StaticComponentSource.add(DummyNotificationConfig)
+        StaticComponentSource.add(DummyNotificationCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():

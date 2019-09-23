@@ -7,7 +7,7 @@ import click
 from yaml import YAMLError
 
 from doodledashboard import __about__
-from doodledashboard.component import ExternalPackageSource, StaticComponentSource, ComponentConfigLoader, ComponentType
+from doodledashboard.component import ExternalPackageSource, StaticComponentSource, ComponentCreatorLoader, ComponentType
 from doodledashboard.configuration import DashboardConfigReader, InvalidConfigurationException
 from doodledashboard.dashboard import DashboardRunner, DashboardValidator, ValidationException
 from doodledashboard.datafeeds.datafeed import MessageJsonEncoder
@@ -196,7 +196,7 @@ def read_dashboard_from_config(dashboard_config, configs):
 
 
 def initialise_component_loader():
-    configs = ComponentConfigLoader()
+    configs = ComponentCreatorLoader()
     configs.add_source(ExternalPackageSource())
     configs.add_source(StaticComponentSource())
     return configs

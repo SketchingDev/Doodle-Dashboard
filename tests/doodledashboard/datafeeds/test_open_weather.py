@@ -5,7 +5,7 @@ import pyowm
 import pytest
 
 from doodledashboard.component import MissingRequiredOptionException
-from doodledashboard.datafeeds.open_weather import OpenWeatherConfig, OpenWeatherFeed
+from doodledashboard.datafeeds.open_weather import OpenWeatherCreator, OpenWeatherFeed
 from doodledashboard.secrets_store import SecretNotFound
 
 
@@ -14,17 +14,17 @@ class TestConfig(unittest.TestCase):
     _EMPTY_SECRET_STORE = {}
 
     def test_id_is_open_weather(self):
-        self.assertEqual("open-weather", OpenWeatherConfig.get_id())
+        self.assertEqual("open-weather", OpenWeatherCreator.get_id())
 
     def test_exception_thrown_when_data_feed_created_with_empty_options(self):
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            OpenWeatherConfig().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
+            OpenWeatherCreator().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Expected 'place-name' or 'coords' option to exist", err_info.value.message)
 
     def test_exception_thrown_when_data_feed_created_with_empty_secret_store(self):
         with pytest.raises(SecretNotFound) as err_info:
-            OpenWeatherConfig().create({"place-name": "London, GB"}, self._EMPTY_SECRET_STORE)
+            OpenWeatherCreator().create({"place-name": "London, GB"}, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Secret not found for ID 'open-weather-map-key'", err_info.value.message)
 

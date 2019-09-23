@@ -18,9 +18,9 @@ class NamedComponent(ABC):
         self._name = name
 
 
-class ComponentConfig(ABC):
+class ComponentCreator(ABC):
     """
-    Inherited by components that can be defined and created from a dashboard file
+    A factory that is inherited by components that create a component from a dashboard file.
     """
 
     def __init__(self):
@@ -30,99 +30,108 @@ class ComponentConfig(ABC):
     @abstractmethod
     def get_id():
         """
-        :return: Returns the ID used to represent the component in the config
+        :return: The ID for the component this factory can create
         """
 
     @abstractmethod
     def create(self, options, secret_store):
         """
-        :param options: Element's options
+        Creates the component from the options and secrets provided
+        :param options: Components options
         :param secret_store: Storage for secrets
-        :return:
+        :return: component
         """
 
 
-class DisplayConfig(ComponentConfig):
+class DisplayCreator(ComponentCreator):
     """
-    Interface used to tell the component loader what type of component the implementor is.
+    This specific component interface is used by the component loader to determine that the implementor creates a
+    display
     """
 
     @staticmethod
     @abstractmethod
     def get_id():
         """
-        :return: Returns the ID used to represent the component in the config
+        :return: The ID for the component this factory can create
         """
 
     @abstractmethod
     def create(self, options, secret_store):
         """
-        :param options: Element's options
+        Creates the component from the options and secrets provided
+        :param options: Components options
         :param secret_store: Storage for secrets
-        :return:
+        :return: display
         """
 
 
-class DataFeedConfig(ComponentConfig):
+class DataFeedCreator(ComponentCreator):
     """
-    Interface used to tell the component loader what type of component the implementor is.
+    This specific component interface is used by the component loader to determine that the implementor creates a
+    data-feed
     """
 
     @staticmethod
     @abstractmethod
     def get_id():
         """
-        :return: Returns the ID used to represent the component in the config
+        :return: The ID for the component this factory can create
         """
 
     @abstractmethod
     def create(self, options, secret_store):
         """
-        :param options: Element's options
+        Creates the component from the options and secrets provided
+        :param options: Components options
         :param secret_store: Storage for secrets
-        :return:
+        :return: Data-feed
         """
 
 
-class FilterConfig:
+class FilterCreator:
     """
-    Interface used to tell the component loader what type of component the implementor is.
+    This specific component interface is used by the component loader to determine that the implementor creates a
+    filter
     """
 
     @staticmethod
     @abstractmethod
     def get_id():
         """
-        :return: Returns the ID used to represent the component in the config
+        :return: The ID for the component this factory can create
         """
 
     @abstractmethod
     def create(self, options, secret_store):
         """
-        :param options: Element's options
+        Creates the component from the options and secrets provided
+        :param options: Components options
         :param secret_store: Storage for secrets
-        :return:
+        :return: filter
         """
 
 
-class NotificationConfig:
+class NotificationCreator:
     """
-    Interface used to tell the component loader what type of component the implementor is.
+    This specific component interface is used by the component loader to determine that the implementor creates a
+    notification
     """
 
     @staticmethod
     @abstractmethod
     def get_id():
         """
-        :return: Returns the ID used to represent the component in the config
+        :return: The ID for the component this factory can create
         """
 
     @abstractmethod
     def create(self, options, secret_store):
         """
-        :param options: Element's options
+        Creates the component from the options and secrets provided
+        :param options: Components options
         :param secret_store: Storage for secrets
-        :return:
+        :return: notification
         """
 
 
@@ -150,7 +159,7 @@ class ComponentType(Enum):
     FILTER = 4
 
 
-class ComponentConfigLoader:
+class ComponentCreatorLoader:
 
     def __init__(self):
         self._loaders = []
@@ -159,20 +168,20 @@ class ComponentConfigLoader:
         self._loaders.append(loader)
 
     def load_by_type(self, component_type):
-        component_configs = []
+        component_creators = []
 
         for loader in self._loaders:
-            component_configs += loader.load(component_type)
+            component_creators += loader.load(component_type)
 
-        return component_configs
+        return component_creators
 
 
-class ComponentConfigsSource(ABC):
+class ComponentCreatorsSource(ABC):
     _COMPONENT_SUBCLASS_MAP = {
-        ComponentType.DISPLAY: DisplayConfig,
-        ComponentType.DATA_FEED: DataFeedConfig,
-        ComponentType.FILTER: FilterConfig,
-        ComponentType.NOTIFICATION: NotificationConfig
+        ComponentType.DISPLAY: DisplayCreator,
+        ComponentType.DATA_FEED: DataFeedCreator,
+        ComponentType.FILTER: FilterCreator,
+        ComponentType.NOTIFICATION: NotificationCreator
     }
 
     @abstractmethod
@@ -181,28 +190,28 @@ class ComponentConfigsSource(ABC):
         Returns an array of all the component configs
         """
 
-    def _filter_component_configs_by_type(self, classes, component_type):
+    def _filter_component_creators_by_type(self, classes, component_type):
         component_subclass = self._COMPONENT_SUBCLASS_MAP.get(component_type)
 
         filtered_components = filter(lambda c: issubclass(c, component_subclass), classes)
         return list(map(lambda c: c(), filtered_components))
 
 
-class StaticComponentSource(ComponentConfigsSource):
-    _CONFIGS = []
+class StaticComponentSource(ComponentCreatorsSource):
+    _CREATORS = []
 
     @staticmethod
     def add(config):
-        StaticComponentSource._CONFIGS.append(config)
+        StaticComponentSource._CREATORS.append(config)
 
     def load(self, component_type):
-        return self._filter_component_configs_by_type(
-            StaticComponentSource._CONFIGS,
+        return self._filter_component_creators_by_type(
+            StaticComponentSource._CREATORS,
             component_type
         )
 
 
-class ExternalPackageSource(ComponentConfigsSource):
+class ExternalPackageSource(ComponentCreatorsSource):
     _ENTRY_POINT_NAMES_MAP = {
         ComponentType.DISPLAY: "doodledashboard.custom.displays",
         ComponentType.DATA_FEED: "doodledashboard.custom.datafeeds",
@@ -217,6 +226,6 @@ class ExternalPackageSource(ComponentConfigsSource):
 
     def load(self, component_type):
         entry_point_name = self._ENTRY_POINT_NAMES_MAP.get(component_type)
-        component_configs = self._find_entry_points_by_group(entry_point_name)
+        component_creators = self._find_entry_points_by_group(entry_point_name)
 
-        return self._filter_component_configs_by_type(component_configs, component_type)
+        return self._filter_component_creators_by_type(component_creators, component_type)

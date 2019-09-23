@@ -1,7 +1,7 @@
 import urllib.parse
 import urllib.request
 
-from doodledashboard.component import MissingRequiredOptionException, NotificationConfig, \
+from doodledashboard.component import MissingRequiredOptionException, NotificationCreator, \
     ComponentCreationException
 from doodledashboard.filters.contains_text import ContainsTextFilter
 from doodledashboard.filters.matches_regex import MatchesRegexFilter
@@ -66,7 +66,7 @@ class ImageDependingOnMessageContent(Notification):
         return notification_name
 
 
-class ImageDependingOnMessageContentConfig(NotificationConfig):
+class ImageDependingOnMessageContentCreator(NotificationCreator):
 
     def __init__(self, file_downloader=FileDownloader()):
         super().__init__()

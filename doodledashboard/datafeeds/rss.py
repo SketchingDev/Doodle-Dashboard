@@ -2,7 +2,7 @@ import logging
 
 import feedparser
 
-from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException
+from doodledashboard.component import DataFeedCreator, MissingRequiredOptionException
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
@@ -53,7 +53,7 @@ class RssFeed(DataFeed):
         return "RSS feed for %s" % self._feed_url
 
 
-class RssFeedConfig(DataFeedConfig):
+class RssFeedCreator(DataFeedCreator):
 
     @staticmethod
     def get_id():

@@ -3,7 +3,7 @@ import logging
 from requests import ConnectionError
 from slackclient import SlackClient
 
-from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException
+from doodledashboard.component import DataFeedCreator, MissingRequiredOptionException
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 from doodledashboard.secrets_store import SecretNotFound
 
@@ -104,7 +104,7 @@ class SlackFeed(DataFeed):
         return "Slack feed for %s channel" % self._channel_name
 
 
-class SlackFeedConfig(DataFeedConfig):
+class SlackFeedCreator(DataFeedCreator):
     _SECRET_TOKEN_ID = "slack-token"
 
     @staticmethod

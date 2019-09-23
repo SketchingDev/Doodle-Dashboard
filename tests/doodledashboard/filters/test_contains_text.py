@@ -4,7 +4,7 @@ import pytest
 
 from doodledashboard.component import MissingRequiredOptionException
 from doodledashboard.datafeeds.datafeed import Message
-from doodledashboard.filters.contains_text import ContainsTextFilter, ContainsTextFilterConfig
+from doodledashboard.filters.contains_text import ContainsTextFilter, ContainsTextFilterCreator
 
 
 class TestConfig(unittest.TestCase):
@@ -12,11 +12,11 @@ class TestConfig(unittest.TestCase):
     _EMPTY_SECRET_STORE = {}
 
     def test_id_is_message_contains_text(self):
-        self.assertEqual("message-contains-text", ContainsTextFilterConfig().get_id())
+        self.assertEqual("message-contains-text", ContainsTextFilterCreator().get_id())
 
     def test_exception_raised_when_no_text_in_options(self):
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            ContainsTextFilterConfig().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
+            ContainsTextFilterCreator().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Expected 'text' option to exist", err_info.value.message)
 

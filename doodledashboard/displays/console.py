@@ -4,7 +4,7 @@ import time
 import click
 from sketchingdev.image_to_ascii.centre import centre_in_container
 
-from doodledashboard.component import DisplayConfig
+from doodledashboard.component import DisplayCreator
 from doodledashboard.displays.display import Display
 from doodledashboard.notifications.outputs import TextNotificationOutput, ImageNotificationOutput
 
@@ -111,7 +111,7 @@ class ConsoleDisplay(Display):
         return "Console display"
 
 
-class ConsoleDisplayConfig(DisplayConfig):
+class ConsoleDisplayCreator(DisplayCreator):
 
     @staticmethod
     def get_id():

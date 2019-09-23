@@ -1,4 +1,4 @@
-from doodledashboard.component import NotificationConfig
+from doodledashboard.component import NotificationCreator
 from doodledashboard.notifications.notification import Notification
 from doodledashboard.notifications.outputs import TextNotificationOutput
 
@@ -16,7 +16,7 @@ class TextInMessage(Notification):
         return "Text In Message (name=%s)" % self.name
 
 
-class TextInMessageConfig(NotificationConfig):
+class TextInMessageCreator(NotificationCreator):
 
     @staticmethod
     def get_id():

@@ -6,13 +6,13 @@ import unittest
 from click.testing import CliRunner
 
 from doodledashboard.cli import start, view
-from doodledashboard.component import StaticComponentSource, DataFeedConfig
+from doodledashboard.component import StaticComponentSource, DataFeedCreator
 from doodledashboard.datafeeds.text import TextFeed
 from doodledashboard.secrets_store import SecretNotFound
 from tests.doodledashboard.it.support import CliTestCase
 
 
-class SecretLeakerConfig(DataFeedConfig):
+class SecretLeakerCreator(DataFeedCreator):
 
     @staticmethod
     def get_id():
@@ -46,7 +46,7 @@ class StartCommand(CliTestCase):
     def test_secrets_available_to_data_feed_config(self):
         secrets = "twitter-api: This secret has been printed to the console"
 
-        StaticComponentSource.add(SecretLeakerConfig)
+        StaticComponentSource.add(SecretLeakerCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -67,7 +67,7 @@ class StartCommand(CliTestCase):
                 secret-id: twitter-api
         """
 
-        StaticComponentSource.add(SecretLeakerConfig)
+        StaticComponentSource.add(SecretLeakerCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -133,7 +133,7 @@ class ViewCommand(CliTestCase):
                 secret-id: twitter-api
         """
 
-        StaticComponentSource.add(SecretLeakerConfig)
+        StaticComponentSource.add(SecretLeakerCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -156,7 +156,7 @@ class ViewCommand(CliTestCase):
                  secret-id: twitter-api
         """
 
-        StaticComponentSource.add(SecretLeakerConfig)
+        StaticComponentSource.add(SecretLeakerCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():

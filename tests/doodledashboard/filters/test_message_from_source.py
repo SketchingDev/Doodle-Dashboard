@@ -4,7 +4,7 @@ import pytest
 
 from doodledashboard.component import MissingRequiredOptionException
 from doodledashboard.datafeeds.datafeed import Message
-from doodledashboard.filters.message_from_source import MessageFromSourceFilterConfig, MessageFromSourceFilter
+from doodledashboard.filters.message_from_source import MessageFromSourceFilterCreator, MessageFromSourceFilter
 
 
 class TestConfig(unittest.TestCase):
@@ -12,17 +12,17 @@ class TestConfig(unittest.TestCase):
     _EMPTY_SECRET_STORE = {}
 
     def test_id_is_message_from_source(self):
-        self.assertEqual("message-from-source", MessageFromSourceFilterConfig().get_id())
+        self.assertEqual("message-from-source", MessageFromSourceFilterCreator().get_id())
 
     def test_exception_raised_when_no_source_name_in_options(self):
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            MessageFromSourceFilterConfig().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
+            MessageFromSourceFilterCreator().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Expected 'source-name' option to exist", err_info.value.message)
 
     def test_filter_from_config_factory_configured_correctly(self):
-        source_filter = MessageFromSourceFilterConfig().create({'source-name': 'test-config-source-name'},
-                                                               self._EMPTY_SECRET_STORE)
+        source_filter = MessageFromSourceFilterCreator().create({'source-name': 'test-config-source-name'},
+                                                                self._EMPTY_SECRET_STORE)
         self.assertEqual(source_filter.source_name, 'test-config-source-name')
 
 

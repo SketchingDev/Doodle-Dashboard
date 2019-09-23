@@ -1,6 +1,6 @@
 import re
 
-from doodledashboard.component import FilterConfig, MissingRequiredOptionException
+from doodledashboard.component import FilterCreator, MissingRequiredOptionException
 from doodledashboard.filters.filter import MessageFilter
 
 
@@ -18,7 +18,7 @@ class MatchesRegexFilter(MessageFilter):
         return self._regex.pattern
 
 
-class MatchesRegexFilterConfig(FilterConfig):
+class MatchesRegexFilterCreator(FilterCreator):
 
     @staticmethod
     def get_id():

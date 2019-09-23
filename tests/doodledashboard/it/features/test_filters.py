@@ -3,7 +3,7 @@ import unittest
 from click.testing import CliRunner
 
 from doodledashboard.cli import list
-from doodledashboard.component import StaticComponentSource, FilterConfig
+from doodledashboard.component import StaticComponentSource, FilterCreator
 from doodledashboard.filters.filter import MessageFilter
 from tests.doodledashboard.it.support import CliTestCase
 
@@ -14,7 +14,7 @@ class DummyFilter(MessageFilter):
         return messages
 
 
-class DummyFilterConfig(FilterConfig):
+class DummyFilterCreator(FilterCreator):
 
     @staticmethod
     def get_id():
@@ -27,7 +27,7 @@ class DummyFilterConfig(FilterConfig):
 class ListCommand(CliTestCase):
 
     def test_filter_shown_in_list_of_available_filters(self):
-        StaticComponentSource.add(DummyFilterConfig)
+        StaticComponentSource.add(DummyFilterCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -38,7 +38,7 @@ class ListCommand(CliTestCase):
         self.assertEqual(0, result.exit_code)
 
     def test_filter_shown_in_list_all(self):
-        StaticComponentSource.add(DummyFilterConfig)
+        StaticComponentSource.add(DummyFilterCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():

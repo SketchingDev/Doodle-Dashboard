@@ -1,6 +1,6 @@
 import pyowm
 
-from doodledashboard.component import MissingRequiredOptionException, DataFeedConfig
+from doodledashboard.component import MissingRequiredOptionException, DataFeedCreator
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 from doodledashboard.secrets_store import SecretNotFound
 
@@ -69,7 +69,7 @@ class OpenWeatherFeed(DataFeed):
         return "OpenWeather"
 
 
-class OpenWeatherConfig(DataFeedConfig):
+class OpenWeatherCreator(DataFeedCreator):
     _SECRET_TOKEN_ID = "open-weather-map-key"
 
     @staticmethod

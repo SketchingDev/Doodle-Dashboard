@@ -1,6 +1,6 @@
 import unittest
 
-from doodledashboard.component import DataFeedConfig
+from doodledashboard.component import DataFeedCreator
 from doodledashboard.configuration import ComponentConfigParser
 from doodledashboard.datafeeds.datafeed import DataFeed
 
@@ -15,7 +15,7 @@ class DummyFeed(DataFeed):
         return []
 
 
-class DummyFeedConfig(DataFeedConfig):
+class DummyFeedCreator(DataFeedCreator):
 
     @staticmethod
     def get_id():
@@ -29,7 +29,7 @@ class TestComponentConfigParser(unittest.TestCase):
     _EMPTY_SECRET_STORE = {}
 
     def test_name_is_set_against_component(self):
-        abc = ComponentConfigParser([DummyFeedConfig()], self._EMPTY_SECRET_STORE)
+        abc = ComponentConfigParser([DummyFeedCreator()], self._EMPTY_SECRET_STORE)
         component = abc.parse({
             'name': 'test-name',
             'type': 'test-feed',
@@ -44,7 +44,7 @@ class TestComponentConfigParser(unittest.TestCase):
         })
 
     def test_options_are_passed_to_create_method_of_config(self):
-        abc = ComponentConfigParser([DummyFeedConfig()], self._EMPTY_SECRET_STORE)
+        abc = ComponentConfigParser([DummyFeedCreator()], self._EMPTY_SECRET_STORE)
         component = abc.parse({
             'type': 'test-feed',
             'options': {

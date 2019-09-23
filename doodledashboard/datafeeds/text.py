@@ -1,4 +1,4 @@
-from doodledashboard.component import MissingRequiredOptionException, DataFeedConfig
+from doodledashboard.component import MissingRequiredOptionException, DataFeedCreator
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
@@ -21,7 +21,7 @@ class TextFeed(DataFeed):
         return "Text"
 
 
-class TextFeedConfig(DataFeedConfig):
+class TextFeedCreator(DataFeedCreator):
 
     @staticmethod
     def get_id():

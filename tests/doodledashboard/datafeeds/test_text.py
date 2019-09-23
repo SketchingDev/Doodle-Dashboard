@@ -2,7 +2,7 @@ import pytest
 import unittest
 from doodledashboard.component import MissingRequiredOptionException
 
-from doodledashboard.datafeeds.text import TextFeed, TextFeedConfig
+from doodledashboard.datafeeds.text import TextFeed, TextFeedCreator
 
 
 class TestConfig(unittest.TestCase):
@@ -10,11 +10,11 @@ class TestConfig(unittest.TestCase):
     _EMPTY_SECRET_STORE = {}
 
     def test_id_is_datetime(self):
-        self.assertEqual("text", TextFeedConfig.get_id())
+        self.assertEqual("text", TextFeedCreator.get_id())
 
     def test_exception_raised_when_no_text_in_options(self):
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            TextFeedConfig().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
+            TextFeedCreator().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Expected 'text' option to exist", err_info.value.message)
 
@@ -23,7 +23,7 @@ class TestConfig(unittest.TestCase):
             "text": "Testing Testing 123"
         }
 
-        data_feed = TextFeedConfig().create(options_with_text, self._EMPTY_SECRET_STORE)
+        data_feed = TextFeedCreator().create(options_with_text, self._EMPTY_SECRET_STORE)
 
         self.assertIsInstance(data_feed, TextFeed)
 
@@ -36,7 +36,7 @@ class TestConfig(unittest.TestCase):
             "text": ["Testing", "456"]
         }
 
-        data_feed = TextFeedConfig().create(options_with_multiple_text, self._EMPTY_SECRET_STORE)
+        data_feed = TextFeedCreator().create(options_with_multiple_text, self._EMPTY_SECRET_STORE)
 
         self.assertIsInstance(data_feed, TextFeed)
 
@@ -53,7 +53,7 @@ class TestFeed(unittest.TestCase):
             "text": "Hello World"
         }
 
-        data_feed = TextFeedConfig().create(options_with_text, self._EMPTY_SECRET_STORE)
+        data_feed = TextFeedCreator().create(options_with_text, self._EMPTY_SECRET_STORE)
 
         messages = data_feed.get_messages()
         self.assertEqual(1, len(messages))
@@ -64,7 +64,7 @@ class TestFeed(unittest.TestCase):
             "text": ["Hello", "World"]
         }
 
-        data_feed = TextFeedConfig().create(options_with_multiple_text, self._EMPTY_SECRET_STORE)
+        data_feed = TextFeedCreator().create(options_with_multiple_text, self._EMPTY_SECRET_STORE)
 
         messages = data_feed.get_messages()
         self.assertEqual(2, len(messages))

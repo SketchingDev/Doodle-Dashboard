@@ -4,7 +4,7 @@ import unittest
 from click.testing import CliRunner
 
 from doodledashboard.cli import list, view
-from doodledashboard.component import DataFeedConfig, StaticComponentSource
+from doodledashboard.component import DataFeedCreator, StaticComponentSource
 from doodledashboard.datafeeds.datafeed import DataFeed
 from tests.doodledashboard.it.support import CliTestCase
 
@@ -15,7 +15,7 @@ class DummyFeed(DataFeed):
         return []
 
 
-class DummyFeedConfig(DataFeedConfig):
+class DummyFeedCreator(DataFeedCreator):
 
     @staticmethod
     def get_id():
@@ -28,7 +28,7 @@ class DummyFeedConfig(DataFeedConfig):
 class ListCommand(CliTestCase):
 
     def test_data_feed_shown_in_list_of_available_data_feeds(self):
-        StaticComponentSource.add(DummyFeedConfig)
+        StaticComponentSource.add(DummyFeedCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
@@ -39,7 +39,7 @@ class ListCommand(CliTestCase):
         self.assertEqual(0, result.exit_code)
 
     def test_data_feed_shown_in_list_all(self):
-        StaticComponentSource.add(DummyFeedConfig)
+        StaticComponentSource.add(DummyFeedCreator)
 
         runner = CliRunner()
         with runner.isolated_filesystem():

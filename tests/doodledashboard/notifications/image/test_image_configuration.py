@@ -11,7 +11,7 @@ from doodledashboard.filters.contains_text import ContainsTextFilter
 from doodledashboard.filters.matches_regex import MatchesRegexFilter
 from doodledashboard.notifications.image.file_downloader import FileDownloader
 from doodledashboard.notifications.image.image import ImageDependingOnMessageContent, \
-    ImageDependingOnMessageContentConfig
+    ImageDependingOnMessageContentCreator
 
 
 @pytest.mark.usefixtures
@@ -30,18 +30,18 @@ class TestConfig(unittest.TestCase):
         cls.http_server.stop()
 
     def test_id_is_image_depending_on_message_content(self):
-        id = ImageDependingOnMessageContentConfig.get_id()
+        id = ImageDependingOnMessageContentCreator.get_id()
         self.assertEqual("image-depending-on-message-content", id)
 
     def test_exception_raised_when_no_image_list_and_default_image_in_options(self):
-        config = ImageDependingOnMessageContentConfig()
+        config = ImageDependingOnMessageContentCreator()
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             config.create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
         self.assertEqual("Expected 'images' list and/or default-image to exist", exception.value.message)
 
     def test_exception_raised_when_image_missing_path_in_options(self):
-        config = ImageDependingOnMessageContentConfig()
+        config = ImageDependingOnMessageContentCreator()
         options = {
             "images": [
                 {}
@@ -54,7 +54,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual("Expected 'path' option to exist", exception.value.message)
 
     def test_exception_raised_when_image_in_list_missing_pattern_and_contains(self):
-        config = ImageDependingOnMessageContentConfig()
+        config = ImageDependingOnMessageContentCreator()
         options = {
             "images": [
                 {"path": "test"}
@@ -77,7 +77,7 @@ class TestConfig(unittest.TestCase):
             ]
         }
 
-        config = ImageDependingOnMessageContentConfig()
+        config = ImageDependingOnMessageContentCreator()
 
         with pytest.raises(MissingRequiredOptionException) as exception:
             config.create(options, {})
@@ -88,7 +88,7 @@ class TestConfig(unittest.TestCase):
         self.http_server.serve_content("<IMAGE CONTENT>")
 
         downloader = FileDownloader()
-        config = ImageDependingOnMessageContentConfig(downloader)
+        config = ImageDependingOnMessageContentCreator(downloader)
         options = {
             "images": [
                 {
@@ -122,7 +122,7 @@ class TestConfig(unittest.TestCase):
         self.http_server.serve_content('<IMAGE CONTENT>')
 
         downloader = FileDownloader()
-        config = ImageDependingOnMessageContentConfig(downloader)
+        config = ImageDependingOnMessageContentCreator(downloader)
         options = {
             "images": [
                 {
@@ -154,7 +154,7 @@ class TestConfig(unittest.TestCase):
         self.http_server.serve_content("<IMAGE CONTENT>")
 
         downloader = FileDownloader()
-        config = ImageDependingOnMessageContentConfig(downloader)
+        config = ImageDependingOnMessageContentCreator(downloader)
         options = {
             "default-image": "%s/default-image.png" % self.http_server.url
         }
@@ -180,7 +180,7 @@ class TestConfig(unittest.TestCase):
         self.http_server.serve_content(file_contents)
 
         downloader = FileDownloader()
-        config = ImageDependingOnMessageContentConfig(downloader)
+        config = ImageDependingOnMessageContentCreator(downloader)
         options = {
             "default-image": "%s/default image.png" % self.http_server.url
         }

@@ -3,7 +3,7 @@ import unittest
 from doodledashboard.component import MissingRequiredOptionException
 from pytest_localserver import http
 
-from doodledashboard.datafeeds.rss import RssFeed, RssFeedConfig
+from doodledashboard.datafeeds.rss import RssFeed, RssFeedCreator
 
 
 class TestConfig(unittest.TestCase):
@@ -12,11 +12,11 @@ class TestConfig(unittest.TestCase):
     _VALID_URL = "https://sketchingdev.co.uk/feed.xml"
 
     def test_id_is_rss(self):
-        self.assertEqual("rss", RssFeedConfig.get_id())
+        self.assertEqual("rss", RssFeedCreator.get_id())
 
     def test_exception_raised_when_no_url_in_options(self):
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            RssFeedConfig().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
+            RssFeedCreator().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Expected 'url' option to exist", err_info.value.message)
 
@@ -25,7 +25,7 @@ class TestConfig(unittest.TestCase):
             "url": "https://sketchingdev.co.uk/feed.xml"
         }
 
-        data_feed = RssFeedConfig().create(options_with_url, self._EMPTY_SECRET_STORE)
+        data_feed = RssFeedCreator().create(options_with_url, self._EMPTY_SECRET_STORE)
 
         self.assertIsInstance(data_feed, RssFeed)
 
@@ -36,7 +36,7 @@ class TestConfig(unittest.TestCase):
         }
 
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            RssFeedConfig().create(options_with_invalid_sort, self._EMPTY_SECRET_STORE)
+            RssFeedCreator().create(options_with_invalid_sort, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Sorting value for RSS feed can only be either ascending or descending", err_info.value.message)
 
@@ -46,7 +46,7 @@ class TestConfig(unittest.TestCase):
             "sort": "newest"
         }
 
-        data_feed = RssFeedConfig().create(options_with_ascending_order, self._EMPTY_SECRET_STORE)
+        data_feed = RssFeedCreator().create(options_with_ascending_order, self._EMPTY_SECRET_STORE)
         self.assertEqual("newest", data_feed.get_sort_order())
 
     def test_data_feed_created_with_descending_sort_order_from_options(self):
@@ -55,7 +55,7 @@ class TestConfig(unittest.TestCase):
             "sort": "oldest"
         }
 
-        data_feed = RssFeedConfig().create(options_with_descending_order, self._EMPTY_SECRET_STORE)
+        data_feed = RssFeedCreator().create(options_with_descending_order, self._EMPTY_SECRET_STORE)
         self.assertEqual("oldest", data_feed.get_sort_order())
 
 
@@ -104,7 +104,7 @@ class TestFeed(unittest.TestCase):
             "sort": "oldest"
         }
 
-        data_feed = RssFeedConfig().create(options, self._EMPTY_SECRET_STORE)
+        data_feed = RssFeedCreator().create(options, self._EMPTY_SECRET_STORE)
         messages = data_feed.get_messages()
 
         self.assertEqual(3, len(messages))
@@ -119,7 +119,7 @@ class TestFeed(unittest.TestCase):
             "sort": "newest"
         }
 
-        data_feed = RssFeedConfig().create(options, self._EMPTY_SECRET_STORE)
+        data_feed = RssFeedCreator().create(options, self._EMPTY_SECRET_STORE)
         messages = data_feed.get_messages()
 
         self.assertEqual(3, len(messages))
@@ -133,7 +133,7 @@ class TestFeed(unittest.TestCase):
             "url": self.http_server.url
         }
 
-        data_feed = RssFeedConfig().create(options, self._EMPTY_SECRET_STORE)
+        data_feed = RssFeedCreator().create(options, self._EMPTY_SECRET_STORE)
         messages = data_feed.get_messages()
 
         self.assertEqual(3, len(messages))

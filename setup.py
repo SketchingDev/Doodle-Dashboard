@@ -37,23 +37,23 @@ setup(
             "doodle-dashboard=doodledashboard.cli:cli"
         ],
         "doodledashboard.custom.displays": [
-            "console=doodledashboard.displays.console:ConsoleDisplayConfig"
+            "console=doodledashboard.displays.console:ConsoleDisplayCreator"
         ],
         "doodledashboard.custom.filters": [
-            "contains-text=doodledashboard.filters.contains_text:ContainsTextFilterConfig",
-            "matches-regex=doodledashboard.filters.matches_regex:MatchesRegexFilterConfig",
-            "from-source=doodledashboard.filters.message_from_source:MessageFromSourceFilterConfig"
+            "contains-text=doodledashboard.filters.contains_text:ContainsTextFilterCreator",
+            "matches-regex=doodledashboard.filters.matches_regex:MatchesRegexFilterCreator",
+            "from-source=doodledashboard.filters.message_from_source:MessageFromSourceFilterCreator"
         ],
         "doodledashboard.custom.datafeeds": [
-            "datetime=doodledashboard.datafeeds.datetime:DateTimeFeedConfig",
-            "rss=doodledashboard.datafeeds.rss:RssFeedConfig",
-            "slack=doodledashboard.datafeeds.slack:SlackFeedConfig",
-            "text=doodledashboard.datafeeds.text:TextFeedConfig",
-            "open-weather=doodledashboard.datafeeds.open_weather:OpenWeatherConfig"
+            "datetime=doodledashboard.datafeeds.datetime:DateTimeFeedCreator",
+            "rss=doodledashboard.datafeeds.rss:RssFeedCreator",
+            "slack=doodledashboard.datafeeds.slack:SlackFeedCreator",
+            "text=doodledashboard.datafeeds.text:TextFeedCreator",
+            "open-weather=doodledashboard.datafeeds.open_weather:OpenWeatherCreator"
         ],
         "doodledashboard.custom.notification": [
-            "image-depending-on-content=doodledashboard.notifications.image.image:ImageDependingOnMessageContentConfig",
-            "text-in-message=doodledashboard.notifications.text.text:TextInMessageConfig"
+            "image-depending-on-content=doodledashboard.notifications.image.image:ImageDependingOnMessageContentCreator",
+            "text-in-message=doodledashboard.notifications.text.text:TextInMessageCreator"
         ]
     },
     classifiers=[

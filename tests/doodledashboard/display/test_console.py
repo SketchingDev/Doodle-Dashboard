@@ -8,7 +8,7 @@ from parameterized import parameterized
 import os
 from os import path
 
-from doodledashboard.displays.console import ConsoleDisplay, ConsoleDisplayConfig
+from doodledashboard.displays.console import ConsoleDisplay, ConsoleDisplayCreator
 from doodledashboard.notifications.outputs import TextNotificationOutput, ImageNotificationOutput
 
 
@@ -24,7 +24,7 @@ def resolve_data_path(filename):
 class TestConsoleDisplay(unittest.TestCase):
 
     def test_id(self):
-        self.assertEqual("console", ConsoleDisplayConfig().get_id())
+        self.assertEqual("console", ConsoleDisplayCreator().get_id())
 
     def test_warning_shown_for_unsupported_notifications(self):
         image_notification = None

@@ -26,11 +26,9 @@ class DashboardMerger:
         return accum_value
 
 
-# @todo Improve the name of what is currently known as a Component Config
-# @body This doesn't reflect that it actually takes a configuration and creates the component from it.
 class ComponentConfigParser:
     """
-    A generic component parser, which parses the following configuration:
+    A generic parser for component configuration. It will parse the following configuration structure:
         {
             'type': '<component ID>'
             'name': '<component name>'

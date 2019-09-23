@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from doodledashboard.component import DataFeedConfig
+from doodledashboard.component import DataFeedCreator
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
@@ -15,10 +15,10 @@ class DateTimeFeed(DataFeed):
 
     @staticmethod
     def get_config_factory():
-        return DateTimeFeedConfig()
+        return DateTimeFeedCreator()
 
 
-class DateTimeFeedConfig(DataFeedConfig):
+class DateTimeFeedCreator(DataFeedCreator):
 
     @staticmethod
     def get_id():

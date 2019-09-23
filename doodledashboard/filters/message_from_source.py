@@ -1,4 +1,4 @@
-from doodledashboard.component import FilterConfig, MissingRequiredOptionException, ComponentConfig
+from doodledashboard.component import FilterConfig, MissingRequiredOptionException
 from doodledashboard.filters.filter import MessageFilter
 
 
@@ -15,13 +15,13 @@ class MessageFromSourceFilter(MessageFilter):
         return self._source_name
 
 
-class MessageFromSourceFilterConfig(ComponentConfig, FilterConfig):
+class MessageFromSourceFilterConfig(FilterConfig):
 
     @staticmethod
     def get_id():
         return "message-from-source"
 
-    def create(self, options):
+    def create(self, options, secret_store):
         if "source-name" not in options:
             raise MissingRequiredOptionException("Expected 'source-name' option to exist")
 

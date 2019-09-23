@@ -1,12 +1,12 @@
+import json
 import unittest
 
-import json
 from click.testing import CliRunner
 
 from doodledashboard.cli import list, view, start
-from doodledashboard.component import StaticComponentSource, ComponentConfig, NotificationConfig
-from doodledashboard.notifications.outputs import TextNotificationOutput
+from doodledashboard.component import StaticComponentSource, NotificationConfig
 from doodledashboard.notifications.notification import Notification
+from doodledashboard.notifications.outputs import TextNotificationOutput
 from tests.doodledashboard.it.support import CliTestCase
 
 
@@ -23,13 +23,13 @@ class DummyNotification(Notification):
         return [TextNotificationOutput]
 
 
-class DummyNotificationConfig(ComponentConfig, NotificationConfig):
+class DummyNotificationConfig(NotificationConfig):
 
     @staticmethod
     def get_id():
         return "test-notification-1"
 
-    def create(self, options):
+    def create(self, options, secret_storage):
         return DummyNotification(options)
 
 

@@ -1,4 +1,4 @@
-from doodledashboard.component import FilterConfig, MissingRequiredOptionException, ComponentConfig
+from doodledashboard.component import FilterConfig, MissingRequiredOptionException
 from doodledashboard.filters.filter import MessageFilter
 
 
@@ -20,13 +20,13 @@ class ContainsTextFilter(MessageFilter):
         return self._text
 
 
-class ContainsTextFilterConfig(ComponentConfig, FilterConfig):
+class ContainsTextFilterConfig(FilterConfig):
 
     @staticmethod
     def get_id():
         return "message-contains-text"
 
-    def create(self, options):
+    def create(self, options, secret_store):
         if "text" not in options:
             raise MissingRequiredOptionException("Expected 'text' option to exist")
 

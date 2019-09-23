@@ -1,17 +1,17 @@
 import logging
+
 from requests import ConnectionError
 from slackclient import SlackClient
 
-from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException, ComponentConfig
+from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 from doodledashboard.secrets_store import SecretNotFound
 
 
 class SlackFeed(DataFeed):
-    _SECRET_ID = "slack-token"
     _channel = None
 
-    def __init__(self, channel_name, client=None):
+    def __init__(self, channel_name, client):
         DataFeed.__init__(self)
         self._client = client
         self._channel_name = channel_name
@@ -19,17 +19,7 @@ class SlackFeed(DataFeed):
         self._connected = False
         self._connected_previously = False
 
-    def _create_client(self):
-        slack_token = self.secret_store.get(self._SECRET_ID)
-        if slack_token:
-            return SlackClient(slack_token)
-        else:
-            raise SecretNotFound(self, self._SECRET_ID)
-
     def get_latest_messages(self):
-        if not self._client:
-            self._client = self._create_client()
-
         if not self._connected:
             self._connected = self._try_connect()
 
@@ -114,18 +104,23 @@ class SlackFeed(DataFeed):
         return "Slack feed for %s channel" % self._channel_name
 
 
-class SlackFeedConfig(ComponentConfig, DataFeedConfig):
+class SlackFeedConfig(DataFeedConfig):
+    _SECRET_TOKEN_ID = "slack-token"
 
     @staticmethod
     def get_id():
         return "slack"
 
-    def create(self, options):
+    def create(self, options, secret_store):
         if "token" not in options:
             raise MissingRequiredOptionException("Expected 'token' option to exist")
 
         if "channel" not in options:
             raise MissingRequiredOptionException("Expected 'channel' option to exist")
 
+        slack_token = secret_store.get(self._SECRET_TOKEN_ID)
+        if not slack_token:
+            raise SecretNotFound(self, self._SECRET_TOKEN_ID)
+
         channel = options["channel"]
-        return SlackFeed(channel)
+        return SlackFeed(channel, SlackClient(slack_token))

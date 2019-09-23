@@ -1,15 +1,14 @@
 import unittest
 
+import click
 from click.testing import CliRunner
 
 from doodledashboard.cli import list, start
+from doodledashboard.component import DisplayConfig
 from doodledashboard.component import StaticComponentSource
-from tests.doodledashboard.it.support import CliTestCase
-import click
-
-from doodledashboard.component import DisplayConfig, ComponentConfig
 from doodledashboard.displays.display import Display
 from doodledashboard.notifications.outputs import TextNotificationOutput
+from tests.doodledashboard.it.support import CliTestCase
 
 
 class DummyDisplay(Display):
@@ -25,13 +24,13 @@ class DummyDisplay(Display):
         return "dummy display"
 
 
-class DummyDisplayConfig(ComponentConfig, DisplayConfig):
+class DummyDisplayConfig(DisplayConfig):
 
     @staticmethod
     def get_id():
         return "test-display"
 
-    def create(self, options):
+    def create(self, options, secret_storage):
         return DummyDisplay()
 
 

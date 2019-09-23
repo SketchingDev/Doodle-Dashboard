@@ -4,7 +4,7 @@ import unittest
 from click.testing import CliRunner
 
 from doodledashboard.cli import list, view
-from doodledashboard.component import ComponentConfig, DataFeedConfig, StaticComponentSource
+from doodledashboard.component import DataFeedConfig, StaticComponentSource
 from doodledashboard.datafeeds.datafeed import DataFeed
 from tests.doodledashboard.it.support import CliTestCase
 
@@ -15,13 +15,13 @@ class DummyFeed(DataFeed):
         return []
 
 
-class DummyFeedConfig(ComponentConfig, DataFeedConfig):
+class DummyFeedConfig(DataFeedConfig):
 
     @staticmethod
     def get_id():
         return "test-feed"
 
-    def create(self, options):
+    def create(self, options, secret_storage):
         return DummyFeed()
 
 

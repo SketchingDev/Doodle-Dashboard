@@ -1,4 +1,4 @@
-from doodledashboard.component import MissingRequiredOptionException, DataFeedConfig, ComponentConfig
+from doodledashboard.component import MissingRequiredOptionException, DataFeedConfig
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
@@ -21,13 +21,13 @@ class TextFeed(DataFeed):
         return "Text"
 
 
-class TextFeedConfig(ComponentConfig, DataFeedConfig):
+class TextFeedConfig(DataFeedConfig):
 
     @staticmethod
     def get_id():
         return "text"
 
-    def create(self, options):
+    def create(self, options, secret_store):
         if "text" not in options:
             raise MissingRequiredOptionException("Expected 'text' option to exist")
 

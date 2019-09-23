@@ -1,46 +1,30 @@
-import unittest
-import os.path
-import os
-
 import json
+import os
+import os.path
+import unittest
+
 from click.testing import CliRunner
 
 from doodledashboard.cli import start, view
-from doodledashboard.component import StaticComponentSource, ComponentConfig, DataFeedConfig
-from doodledashboard.datafeeds.datafeed import DataFeed, Message
+from doodledashboard.component import StaticComponentSource, DataFeedConfig
+from doodledashboard.datafeeds.text import TextFeed
 from doodledashboard.secrets_store import SecretNotFound
 from tests.doodledashboard.it.support import CliTestCase
 
 
-class SecretLeaker(DataFeed):
-
-    def __init__(self, secret_key):
-        super().__init__()
-        self._secret_key = secret_key
-
-    def get_latest_messages(self):
-        secret_value = self.secret_store.get(self._secret_key)
-
-        if secret_value:
-            return [Message(secret_value)]
-        else:
-            raise SecretNotFound(self, self._secret_key)
-
-    def required_secrets(self):
-        return [self._secret_key]
-
-    def __str__(self):
-        return "SecretLeaker"
-
-
-class SecretLeakerConfig(ComponentConfig, DataFeedConfig):
+class SecretLeakerConfig(DataFeedConfig):
 
     @staticmethod
     def get_id():
         return "leak-secrets"
 
-    def create(self, options):
-        return SecretLeaker(options["secret-id"])
+    def create(self, options, secret_store):
+        id_of_secret = options["secret-id"]
+        secret = secret_store.get(id_of_secret)
+        if secret:
+            return TextFeed(secret)
+        else:
+            raise SecretNotFound(self, id_of_secret)
 
 
 class StartCommand(CliTestCase):
@@ -59,7 +43,7 @@ class StartCommand(CliTestCase):
               type: text-from-message
         """
 
-    def test_secrets_available_to_data_feed(self):
+    def test_secrets_available_to_data_feed_config(self):
         secrets = "twitter-api: This secret has been printed to the console"
 
         StaticComponentSource.add(SecretLeakerConfig)
@@ -91,7 +75,8 @@ class StartCommand(CliTestCase):
             self.save_file("secrets.yml", secrets)
             result = self.call_cli(runner, start, "--once config.yml --secrets secrets.yml")
 
-        err_msg = "The secret 'twitter-api' is missing from your secrets file according to the data feed SecretLeaker"
+        err_msg = "The secret 'twitter-api' is missing from your secrets file according to the data feed config " \
+                  "'leak-secrets'"
         self.assertIn(err_msg, result.output)
         self.assertEqual(1, result.exit_code)
 
@@ -179,7 +164,8 @@ class ViewCommand(CliTestCase):
             self.save_file("secrets.yml", secrets)
             result = self.call_cli(runner, view, "datafeeds config.yml --secrets secrets.yml")
 
-        err_msg = "The secret 'twitter-api' is missing from your secrets file according to the data feed SecretLeaker"
+        err_msg = "The secret 'twitter-api' is missing from your secrets file according to the data feed config " \
+                  "'leak-secrets'"
         self.assertIn(err_msg, result.output)
         self.assertEqual(1, result.exit_code)
 

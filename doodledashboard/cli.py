@@ -1,8 +1,9 @@
-import click
 import json
 import logging
 import os
 import re
+
+import click
 from yaml import YAMLError
 
 from doodledashboard import __about__
@@ -85,6 +86,9 @@ def start(dashboards, once, secrets):
     except YAMLError as err:
         click.echo(get_error_message(err, default="Dashboard configuration is invalid"), err=True)
         raise click.Abort()
+    except SecretNotFound as err:
+        click.echo(get_error_message(err, default="Datafeed didn't have required secret"), err=True)
+        raise click.Abort()
 
     try:
         DashboardValidator().validate(dashboard)
@@ -97,11 +101,7 @@ def start(dashboards, once, secrets):
     click.echo("Dashboard running...")
 
     while True:
-        try:
-            DashboardRunner(dashboard).cycle()
-        except SecretNotFound as err:
-            click.echo(get_error_message(err, default="Datafeed didn't have required secret"), err=True)
-            raise click.Abort()
+        DashboardRunner(dashboard).cycle()
 
         if once:
             break
@@ -125,15 +125,15 @@ def view(action, dashboards, secrets):
         raise click.Abort()
 
     dashboard_config = DashboardConfigReader(initialise_component_loader(), loaded_secrets)
-
     read_configs = [read_file(f) for f in dashboards]
-    dashboard = read_dashboard_from_config(dashboard_config, read_configs)
 
     try:
-        messages = DashboardRunner(dashboard).poll_datafeeds()
+        dashboard = read_dashboard_from_config(dashboard_config, read_configs)
     except SecretNotFound as err:
         click.echo(get_error_message(err, default="Datafeed didn't have required secret"), err=True)
         raise click.Abort()
+
+    messages = DashboardRunner(dashboard).poll_datafeeds()
 
     cli_output = {"source-data": messages}
 

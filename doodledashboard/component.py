@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
+
 from pkg_resources import iter_entry_points
 
 
@@ -33,23 +34,54 @@ class ComponentConfig(ABC):
         """
 
     @abstractmethod
-    def create(self, options):
+    def create(self, options, secret_store):
         """
         :param options: Element's options
+        :param secret_store: Storage for secrets
         :return:
         """
 
 
-class DisplayConfig:
+class DisplayConfig(ComponentConfig):
     """
     Interface used to tell the component loader what type of component the implementor is.
     """
 
+    @staticmethod
+    @abstractmethod
+    def get_id():
+        """
+        :return: Returns the ID used to represent the component in the config
+        """
 
-class DataFeedConfig:
+    @abstractmethod
+    def create(self, options, secret_store):
+        """
+        :param options: Element's options
+        :param secret_store: Storage for secrets
+        :return:
+        """
+
+
+class DataFeedConfig(ComponentConfig):
     """
     Interface used to tell the component loader what type of component the implementor is.
     """
+
+    @staticmethod
+    @abstractmethod
+    def get_id():
+        """
+        :return: Returns the ID used to represent the component in the config
+        """
+
+    @abstractmethod
+    def create(self, options, secret_store):
+        """
+        :param options: Element's options
+        :param secret_store: Storage for secrets
+        :return:
+        """
 
 
 class FilterConfig:
@@ -57,11 +89,41 @@ class FilterConfig:
     Interface used to tell the component loader what type of component the implementor is.
     """
 
+    @staticmethod
+    @abstractmethod
+    def get_id():
+        """
+        :return: Returns the ID used to represent the component in the config
+        """
+
+    @abstractmethod
+    def create(self, options, secret_store):
+        """
+        :param options: Element's options
+        :param secret_store: Storage for secrets
+        :return:
+        """
+
 
 class NotificationConfig:
     """
     Interface used to tell the component loader what type of component the implementor is.
     """
+
+    @staticmethod
+    @abstractmethod
+    def get_id():
+        """
+        :return: Returns the ID used to represent the component in the config
+        """
+
+    @abstractmethod
+    def create(self, options, secret_store):
+        """
+        :param options: Element's options
+        :param secret_store: Storage for secrets
+        :return:
+        """
 
 
 class ComponentCreationException(Exception):

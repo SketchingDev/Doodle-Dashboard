@@ -43,8 +43,9 @@ class ComponentConfigParser:
     which has the concept of filters
     """
 
-    def __init__(self, section_component_configs):
+    def __init__(self, section_component_configs, secret_store):
         self._component_configs = section_component_configs
+        self._secret_store = secret_store
 
     def parse(self, config):
         """
@@ -68,7 +69,7 @@ class ComponentConfigParser:
         return component
 
     def _parse_item(self, component_config, options, root_config):
-        return component_config.create(options)
+        return component_config.create(options, self._secret_store)
 
     @staticmethod
     def _get_config_by_id(component_configs, component_id):
@@ -83,12 +84,13 @@ class NotificationComponentsConfigParser(ComponentConfigParser):
     Parser specific to the notification component type, which contains filters
     """
 
-    def __init__(self, notification_configs, filter_parser):
-        super().__init__(notification_configs)
+    def __init__(self, notification_configs, filter_parser, secret_store):
+        super().__init__(notification_configs, secret_store)
         self._filter_parser = filter_parser
+        self._secret_store = secret_store
 
     def _parse_item(self, component_config, options, root_config):
-        notification = component_config.create(options)
+        notification = component_config.create(options, self._secret_store)
 
         if "filters" in root_config:
             filters = self._parse_filters(root_config["filters"])
@@ -111,19 +113,20 @@ class DashboardConfigReader:
 
     def _initialise_parsers(self):
         display_configs = self._component_configs_loader.load_by_type(ComponentType.DISPLAY)
-        self._display_config_section_parser = ComponentConfigParser(display_configs)
+        self._display_config_section_parser = ComponentConfigParser(display_configs,  self._secret_store)
 
         data_feed_configs = self._component_configs_loader.load_by_type(ComponentType.DATA_FEED)
-        self._data_feed_config_section_parser = ComponentConfigParser(data_feed_configs)
+        self._data_feed_config_section_parser = ComponentConfigParser(data_feed_configs, self._secret_store)
 
         filter_configs = self._component_configs_loader.load_by_type(ComponentType.FILTER)
-        filter_parser = ComponentConfigParser(filter_configs)
+        filter_parser = ComponentConfigParser(filter_configs,  self._secret_store)
 
         notification_configs = \
             self._component_configs_loader.load_by_type(ComponentType.NOTIFICATION)
         self._notification_config_section_parser = NotificationComponentsConfigParser(
             notification_configs,
-            filter_parser
+            filter_parser,
+            self._secret_store
         )
 
     def read_yaml(self, yaml_configs):

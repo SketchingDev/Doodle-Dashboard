@@ -1,8 +1,8 @@
-import unittest
-
 import os
-import pytest
+import unittest
 import uuid
+
+import pytest
 from pytest_localserver import http
 
 from doodledashboard.component import MissingRequiredOptionException
@@ -17,6 +17,7 @@ from doodledashboard.notifications.image.image import ImageDependingOnMessageCon
 @pytest.mark.usefixtures
 class TestConfig(unittest.TestCase):
     _EMPTY_OPTIONS = {}
+    _EMPTY_SECRET_STORE = {}
 
     @classmethod
     def setUpClass(cls):
@@ -36,7 +37,7 @@ class TestConfig(unittest.TestCase):
         config = ImageDependingOnMessageContentConfig()
 
         with pytest.raises(MissingRequiredOptionException) as exception:
-            config.create(self._EMPTY_OPTIONS)
+            config.create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
         self.assertEqual("Expected 'images' list and/or default-image to exist", exception.value.message)
 
     def test_exception_raised_when_image_missing_path_in_options(self):
@@ -48,7 +49,7 @@ class TestConfig(unittest.TestCase):
         }
 
         with pytest.raises(MissingRequiredOptionException) as exception:
-            config.create(options)
+            config.create(options, {})
 
         self.assertEqual("Expected 'path' option to exist", exception.value.message)
 
@@ -61,7 +62,7 @@ class TestConfig(unittest.TestCase):
         }
 
         with pytest.raises(MissingRequiredOptionException) as exception:
-            config.create(options)
+            config.create(options, {})
 
         self.assertEqual("Expected either 'if-contains' or 'if-matches' option to exist", exception.value.message)
 
@@ -79,7 +80,7 @@ class TestConfig(unittest.TestCase):
         config = ImageDependingOnMessageContentConfig()
 
         with pytest.raises(MissingRequiredOptionException) as exception:
-            config.create(options)
+            config.create(options, {})
 
         self.assertEqual("Expected either 'if-contains' or 'if-matches' option, but not both", exception.value.message)
 
@@ -98,7 +99,7 @@ class TestConfig(unittest.TestCase):
         }
 
         try:
-            config = config.create(options)
+            config = config.create(options, self._EMPTY_SECRET_STORE)
             self.assertIsInstance(config, ImageDependingOnMessageContent)
 
             image_filters = config.filtered_images
@@ -132,7 +133,7 @@ class TestConfig(unittest.TestCase):
         }
 
         try:
-            notification = config.create(options)
+            notification = config.create(options, self._EMPTY_SECRET_STORE)
             image_filters = notification.filtered_images
 
             self.assertEqual(1, len(image_filters), "Single image has been configured")
@@ -159,7 +160,7 @@ class TestConfig(unittest.TestCase):
         }
 
         try:
-            notification = config.create(options)
+            notification = config.create(options, self._EMPTY_SECRET_STORE)
 
             downloaded_files = downloader.get_downloaded_files()
             self.assertEqual(1, len(downloaded_files))
@@ -185,7 +186,7 @@ class TestConfig(unittest.TestCase):
         }
 
         try:
-            notification = config.create(options)
+            notification = config.create(options, self._EMPTY_SECRET_STORE)
             image_output = notification.create([])
 
             self.assertIsNotNone(image_output.image_path)

@@ -1,10 +1,10 @@
+import json
 import unittest
 
-import json
 from click.testing import CliRunner
 
 from doodledashboard.cli import start, view
-from doodledashboard.component import ComponentConfig, NotificationConfig, StaticComponentSource
+from doodledashboard.component import NotificationConfig, StaticComponentSource
 from doodledashboard.notifications.notification import Notification
 from doodledashboard.notifications.outputs import NotificationOutput
 from tests.doodledashboard.it.support import CliTestCase
@@ -26,13 +26,13 @@ class DummyNotification(Notification):
         return [DummyNotificationOutput]
 
 
-class DummyNotificationConfig(ComponentConfig, NotificationConfig):
+class DummyNotificationConfig(NotificationConfig):
 
     @staticmethod
     def get_id():
         return "test-notification-with-unsupported-output"
 
-    def create(self, options):
+    def create(self, options, secret_storage):
         return DummyNotification(options)
 
 

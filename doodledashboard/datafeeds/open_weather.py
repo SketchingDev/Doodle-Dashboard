@@ -1,7 +1,7 @@
-from doodledashboard.component import MissingRequiredOptionException, DataFeedConfig, ComponentConfig
-from doodledashboard.datafeeds.datafeed import DataFeed, Message
 import pyowm
 
+from doodledashboard.component import MissingRequiredOptionException, DataFeedConfig
+from doodledashboard.datafeeds.datafeed import DataFeed, Message
 from doodledashboard.secrets_store import SecretNotFound
 
 
@@ -36,12 +36,10 @@ class GeoLocationOption:
 
 
 class OpenWeatherFeed(DataFeed):
-    _SECRET_TOKEN_ID = "open-weather-map-key"
 
-    def __init__(self, place_name, position, client_creator=lambda token: pyowm.OWM(token)):
+    def __init__(self, place_name, position, client):
         DataFeed.__init__(self)
-        self._client = None
-        self._client_creator = client_creator
+        self._client = client
 
         self._place_name = place_name
         self._has_place_name = True if place_name else False
@@ -52,20 +50,7 @@ class OpenWeatherFeed(DataFeed):
         if not self._has_place_name and not self._has_position:
             raise Exception("Place name or position has to be defined")
 
-    def _create_client(self):
-        # @todo Update Secret store to make easy to try and get secret else throw exception asking for it
-        # @body By passing the secrets into the Config it will allow the client to be injected into the DataFeed making
-        #       testing easier
-        owm_token = self.secret_store.get(self._SECRET_TOKEN_ID)
-        if owm_token:
-            return self._client_creator(owm_token)
-        else:
-            raise SecretNotFound(self, self._SECRET_TOKEN_ID)
-
     def get_latest_messages(self):
-        if not self._client:
-            self._client = self._create_client()
-
         if self._has_position:
             observation = self._client.weather_at_coords(self._position.latitude, self._position.longitude)
         else:
@@ -84,17 +69,22 @@ class OpenWeatherFeed(DataFeed):
         return "OpenWeather"
 
 
-class OpenWeatherConfig(ComponentConfig, DataFeedConfig):
+class OpenWeatherConfig(DataFeedConfig):
+    _SECRET_TOKEN_ID = "open-weather-map-key"
 
     @staticmethod
     def get_id():
         return "open-weather"
 
-    def create(self, options):
+    def create(self, options, secret_store):
         place_name = options["place-name"] if "place-name" in options else None
         coords = options["coords"] if "coords" in options else None
 
         if not place_name and not coords:
             raise MissingRequiredOptionException("Expected 'place-name' or 'coords' option to exist")
 
-        return OpenWeatherFeed(place_name, coords)
+        owm_token = secret_store.get(self._SECRET_TOKEN_ID)
+        if not owm_token:
+            raise SecretNotFound(self, self._SECRET_TOKEN_ID)
+
+        return OpenWeatherFeed(place_name, coords, pyowm.OWM(owm_token))

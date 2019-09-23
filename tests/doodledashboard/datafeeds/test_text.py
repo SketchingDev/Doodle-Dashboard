@@ -7,13 +7,14 @@ from doodledashboard.datafeeds.text import TextFeed, TextFeedConfig
 
 class TestConfig(unittest.TestCase):
     _EMPTY_OPTIONS = {}
+    _EMPTY_SECRET_STORE = {}
 
     def test_id_is_datetime(self):
         self.assertEqual("text", TextFeedConfig.get_id())
 
     def test_exception_raised_when_no_text_in_options(self):
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            TextFeedConfig().create(self._EMPTY_OPTIONS)
+            TextFeedConfig().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Expected 'text' option to exist", err_info.value.message)
 
@@ -22,7 +23,7 @@ class TestConfig(unittest.TestCase):
             "text": "Testing Testing 123"
         }
 
-        data_feed = TextFeedConfig().create(options_with_text)
+        data_feed = TextFeedConfig().create(options_with_text, self._EMPTY_SECRET_STORE)
 
         self.assertIsInstance(data_feed, TextFeed)
 
@@ -35,7 +36,7 @@ class TestConfig(unittest.TestCase):
             "text": ["Testing", "456"]
         }
 
-        data_feed = TextFeedConfig().create(options_with_multiple_text)
+        data_feed = TextFeedConfig().create(options_with_multiple_text, self._EMPTY_SECRET_STORE)
 
         self.assertIsInstance(data_feed, TextFeed)
 
@@ -45,13 +46,14 @@ class TestConfig(unittest.TestCase):
 
 
 class TestFeed(unittest.TestCase):
+    _EMPTY_SECRET_STORE = {}
 
     def test_message_contains_text_from_options(self):
         options_with_text = {
             "text": "Hello World"
         }
 
-        data_feed = TextFeedConfig().create(options_with_text)
+        data_feed = TextFeedConfig().create(options_with_text, self._EMPTY_SECRET_STORE)
 
         messages = data_feed.get_messages()
         self.assertEqual(1, len(messages))
@@ -62,7 +64,7 @@ class TestFeed(unittest.TestCase):
             "text": ["Hello", "World"]
         }
 
-        data_feed = TextFeedConfig().create(options_with_multiple_text)
+        data_feed = TextFeedConfig().create(options_with_multiple_text, self._EMPTY_SECRET_STORE)
 
         messages = data_feed.get_messages()
         self.assertEqual(2, len(messages))

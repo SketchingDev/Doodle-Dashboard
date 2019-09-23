@@ -1,6 +1,6 @@
 import re
 
-from doodledashboard.component import ComponentConfig, FilterConfig, MissingRequiredOptionException
+from doodledashboard.component import FilterConfig, MissingRequiredOptionException
 from doodledashboard.filters.filter import MessageFilter
 
 
@@ -18,13 +18,13 @@ class MatchesRegexFilter(MessageFilter):
         return self._regex.pattern
 
 
-class MatchesRegexFilterConfig(ComponentConfig, FilterConfig):
+class MatchesRegexFilterConfig(FilterConfig):
 
     @staticmethod
     def get_id():
         return "message-matches-regex"
 
-    def create(self, options):
+    def create(self, options, secret_store):
         if "pattern" not in options:
             raise MissingRequiredOptionException("Expected 'pattern' option to exist")
 

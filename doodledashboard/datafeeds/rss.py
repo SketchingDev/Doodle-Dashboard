@@ -1,7 +1,8 @@
 import logging
+
 import feedparser
 
-from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException, ComponentConfig
+from doodledashboard.component import DataFeedConfig, MissingRequiredOptionException
 from doodledashboard.datafeeds.datafeed import DataFeed, Message
 
 
@@ -52,13 +53,13 @@ class RssFeed(DataFeed):
         return "RSS feed for %s" % self._feed_url
 
 
-class RssFeedConfig(ComponentConfig, DataFeedConfig):
+class RssFeedConfig(DataFeedConfig):
 
     @staticmethod
     def get_id():
         return "rss"
 
-    def create(self, options):
+    def create(self, options, secret_store):
         if "url" not in options:
             raise MissingRequiredOptionException("Expected 'url' option to exist")
 

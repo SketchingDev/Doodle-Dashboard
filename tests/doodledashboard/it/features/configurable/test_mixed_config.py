@@ -5,7 +5,7 @@ from click.testing import CliRunner
 from pytest_localserver import http
 
 from doodledashboard.cli import start
-from doodledashboard.component import StaticComponentSource, ComponentConfig, DisplayConfig
+from doodledashboard.component import StaticComponentSource, DisplayConfig
 from doodledashboard.displays.display import Display
 from tests.doodledashboard.it.support import CliTestCase
 
@@ -29,14 +29,14 @@ class DummyDisplay(Display):
         return "Display (interval=%s)" % self._interval
 
 
-class DummyDisplayConfig(ComponentConfig, DisplayConfig):
+class DummyDisplayConfig(DisplayConfig):
     _DEFAULT_INTERVAL = 5
 
     @staticmethod
     def get_id():
         return "test-display-with-interval"
 
-    def create(self, options):
+    def create(self, options, secret_storage):
         interval = options.get("seconds-per-notifications", self._DEFAULT_INTERVAL)
         return DummyDisplay(interval)
 

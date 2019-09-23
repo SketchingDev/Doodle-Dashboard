@@ -8,13 +8,14 @@ from doodledashboard.filters.matches_regex import MatchesRegexFilter, MatchesReg
 
 class TestConfig(unittest.TestCase):
     _EMPTY_OPTIONS = {}
+    _EMPTY_SECRET_STORE = {}
 
     def test_id_is_message_matches_regex(self):
         self.assertEqual("message-matches-regex", MatchesRegexFilterConfig.get_id())
 
     def test_exception_raised_when_no_pattern_in_options(self):
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            MatchesRegexFilterConfig().create(self._EMPTY_OPTIONS)
+            MatchesRegexFilterConfig().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Expected 'pattern' option to exist", err_info.value.message)
 

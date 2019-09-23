@@ -9,13 +9,14 @@ from doodledashboard.filters.contains_text import ContainsTextFilter, ContainsTe
 
 class TestConfig(unittest.TestCase):
     _EMPTY_OPTIONS = {}
+    _EMPTY_SECRET_STORE = {}
 
     def test_id_is_message_contains_text(self):
         self.assertEqual("message-contains-text", ContainsTextFilterConfig().get_id())
 
     def test_exception_raised_when_no_text_in_options(self):
         with pytest.raises(MissingRequiredOptionException) as err_info:
-            ContainsTextFilterConfig().create(self._EMPTY_OPTIONS)
+            ContainsTextFilterConfig().create(self._EMPTY_OPTIONS, self._EMPTY_SECRET_STORE)
 
         self.assertEqual("Expected 'text' option to exist", err_info.value.message)
 

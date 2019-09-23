@@ -46,8 +46,8 @@ def display_does_not_support_notification(err: DisplayDoesNotSupportNotification
 
 
 def data_feed_could_not_find_a_secret(err: SecretNotFound):
-    return "The secret '%s' is missing from your secrets file according to the data feed %s" % (
-        err.missing_token, err.data_feed
+    return "The secret '%s' is missing from your secrets file according to the data feed config '%s'" % (
+        err.missing_token, err.data_feed_config.get_id()
     )
 
 

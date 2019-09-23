@@ -3,7 +3,7 @@ import unittest
 from click.testing import CliRunner
 
 from doodledashboard.cli import list
-from doodledashboard.component import StaticComponentSource, ComponentConfig, FilterConfig
+from doodledashboard.component import StaticComponentSource, FilterConfig
 from doodledashboard.filters.filter import MessageFilter
 from tests.doodledashboard.it.support import CliTestCase
 
@@ -14,13 +14,13 @@ class DummyFilter(MessageFilter):
         return messages
 
 
-class DummyFilterConfig(ComponentConfig, FilterConfig):
+class DummyFilterConfig(FilterConfig):
 
     @staticmethod
     def get_id():
         return "test-filter"
 
-    def create(self, options):
+    def create(self, options, secret_storage):
         return DummyFilter()
 
 

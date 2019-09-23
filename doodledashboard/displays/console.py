@@ -4,7 +4,7 @@ import time
 import click
 from sketchingdev.image_to_ascii.centre import centre_in_container
 
-from doodledashboard.component import ComponentConfig, DisplayConfig
+from doodledashboard.component import DisplayConfig
 from doodledashboard.displays.display import Display
 from doodledashboard.notifications.outputs import TextNotificationOutput, ImageNotificationOutput
 
@@ -111,13 +111,13 @@ class ConsoleDisplay(Display):
         return "Console display"
 
 
-class ConsoleDisplayConfig(ComponentConfig, DisplayConfig):
+class ConsoleDisplayConfig(DisplayConfig):
 
     @staticmethod
     def get_id():
         return "console"
 
-    def create(self, options):
+    def create(self, options, secret_store):
         show_notification_name = options.get("show-notification-name", False)
         seconds_per_notification = options.get("seconds-per-notifications", ConsoleDisplay.DEFAULT_PERIOD)
         return ConsoleDisplay(show_notification_name, seconds_per_notification)

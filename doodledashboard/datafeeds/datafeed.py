@@ -43,13 +43,10 @@ class MessageJsonEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-# @todo Should secret be passed to DataFeedConfig instead
-# @body By passing it to the config then all configuration/validation of the data-feed happens in one place
 class DataFeed(NamedComponent):
 
     def __init__(self):
         super().__init__()
-        self._secret_store = {}
 
     @abstractmethod
     def get_latest_messages(self):
@@ -64,11 +61,3 @@ class DataFeed(NamedComponent):
             message.source_name = self.name
 
         return messages
-
-    @property
-    def secret_store(self):
-        return self._secret_store
-
-    @secret_store.setter
-    def secret_store(self, secret_store):
-        self._secret_store = secret_store

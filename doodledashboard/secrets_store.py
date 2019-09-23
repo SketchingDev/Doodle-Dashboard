@@ -3,17 +3,22 @@ import yaml
 
 
 class SecretNotFound(Exception):
-    def __init__(self, data_feed, missing_token):
-        self._data_feed = data_feed
+    def __init__(self, data_feed_config, missing_token):
+        self._data_feed_config = data_feed_config
         self._missing_token = missing_token
+        self._message = "Secret not found for ID '%s'" % self.missing_token
 
     @property
-    def data_feed(self):
-        return self._data_feed
+    def data_feed_config(self):
+        return self._data_feed_config
 
     @property
     def missing_token(self):
         return self._missing_token
+
+    @property
+    def message(self):
+        return self._message
 
 
 class InvalidSecretsException(Exception):

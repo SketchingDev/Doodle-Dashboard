@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 
+from doodledashboard.datafeeds.datafeed import DataFeed
+from doodledashboard.displays.display import Display
+from doodledashboard.filters.filter import MessageFilter
 from pkg_resources import iter_entry_points
+
+from doodledashboard.notifications.notification import Notification
 
 
 class NamedComponent(ABC):
@@ -10,11 +15,11 @@ class NamedComponent(ABC):
         self._name = ""
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name: str):
         self._name = name
 
 
@@ -28,13 +33,13 @@ class ComponentCreator(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_id():
+    def get_id() -> str:
         """
         :return: The ID for the component this factory can create
         """
 
     @abstractmethod
-    def create(self, options, secret_store):
+    def create(self, options: dict, secret_store: dict):
         """
         Creates the component from the options and secrets provided
         :param options: Components options
@@ -51,13 +56,13 @@ class DisplayCreator(ComponentCreator):
 
     @staticmethod
     @abstractmethod
-    def get_id():
+    def get_id() -> str:
         """
         :return: The ID for the component this factory can create
         """
 
     @abstractmethod
-    def create(self, options, secret_store):
+    def create(self, options: dict, secret_store: dict) -> Display:
         """
         Creates the component from the options and secrets provided
         :param options: Components options
@@ -74,13 +79,13 @@ class DataFeedCreator(ComponentCreator):
 
     @staticmethod
     @abstractmethod
-    def get_id():
+    def get_id() -> str:
         """
         :return: The ID for the component this factory can create
         """
 
     @abstractmethod
-    def create(self, options, secret_store):
+    def create(self, options: dict, secret_store: dict) -> DataFeed:
         """
         Creates the component from the options and secrets provided
         :param options: Components options
@@ -97,13 +102,13 @@ class FilterCreator:
 
     @staticmethod
     @abstractmethod
-    def get_id():
+    def get_id() -> str:
         """
         :return: The ID for the component this factory can create
         """
 
     @abstractmethod
-    def create(self, options, secret_store):
+    def create(self, options: dict, secret_store: dict) -> MessageFilter:
         """
         Creates the component from the options and secrets provided
         :param options: Components options
@@ -120,13 +125,13 @@ class NotificationCreator:
 
     @staticmethod
     @abstractmethod
-    def get_id():
+    def get_id() -> str:
         """
         :return: The ID for the component this factory can create
         """
 
     @abstractmethod
-    def create(self, options, secret_store):
+    def create(self, options: dict, secret_store: dict) -> Notification:
         """
         Creates the component from the options and secrets provided
         :param options: Components options

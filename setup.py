@@ -23,7 +23,7 @@ setup(
     packages=find_packages(exclude=["tests", "examples"]),
     install_requires=[
         "pyyaml>=4.2b1",
-        "click",
+        "click>=7",
         "image-to-ascii-converter",
         "requests",
         "slackclient",
@@ -60,5 +60,5 @@ setup(
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3.4"
     ],
-    python_requires=">=3.4"
+    python_requires=">=3.5"
 )

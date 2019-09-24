@@ -1,6 +1,7 @@
 import re
 
 from doodledashboard.component import FilterCreator, MissingRequiredOptionException
+from doodledashboard.datafeeds.datafeed import Message
 from doodledashboard.filters.filter import MessageFilter
 
 
@@ -10,7 +11,7 @@ class MatchesRegexFilter(MessageFilter):
         MessageFilter.__init__(self)
         self._regex = re.compile(regex, re.IGNORECASE)
 
-    def filter(self, message):
+    def filter(self, message: Message):
         return True if self._regex.search(message.text) else False
 
     @property
@@ -21,10 +22,10 @@ class MatchesRegexFilter(MessageFilter):
 class MatchesRegexFilterCreator(FilterCreator):
 
     @staticmethod
-    def get_id():
+    def get_id() -> str:
         return "message-matches-regex"
 
-    def create(self, options, secret_store):
+    def create(self, options: dict, secret_store: dict) -> MatchesRegexFilter:
         if "pattern" not in options:
             raise MissingRequiredOptionException("Expected 'pattern' option to exist")
 

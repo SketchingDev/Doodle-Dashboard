@@ -18,8 +18,8 @@ class DateTimeFeed(DataFeed):
 class DateTimeFeedCreator(DataFeedCreator):
 
     @staticmethod
-    def get_id():
+    def get_id() -> str:
         return "datetime"
 
-    def create(self, options: dict, secret_store: dict):
+    def create(self, options: dict, secret_store: dict) -> DateTimeFeed:
         return DateTimeFeed()

@@ -1,12 +1,16 @@
+
 from abc import ABC, abstractmethod
 from enum import Enum
+from typing import List, Iterator
 
-from doodledashboard.datafeeds.datafeed import DataFeed
-from doodledashboard.displays.display import Display
-from doodledashboard.filters.filter import MessageFilter
 from pkg_resources import iter_entry_points
 
-from doodledashboard.notifications.notification import Notification
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from doodledashboard.datafeeds.datafeed import DataFeed
+    from doodledashboard.displays.display import Display
+    from doodledashboard.filters.filter import MessageFilter
+    from doodledashboard.notifications.notification import Notification
 
 
 class NamedComponent(ABC):
@@ -141,7 +145,7 @@ class NotificationCreator:
 
 
 class ComponentCreationException(Exception):
-    def __init__(self, message):
+    def __init__(self, message: str):
         self._message = message
 
     def __str__(self):
@@ -153,7 +157,7 @@ class ComponentCreationException(Exception):
 
 
 class MissingRequiredOptionException(ComponentCreationException):
-    def __init__(self, message):
+    def __init__(self, message: str):
         super().__init__(message)
 
 
@@ -172,8 +176,8 @@ class ComponentCreatorLoader:
     def add_source(self, loader):
         self._loaders.append(loader)
 
-    def load_by_type(self, component_type):
-        component_creators = []
+    def load_by_type(self, component_type: ComponentType):
+        component_creators = []  # type: List[ComponentCreator]
 
         for loader in self._loaders:
             component_creators += loader.load(component_type)
@@ -190,26 +194,30 @@ class ComponentCreatorsSource(ABC):
     }
 
     @abstractmethod
-    def load(self, component_type):
+    def load(self, component_type: ComponentType):
         """
         Returns an array of all the component configs
         """
 
-    def _filter_component_creators_by_type(self, classes, component_type):
-        component_subclass = self._COMPONENT_SUBCLASS_MAP.get(component_type)
+    def _filter_component_creators_by_type(self,
+                                           classes: List[type],
+                                           component_type: ComponentType) -> List[ComponentCreator]:
+        component_subclass = self._COMPONENT_SUBCLASS_MAP[component_type]  # type: type
+        # if not component_subclass:
+        #     raise Exception("Component type %s does not map to a creator subclass" % repr(component_type))
 
         filtered_components = filter(lambda c: issubclass(c, component_subclass), classes)
         return list(map(lambda c: c(), filtered_components))
 
 
 class StaticComponentSource(ComponentCreatorsSource):
-    _CREATORS = []
+    _CREATORS = []  # type: List[type]
 
     @staticmethod
-    def add(config):
-        StaticComponentSource._CREATORS.append(config)
+    def add(creator: type):
+        StaticComponentSource._CREATORS.append(creator)
 
-    def load(self, component_type):
+    def load(self, component_type: ComponentType) -> List[ComponentCreator]:
         return self._filter_component_creators_by_type(
             StaticComponentSource._CREATORS,
             component_type
@@ -225,12 +233,15 @@ class ExternalPackageSource(ComponentCreatorsSource):
     }
 
     @staticmethod
-    def _find_entry_points_by_group(group_name):
+    def _find_entry_points_by_group(group_name: str) -> Iterator[type]:
         for entry_point in iter_entry_points(group_name):
             yield entry_point.load()
 
-    def load(self, component_type):
+    def load(self, component_type: ComponentType) -> List[ComponentCreator]:
         entry_point_name = self._ENTRY_POINT_NAMES_MAP.get(component_type)
+        if not entry_point_name:
+            raise Exception("Component type %s does not map to entry point" % repr(component_type))
+
         component_creators = self._find_entry_points_by_group(entry_point_name)
 
-        return self._filter_component_creators_by_type(component_creators, component_type)
+        return self._filter_component_creators_by_type(list(component_creators), component_type)

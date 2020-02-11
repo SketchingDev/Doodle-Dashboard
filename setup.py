@@ -58,7 +58,7 @@ setup(
     },
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "Programming Language :: Python :: 3.4"
+        "Programming Language :: Python :: 3.5"
     ],
-    python_requires=">=3.4"
+    python_requires=">=3.5"
 )

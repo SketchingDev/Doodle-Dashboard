@@ -3,7 +3,6 @@ sudo: false
 language: python
 
 python:
-  - "3.4"
   - "3.5"
   - "3.6"
   - "3.7"
@@ -20,5 +19,5 @@ deploy:
     secure: "s9efx2ersTT4xxJmv6QVjq//hqk9a9QjHIN7faR1eDGFjObwYFtjrwMxtERINOKsmZznhk3PT4p+i6qzCutddt20QSdaCFGt0pAv6LwvGD2wdb9NAnpip0XwYKzuAcBHs16iDE2pWp2YD9yIJZ/L+HSOCyPtRw/Lkf1D5ODBsxFCfGKRJEqyHak2Q44nikbGZKlImKIhTc5W3pqp3XiAFboK41Y6u4iGRqRjgrW0vMiP3NwgkwfcliB36cHQTL7I2ruWkMZUK403AMNtHLuqfain6S092Ce800NtexYNbHpQ3OaCXaxcLE3Gm1FO57pb7zKHRAmIbqbCHsO1JtLqexTUJYyK59n/SZ9+M7GSzSISkOjonARhGmzie+hUfPT/bj8w4vvGzCx7u+vdWFuQc5WAe9+F42619F36+FwkUk1v8JC/pJeqa3Rqy44gW5FxWnsBytps+Wlcd30dAx3QtWz7zs97oiL7hnkl2eh076J6/AMfmg1/MboyNORFF3efBwkqPxH0IrS7m+XrORuT0fvCEt2F0yaDJqHe4iag+e3ewJHoBo7NmH56PVu6Dd420BrPhgkrHtunzMrViW5EYxbGROxQ51E19N71WRXtmFOJlhqIcygTI6sGUNbjajL5wmwG7VBznGXmr73+AQ+owXEhkyi0Yawl/Mmr+XvXovU="
   on:
     branch: master
-    python: '3.4'
+    python: '3.5'
     tags: true

@@ -37,7 +37,7 @@ Tweets from your favourite Twitterers, notifications from Slack or breaking news
 Requirements
 ------------
 
-  * `Python 3.4+ <https://www.python.org/downloads/>`_
+  * `Python 3.5+ <https://www.python.org/downloads/>`_
   * `pip <https://pip.pypa.io/en/stable/installing/>`_
 
 Getting started
@@ -49,37 +49,46 @@ Getting started
 
 2. Start a dashboard:
 
-A dashboard is a YAML file that declares the display to use and the notification to display on it. Dashboard files can be hosted
-locally or remotely.
+    A dashboard is a YAML file that declares the display to use and the notification to display on it. Dashboard files can be hosted locally or remotely.
 
-Starting a single dashboard::
+    Starting a single dashboard::
 
-    doodle-dashboard start \
-      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/dashboard.yml
+        $ doodle-dashboard start \
+          https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/dashboard.yml
 
-Starting multiple dashboards::
+    Starting multiple dashboards::
 
-    doodle-dashboard start \
-      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/dashboard.yml \
-      https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/build-radiator/dashboard.yml
+        $ doodle-dashboard start \
+          https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/weather/dashboard.yml \
+          https://raw.githubusercontent.com/SketchingDev/Doodle-Dashboard/master/examples/rss/build-radiator/dashboard.yml
 
 
 Development
 -----------
-
-These steps assume that you're using virtualenv.
 
 1. Clone the repository::
 
     $ git clone https://github.com/SketchingDev/Doodle-Dashboard.git
     $ cd doodle-dashboard
 
-2. Prepare project dependencies::
+2. Create a development environment
+
+    tox is used to create our project's virtual environment::
+
+        $ pip3 install tox
+
+        # Creates virtual environments listed in tox.ini
+        $ tox
+
+        # Activates the virtual environment in your shell
+        $ source .tox/py37/bin/activate
+
+    Alternatively you can install the dependencies outside of a virtual environment::
 
     $ make dev
     $ export PYTHONPATH=`pwd`
 
-3. See usage help::
+3. Test that the environment is setup::
 
     $ python doodledashboard/cli.py
 
